@@ -1,5 +1,9 @@
+<?php
+
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 
 <head>
     <meta charset="UTF-8">
@@ -18,7 +22,7 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-white scrolling-navbar">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light red scrolling-navbar">
         <div class="container">
 
             <!-- Brand -->
@@ -50,8 +54,11 @@
                         <a class="nav-link waves-effect">
                             <span class="badge red z-depth-1 mr-1">1</span>
                             <i class="fas fa-shopping-cart"></i>
-                            <span class="clearfix d-none d-sm-inline-block">Cart </span>
+                            <span class="clearfix d-none d-sm-inline-block">Warenkorb</span>
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-primary">Anmelden</button>
                     </li>
                 </ul>
 
@@ -110,7 +117,7 @@
                             <!-- Default input -->
                             <input type="number" value="1" aria-label="Search" class="form-control mr-1"
                                 style="width: 100px">
-                            <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
+                            <button class="btn btn-primary btn-md my-0 p" type="submit">Zum Warenkorb hinzufügen
                                 <i class="fas fa-shopping-cart ml-1"></i>
                             </button>
 
