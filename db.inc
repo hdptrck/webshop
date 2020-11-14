@@ -1,3 +1,4 @@
+<?php
 // Variabeln deklarieren
 $host = 'localhost'; // host
 $username = 'webShopBackend'; // username
