@@ -1,5 +1,5 @@
 <?php
-require('db.inc'); // Create database connection
+require('../db.inc'); // Create database connection
 
 $firstname_isValid = true;
 $firstname_error = "";
