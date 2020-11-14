@@ -21,7 +21,6 @@ DROP TABLE IF EXISTS `webShop`.`webShopUser` ;
 
 CREATE TABLE IF NOT EXISTS `webShop`.`webShopUser` (
   `idWebShopUser` INT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(45) NOT NULL,
   `firstname` VARCHAR(45) NULL,
   `lastname` VARCHAR(45) NULL,
   `email` VARCHAR(100) NOT NULL,
@@ -120,7 +119,7 @@ CREATE TABLE IF NOT EXISTS `webShop`.`category` (
   `name` VARCHAR(45) NULL,
   `category_idCategory` INT NOT NULL,
   PRIMARY KEY (`idCategory`),
-  INDEX `fk_category_category1_idx` (`category_idCategory` ASC) VISIBLE,
+  INDEX `fk_category_category1_idx` (`category_idCategory` ASC),
   CONSTRAINT `fk_category_category1`
     FOREIGN KEY (`category_idCategory`)
     REFERENCES `webShop`.`category` (`idCategory`)
@@ -153,6 +152,31 @@ CREATE TABLE IF NOT EXISTS `webShop`.`item_has_category` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `webShop`.`passwordResetToken`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `webShop`.`passwordResetToken` ;
+
+CREATE TABLE IF NOT EXISTS `webShop`.`passwordResetToken` (
+  `webShopUser_idWebShopUser` INT NOT NULL,
+  `Token` VARCHAR(255) NOT NULL,
+  `expire` DATETIME NOT NULL,
+  PRIMARY KEY (`webShopUser_idWebShopUser`),
+  INDEX `fk_passwordResetToken_webShopUser1_idx` (`webShopUser_idWebShopUser` ASC),
+  CONSTRAINT `fk_passwordResetToken_webShopUser1`
+    FOREIGN KEY (`webShopUser_idWebShopUser`)
+    REFERENCES `webShop`.`webShopUser` (`idWebShopUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+DROP USER IF EXISTS 'webShopBackend'@'localhost';
+
+CREATE USER 'webShopBackend'@'localhost' IDENTIFIED BY 'modul151webShop';
+GRANT INSERT, SELECT, UPDATE, DELETE ON webshop.* TO 'webShopBackend'@'localhost';

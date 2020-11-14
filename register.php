@@ -1,4 +1,6 @@
 <?php
+    require('db.inc'); // Create database connection
+
 
 
 ?>
