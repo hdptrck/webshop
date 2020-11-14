@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS `webShop`.`category` (
   `name` VARCHAR(45) NULL,
   `category_idCategory` INT NOT NULL,
   PRIMARY KEY (`idCategory`),
-  INDEX `fk_category_category1_idx` (`category_idCategory` ASC) VISIBLE,
+  INDEX `fk_category_category1_idx` (`category_idCategory` ASC),
   CONSTRAINT `fk_category_category1`
     FOREIGN KEY (`category_idCategory`)
     REFERENCES `webShop`.`category` (`idCategory`)
@@ -156,3 +156,6 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+CREATE USER 'webShopBackend'@'localhost' IDENTIFIED BY 'modul151webShop';
+GRANT INSERT, SELECT, UPDATE, DELETE ON webshop.* TO 'webShopBackend'@'localhost';
