@@ -1,5 +1,8 @@
 <?php
 
+$products = array(); //DB Query
+
+
 ?>
 
 <!DOCTYPE html>
@@ -72,79 +75,36 @@
         <div class="container dark-grey-text mt-5">
             <!--Grid row-->
             <div class="row fadeIn">
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                    <div class="card hover-overlay ripple" data-ripple-color="light">
-                        <div class="bg-image">
-                            <img src="https://picsum.photos/214/143" class="img-fluid" />
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Produkt</h5>
-                            <p class="card-text">
-                                Some quick example text to build on the card title and make up the bulk of the
-                                card's content.
-                            </p>
-                            <p>4 auf Lager</p>
-                        </div>
-                        <a href="#!">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                    <div class="card hover-overlay ripple" data-ripple-color="light">
-                        <div class="bg-image">
-                            <img src="https://picsum.photos/214/143" class="img-fluid" />
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Produkt</h5>
-                            <p class="card-text">
-                                Some quick example text to build on the card title and make up the bulk of the
-                                card's content.
-                            </p>
-                            <p>4 auf Lager</p>
-                        </div>
-                        <a href="#!">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                    <div class="card hover-overlay ripple" data-ripple-color="light">
-                        <div class="bg-image">
-                            <img src="https://picsum.photos/214/143" class="img-fluid" />
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Produkt</h5>
-                            <p class="card-text">
-                                Some quick example text to build on the card title and make up the bulk of the
-                                card's content.
-                            </p>
-                            <p>4 auf Lager</p>
-                        </div>
-                        <a href="#!">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                    <div class="card hover-overlay ripple" data-ripple-color="light">
-                        <div class="bg-image">
-                            <img src="https://picsum.photos/214/143" class="img-fluid" />
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Produkt</h5>
-                            <p class="card-text">
-                                Some quick example text to build on the card title and make up the bulk of the
-                                card's content.
-                            </p>
-                            <p>4 auf Lager</p>
-                        </div>
-                        <a href="#!">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
-                        </a>
-                    </div>
-                </div>
 
+                <?php
+                foreach ($products as $product) {
+                ?>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                        <div class="card hover-overlay ripple" data-ripple-color="light">
+                            <div class="bg-image">
+                                <!-- <img src="https://picsum.photos/214/143" class="img-fluid" /> -->
+                                <?php echo '<img class="img-fluid" src="' . $product->img . '" />' ?>
+                            </div>
+                            <div class="card-body">
+                                <!-- <h5 class="card-title">Produkt</h5> -->
+                                <?php echo '<h5 class="card-title">' . $product->title . '</h5>' ?>
+                                <!-- <p class="card-text">
+                                Some quick example text to build on the card title and make up the bulk of the
+                                card's content.
+                            </p> -->
+                                <?php echo '<p class="card-text">' . $product->desc . '</p>' ?>
+                                <!-- <p>4 auf Lager</p> -->
+                                <!-- <p>4 auf Lager</p> -->
+                                <?php echo '<p>' . $product->stock . '</p>' ?>
+                            </div>
+                            <?php echo '<a href="detail.php?id=' . $product->id . '">' ?>
+                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
+                            </a>
+                        </div>
+                    </div>
+                <?php
+                }
+                ?>
 
             </div>
             <!--Grid row-->
