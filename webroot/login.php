@@ -1,5 +1,45 @@
 <?php
+require('../db.inc'); // Create database connection
 
+$email_isset = true;
+$password_isset = true;
+$message = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (!isset($_POST["email"])) {
+        $email_isset = false;
+    }
+
+    if (!isset($_POST["password"])) {
+        $password_isset = false;
+    }
+
+    if ($email_isset && $password_isset) {
+        $query = "SELECT * FROM webShopUser WHERE email=?;";
+        $stmt = $mysqli->prepare($query);
+        $stmt->bind_param("s", $_POST["email"]);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows) { //User exists
+            $row = $result->fetch_assoc();
+            $result->free();
+
+            if (password_verify($_POST["password"], $row["password"])) { //Checks if passwords match
+                //Start session
+            } else {
+                $login_success = false;
+            }
+        } else {
+            $login_success = false;
+        }
+
+        if (!$login_success) {
+            $message = "Die E-Mail-Adresse oder das Passwort ist falsch";
+        }
+    }
+}
 
 ?>
 
@@ -27,17 +67,43 @@
         <div class="row justify-content-center align-items-center h-100-vh">
             <div class="col-lg-4 col-md-7 col-sm-10 col-12">
                 <h1 class="text-center mb-5">Anmelden</h1>
-                <form>
+                <?php 
+                echo '<p class="text-center';
+                if (!$login_success) {
+                    echo ' red-text';
+                }
+                echo '">' . $message . '</p>';
+
+                ?>
+                <form method="post">
                     <!-- Email input -->
                     <div class="form-outline mb-4">
-                        <input type="email" id="login-name" class="form-control" />
-                        <label class="form-label" for="login-name">E-Mail</label>
+                        <input name="email" type="email" id="email" class="form-control <?php if (!$email_isset) {
+                                                                                            echo "is-invalid";
+                                                                                        } ?>" value="<?php if (isset($_POST["email"])) {
+                                                                                                            echo $_POST["email"];
+                                                                                                        } ?>" />
+                        <label class="form-label" for="email">E-Mail</label>
+                        <?php
+                        if (!$email_isset) {
+                            echo '<div class="invalid-feedback">Bitte gib Deine E-Mail-Adresse ein</div>';
+                        }
+                        ?>
                     </div>
 
                     <!-- Password input -->
                     <div class="form-outline mb-4">
-                        <input type="password" id="login-password" class="form-control" />
-                        <label class="form-label" for="login-password">Password</label>
+                        <input name="password" type="password" id="password" class="form-control <?php if (!$password_isset) {
+                                                                                                        echo "is-invalid";
+                                                                                                    } ?>" value="<?php if (isset($_POST["password"])) {
+                                                                                                                        echo $_POST["password"];
+                                                                                                                    } ?>" />
+                        <label class="form-label" for="password">Password</label>
+                        <?php
+                        if (!$password_isset) {
+                            echo '<div class="invalid-feedback">Bitte gib ein Passwort ein</div>';
+                        }
+                        ?>
                     </div>
 
                     <!-- 2 column grid layout -->
