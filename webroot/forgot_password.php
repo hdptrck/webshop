@@ -30,7 +30,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $result->free();
 
                     $idUser = $row['idWebShopUser']; //Get id of user which wants to reset password
-                    $token = bin2hex(random_bytes(100)); //Create random token
+
+                    do {
+                        $token = bin2hex(random_bytes(128)); //Create random token
+
+                        //Try to select token
+                        $query = "SELECT * FROM passwordResetToken WHERE token=?;";
+                        $stmt = $mysqli->prepare($query);
+                        $stmt->bind_param("s", $token);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                    } while ($result->num_rows); //Generate new token if token already exists (pretty unlikely though)
 
                     //Token is only 15 minutes valid
                     $expFormat = mktime(date("H"), date("i") + 15, date("s"), date("m"), date("d"), date("Y"));
