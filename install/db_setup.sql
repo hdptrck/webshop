@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `webShop`.`webShopUser` (
   `firstname` VARCHAR(45) NULL,
   `lastname` VARCHAR(45) NULL,
   `email` VARCHAR(100) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(256) NOT NULL,
   PRIMARY KEY (`idWebShopUser`))
 ENGINE = InnoDB;
 
@@ -158,11 +158,12 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `webShop`.`passwordResetToken` ;
 
 CREATE TABLE IF NOT EXISTS `webShop`.`passwordResetToken` (
+  `idPasswordResetToken` INT NOT NULL AUTO_INCREMENT,
+  `token` VARCHAR(256) NOT NULL,
   `webShopUser_idWebShopUser` INT NOT NULL,
-  `Token` VARCHAR(255) NOT NULL,
   `expire` DATETIME NOT NULL,
-  PRIMARY KEY (`webShopUser_idWebShopUser`),
-  INDEX `fk_passwordResetToken_webShopUser1_idx` (`webShopUser_idWebShopUser` ASC),
+  PRIMARY KEY (`idPasswordResetToken`),
+  INDEX `token` (`token` ASC),
   CONSTRAINT `fk_passwordResetToken_webShopUser1`
     FOREIGN KEY (`webShopUser_idWebShopUser`)
     REFERENCES `webShop`.`webShopUser` (`idWebShopUser`)
