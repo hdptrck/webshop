@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //Validation of password and repeated password.
     if (isset($_POST['register-password'])) {
         if (!empty(trim($_POST['register-password'])) || preg_match("#(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$#", trim($_POST['register-password']))) {
-            if (strlen($_POST['register-password']) <= 255) {
+            if (strlen($_POST['register-password']) <= 256) {
                 if (isset($_POST['register-password-repeat'])) {
                     if ($_POST['register-password'] == $_POST['register-password-repeat']) {
                         $password = $_POST['register-password'];
@@ -111,8 +111,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if($firstname_isValid && $lastname_isValid && $email_isValid && $password_isValid && $password_repeat_isValid) {
-        $driver = new mysqli_driver();
-        $driver->report_mode = MYSQLI_REPORT_ALL;
         $password = password_hash($password, PASSWORD_DEFAULT);
         $query = "INSERT INTO webShopUser (firstname, lastname, email, password) VALUES (?, ?, ?, ?);";
         if (!($stmt2 = $mysqli->prepare($query))) {
