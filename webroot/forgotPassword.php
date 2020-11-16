@@ -1,13 +1,13 @@
 <?php
 require("autoLoad.php");
-require("../../pw.inc");
+require("../../pw.inc.php");
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require('../PHPMailer/Exception.php');
-require('../PHPMailer/PHPMailer.php');
-require('../PHPMailer/SMTP.php');
+require('includes/PHPMailer/Exception.php');
+require('includes/PHPMailer/PHPMailer.php');
+require('includes/PHPMailer/SMTP.php');
 
 $success = false;
 $error_message = "";
