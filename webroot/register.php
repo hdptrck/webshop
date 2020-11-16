@@ -58,12 +58,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $email = htmlspecialchars(trim($_POST['register-email']));
 
+                //Try finde email in DB
                 $query = "SELECT * FROM webShopUser WHERE email=?;";
                 $stmt = $mysqli->prepare($query);
                 $stmt->bind_param("s", $email);
                 $stmt->execute();
                 $result=$stmt->get_result();
-                if ($result->num_rows) {
+                if ($result->num_rows) { // Email is already in use
                     $email = "";
                     $email_isValid = false;
                     $email_error = "Diese E-Mail-Adresse ist bereits vergeben";
@@ -110,13 +111,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password_error = "Bitte gib ein Password ein";
     }
 
-    if($firstname_isValid && $lastname_isValid && $email_isValid && $password_isValid && $password_repeat_isValid) {
-        $password = password_hash($password, PASSWORD_DEFAULT);
-        $query = "INSERT INTO webShopUser (firstname, lastname, email, password) VALUES (?, ?, ?, ?);";
+    if($firstname_isValid && $lastname_isValid && $email_isValid && $password_isValid && $password_repeat_isValid) { // Everything is valid
+        $password = password_hash($password, PASSWORD_DEFAULT); // Generate PW hash
+
+        do {
+            $id = bin2hex(random_bytes(128)); //Create random id
+
+            //Try to select id in DB
+            $query = "SELECT * FROM webShopUser WHERE idWebShopUser=?;";
+            $stmt = $mysqli->prepare($query);
+            $stmt->bind_param("s", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        } while ($result->num_rows); //Generate new id if id already exists (pretty unlikely though)
+
+        $query = "INSERT INTO webShopUser (idWebShopUser, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?);";
         if (!($stmt2 = $mysqli->prepare($query))) {
             echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
         } else {
-            $stmt2->bind_param("ssss", $firstname, $lastname, $email, $password);
+            $stmt2->bind_param("sssss", $id, $firstname, $lastname, $email, $password);
             $stmt2->execute();
         }
     }
