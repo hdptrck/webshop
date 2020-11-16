@@ -20,7 +20,7 @@ USE `webShop` ;
 DROP TABLE IF EXISTS `webShop`.`webShopUser` ;
 
 CREATE TABLE IF NOT EXISTS `webShop`.`webShopUser` (
-  `idWebShopUser` INT NOT NULL AUTO_INCREMENT,
+  `idWebShopUser` VARCHAR(256) NOT NULL,
   `firstname` VARCHAR(45) NULL,
   `lastname` VARCHAR(45) NULL,
   `email` VARCHAR(100) NOT NULL,
@@ -63,7 +63,7 @@ DROP TABLE IF EXISTS `webShop`.`order` ;
 
 CREATE TABLE IF NOT EXISTS `webShop`.`order` (
   `idOrder` INT NOT NULL AUTO_INCREMENT,
-  `webShopUser_idWebShopUser` INT NOT NULL,
+  `webShopUser_idWebShopUser` VARCHAR(256) NOT NULL,
   `eventName` VARCHAR(45) NOT NULL,
   `eventPlace` VARCHAR(45) NULL,
   `pickUpDatetime` DATETIME NOT NULL,
@@ -159,13 +159,48 @@ DROP TABLE IF EXISTS `webShop`.`passwordResetToken` ;
 
 CREATE TABLE IF NOT EXISTS `webShop`.`passwordResetToken` (
   `token` VARCHAR(256) NOT NULL,
-  `webShopUser_idWebShopUser` INT NOT NULL,
+  `webShopUser_idWebShopUser` VARCHAR(256) NOT NULL,
   `expire` DATETIME NOT NULL,
   INDEX `token` (`token` ASC),
   PRIMARY KEY (`token`),
   CONSTRAINT `fk_passwordResetToken_webShopUser1`
     FOREIGN KEY (`webShopUser_idWebShopUser`)
     REFERENCES `webShop`.`webShopUser` (`idWebShopUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `webShop`.`rememberMeToken`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `webShop`.`rememberMeToken` ;
+
+CREATE TABLE IF NOT EXISTS `webShop`.`rememberMeToken` (
+  `token` VARCHAR(256) NOT NULL,
+  PRIMARY KEY (`token`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `webShop`.`webShopUser_has_rememberMeToken`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `webShop`.`webShopUser_has_rememberMeToken` ;
+
+CREATE TABLE IF NOT EXISTS `webShop`.`webShopUser_has_rememberMeToken` (
+  `webShopUser_idWebShopUser` VARCHAR(256) NOT NULL,
+  `rememberMeToken_token` VARCHAR(256) NOT NULL,
+  PRIMARY KEY (`webShopUser_idWebShopUser`, `rememberMeToken_token`),
+  INDEX `fk_webShopUser_has_rememberMeToken_rememberMeToken1_idx` (`rememberMeToken_token` ASC),
+  INDEX `fk_webShopUser_has_rememberMeToken_webShopUser1_idx` (`webShopUser_idWebShopUser` ASC),
+  CONSTRAINT `fk_webShopUser_has_rememberMeToken_webShopUser1`
+    FOREIGN KEY (`webShopUser_idWebShopUser`)
+    REFERENCES `webShop`.`webShopUser` (`idWebShopUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_webShopUser_has_rememberMeToken_rememberMeToken1`
+    FOREIGN KEY (`rememberMeToken_token`)
+    REFERENCES `webShop`.`rememberMeToken` (`token`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
