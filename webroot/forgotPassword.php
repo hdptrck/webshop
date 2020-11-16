@@ -1,5 +1,5 @@
 <?php
-require("autoLoad.php");
+require("includes/autoLoad.php");
 require("../../pw-private.inc.php");
 
 use PHPMailer\PHPMailer\PHPMailer;

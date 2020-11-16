@@ -1,5 +1,5 @@
 <?php
-require("autoLoad.php");
+require("includes/autoLoad.php");
 
 $firstname_isValid = true;
 $firstname_error = "";

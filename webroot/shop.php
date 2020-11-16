@@ -1,5 +1,5 @@
 <?php
-require("autoLoad.php");
+require("includes/autoLoad.php");
 
 $products = array(); //DB Query
 

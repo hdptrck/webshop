@@ -1,5 +1,5 @@
 <?php
-require("autoLoad.php");
+require("includes/autoLoad.php");
 
 
 if (isset($_GET['id'])) {

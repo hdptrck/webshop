@@ -1,5 +1,5 @@
 <?php
-require("autoLoad.php");
+require("includes/autoLoad.php");
 
 $password_isValid = true;
 $password_error = "";

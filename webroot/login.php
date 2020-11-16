@@ -1,6 +1,6 @@
 <?php
-require("autoLoad.php");
-require("includes/pw.inc.php");
+require("includes/autoLoad.php");
+require("../pw.inc.php");
 
 $email_isset = true;
 $password_isset = true;
