@@ -1,6 +1,6 @@
 <?php
 session_start();
-require('../db.inc'); // Create database connection
+require("autoLoad.php");
 
 $email_isset = true;
 $password_isset = true;

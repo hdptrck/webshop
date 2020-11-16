@@ -1,5 +1,5 @@
 <?php
-require("../db.inc");
+require("autoLoad.php");
 require("../../pw.inc");
 
 use PHPMailer\PHPMailer\PHPMailer;

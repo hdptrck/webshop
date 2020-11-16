@@ -1,5 +1,5 @@
 <?php
-require("../db.inc");
+require("autoLoad.php");
 
 $password_isValid = true;
 $password_error = "";

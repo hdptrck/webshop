@@ -1,5 +1,5 @@
 <?php
-require('../db.inc'); // Create database connection
+require("autoLoad.php");
 
 $firstname_isValid = true;
 $firstname_error = "";

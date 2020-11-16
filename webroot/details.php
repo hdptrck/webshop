@@ -1,7 +1,18 @@
 <?php
+require("autoLoad.php");
 
-$products = array(); //DB Query
 
+if (isset($_GET['id'])) {
+    $id = preg_replace('#[^0-9]#i', "", $_GET['id']);
+
+    // DB request
+    $numOfRows = "";
+    $result = ""; // Should be an Object
+ 
+    if ($numOfRows > 0) {
+        //get Product details
+    }
+}
 
 ?>
 
@@ -75,36 +86,45 @@ $products = array(); //DB Query
         <div class="container dark-grey-text mt-5">
             <!--Grid row-->
             <div class="row fadeIn">
+                <!--Grid column-->
+                <div class="col-md-6 mb-4">
 
-                <?php
-                foreach ($products as $product) {
-                ?>
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                        <div class="card hover-overlay ripple" data-ripple-color="light">
-                            <div class="bg-image">
-                                <!-- <img src="https://picsum.photos/214/143" class="img-fluid" /> -->
-                                <?php echo '<img class="img-fluid" src="' . $product->img . '" />' ?>
-                            </div>
-                            <div class="card-body">
-                                <!-- <h5 class="card-title">Produkt</h5> -->
-                                <?php echo '<h5 class="card-title">' . $product->title . '</h5>' ?>
-                                <!-- <p class="card-text">
-                                Some quick example text to build on the card title and make up the bulk of the
-                                card's content.
-                            </p> -->
-                                <?php echo '<p class="card-text">' . $product->desc . '</p>' ?>
-                                <!-- <p>4 auf Lager</p> -->
-                                <!-- <p>4 auf Lager</p> -->
-                                <?php echo '<p>' . $product->stock . '</p>' ?>
-                            </div>
-                            <?php echo '<a href="detail.php?id=' . $product->id . '">' ?>
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
-                            </a>
-                        </div>
+                    <img src="https://picsum.photos/600/400" class="img-fluid" />
+
+                </div>
+                <!--Grid column-->
+
+                <!--Grid column-->
+                <div class="col-md-6 mb-4">
+
+                    <!--Content-->
+                    <div class="p-4">
+                        <p class="lead">
+                            <span>
+                                <?php echo $result->stock; ?>
+                            </span>
+                        </p>
+
+                        <p class="lead font-weight-bold">
+                        <?php echo $result->title; ?>
+                        </p>
+
+                        <p><?php echo $result->desc; ?></p>
+
+                        <form class="d-flex justify-content-left">
+                            <!-- Default input -->
+                            <input type="number" value="1" aria-label="Search" class="form-control mr-2" style="width: 100px">
+                            <button class="btn btn-primary btn-md my-0 p" type="submit">Zum Warenkorb hinzufügen
+                                <i class="fas fa-shopping-cart ml-1"></i>
+                            </button>
+
+                        </form>
+
                     </div>
-                <?php
-                }
-                ?>
+                    <!--Content-->
+
+                </div>
+                <!--Grid column-->
 
             </div>
             <!--Grid row-->
