@@ -1,5 +1,5 @@
 <?php
-require("../../pw.inc.php");
+require(__DIR__ . "../../pw.inc.php");
 // Variabeln deklarieren
 $host = 'localhost'; // host
 $username = 'webShopBackend'; // username
