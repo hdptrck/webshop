@@ -136,7 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 ?>
                 <form method="post">
                     <!-- Email input -->
-                    <div class="form-outline mb-4">
+                    <div class="form-outline mb-5">
                         <input name="email" type="email" id="email" class="form-control <?php if (!$email_isset) {
                                                                                             echo "is-invalid";
                                                                                         } ?>" value="<?php if (isset($_POST["email"])) {
@@ -151,12 +151,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     </div>
 
                     <!-- Password input -->
-                    <div class="form-outline mb-4">
-                        <input name="password" type="password" id="password" class="form-control <?php if (!$password_isset) {
-                                                                                                        echo "is-invalid";
-                                                                                                    } ?>" value="<?php if (isset($_POST["password"])) {
-                                                                                                                        echo $_POST["password"];
-                                                                                                                    } ?>" />
+                    <div class="form-outline mb-5">
+                        <input name="password" type="password" id="password" class="form-control 
+                        <?php if (!$password_isset) {
+                            echo "is-invalid";
+                        } ?>" value="<?php if (isset($_POST["password"])) {
+                                            echo $_POST["password"];
+                                        } ?>" />
                         <label class="form-label" for="password">Password</label>
                         <?php
                         if (!$password_isset) {
