@@ -10,6 +10,12 @@ $login_success = true;
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if(isset($_GET["reason"])) {
+        switch ($_GET["reason"]) {
+            case "resetsuccessful":
+                $message = "Das Zurücksetzen des Passworts war erfolgreich. Bitte melde Dich an.";
+        }
+    }
     $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : '';
     if (isset($_SESSION["userId"])) {
         echo "session valid";
@@ -19,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         if (hash_equals(hash_hmac('sha256', $user . ':' . $token, $privateKey), $mac)) {
             echo "validated";
 
-            $query = "SELECT rememberMeToken.token FROM rememberMeToken INNER JOIN webShopUser ON webShopUser.idWebShopUser=rememberMeToken.webShopUser_idWebShopUser AND webShopUser.userToken=?;";
+            $query = "SELECT rememberMeToken.token, webShopUser.* FROM rememberMeToken INNER JOIN webShopUser ON webShopUser.idWebShopUser=rememberMeToken.webShopUser_idWebShopUser AND webShopUser.userToken=?;";
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("s", $user);
             $stmt->execute();
@@ -29,7 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 $row = $result->fetch_assoc();
                 $result->free();
                 if (hash_equals($row["token"], $token)) {
-                    echo "rememberMe Valid";
+                    createSession($row);
+                    header("Location: shop.php");
                 }
             }
         }
@@ -64,9 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $result->free();
 
             if (password_verify($_POST["password"], $row["password"])) { //Checks if passwords match
-                $userId = $row["idWebShopUser"];
-                $_SESSION["userId"] = $userId;
-                session_regenerate_id(true);
+                createSession($row["idWebShopUser"]);
 
                 if (isset($_POST["login-remember"])) { //Checks if remember me is set;
                     do {
@@ -97,6 +102,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     $mac = hash_hmac('sha256', $cookie, $privateKey); //Key is stored in pw.inc.php
                     $cookie .= ':' . $mac;
                     setcookie('rememberme', $cookie, time() + (86400 * 30));
+
+                    header("Location: shop.php");
                 }
             } else {
                 $login_success = false;
@@ -109,6 +116,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $message = "Die E-Mail-Adresse oder das Passwort ist falsch";
         }
     }
+}
+
+function createSession($row)
+{
+    $_SESSION["userId"] = $row["idWebShopUser"];
+    session_regenerate_id(true);
 }
 
 ?>
@@ -143,9 +156,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     echo ' red-text';
                 }
                 echo '">' . $message . '</p>';
-
                 ?>
-                <form method="post">
+                <form id="1" method="post">
                     <!-- Email input -->
                     <div class="form-outline mb-5">
                         <input name="email" type="email" id="email" class="form-control <?php if (!$email_isset) {
@@ -191,16 +203,16 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
                         <div class="col-md-6 d-flex justify-content-center">
                             <!-- Simple link -->
-                            <a href="#!">Passwort vergessen?</a>
+                            <a href="forgotPassword.php">Passwort vergessen?</a>
                         </div>
                     </div>
                     <!-- Submit button -->
                     <button type="submit" id="login-submit" class="btn btn-primary btn-block mt-5">
                         Anmelden
                     </button>
-                    <button type="submit" id="register-submit" class="btn btn-outline-primary btn-block">
+                    <a href="register.php" class="btn btn-outline-primary btn-block">
                         Registrieren
-                    </button>
+                    </a>
                 </form>
             </div>
         </div>

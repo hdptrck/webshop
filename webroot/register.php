@@ -246,9 +246,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <button type="submit" id="register-submit" class="btn btn-primary btn-block mt-5">
                             Registrieren
                         </button>
-                        <button type="submit" id="login-submit" class="btn btn-outline-primary btn-block">
+                        <a href="login.php" class="btn btn-outline-primary btn-block">
                             Anmelden
-                        </button>
+                        </a>
                 </form>
             </div>
         </div>
