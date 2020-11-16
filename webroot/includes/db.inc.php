@@ -1,8 +1,9 @@
 <?php
+require("../../pw.inc.php");
 // Variabeln deklarieren
 $host = 'localhost'; // host
 $username = 'webShopBackend'; // username
-$password = 'modul151webShop'; // password
+$password = $pw_database; // password is stored in pw.inc.php
 $database = 'webshop'; // database
 
 // mit der Datenbank verbinden

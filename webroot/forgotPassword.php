@@ -1,6 +1,6 @@
 <?php
 require("autoLoad.php");
-require("../../pw.inc.php");
+require("../../pw-private.inc.php");
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
