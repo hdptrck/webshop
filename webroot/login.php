@@ -14,19 +14,21 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (isset($_SESSION["userId"])) {
         echo "session valid";
     } elseif ($cookie) {
+        echo "checking cookie";
         list($user, $token, $mac) = explode(':', $cookie);
         if (hash_equals(hash_hmac('sha256', $user . ':' . $token, $privateKey), $mac)) {
+            echo "validated";
 
-            $query = "SELECT * FROM rememberMeToken WHERE token=?;";
+            $query = "SELECT rememberMeToken.token FROM rememberMeToken INNER JOIN webShopUser ON webShopUser.idWebShopUser=rememberMeToken.webShopUser_idWebShopUser AND webShopUser.userToken=?;";
             $stmt = $mysqli->prepare($query);
-            $stmt->bind_param("s", $_POST["$token"]);
+            $stmt->bind_param("s", $user);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows) { //User exists
                 $row = $result->fetch_assoc();
                 $result->free();
-                if (hash_equals($row["userId"], $token)) {
+                if (hash_equals($row["token"], $token)) {
                     echo "rememberMe Valid";
                 }
             }
@@ -41,11 +43,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $email_isset = false;
     }
 
-    if (!isset($_POST["password"])) {
+    if (isset($_POST["password"])) {
         if (empty(trim($_POST["password"]))) {
             $password_isset = false;
         }
     } else {
+        echo "hi";
         $password_isset = false;
     }
 
@@ -79,13 +82,21 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
                     $query = "INSERT INTO rememberMeToken VALUES (?, ?)";
                     $stmt = $mysqli->prepare($query);
-                    $stmt->bind_param("s", $token, $userId);
+                    $stmt->bind_param("si", $token, $userId);
                     $stmt->execute();
 
-                    $cookie = $userId . ':' . $token;
+                    $query = "SELECT * FROM webShopUser WHERE idWebShopUser=?;";
+                    $stmt = $mysqli->prepare($query);
+                    $stmt->bind_param("s", $userId);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $result->free();
+
+                    $cookie = $row["userToken"] . ':' . $token;
                     $mac = hash_hmac('sha256', $cookie, $privateKey); //Key is stored in pw.inc.php
                     $cookie .= ':' . $mac;
-                    setcookie('rememberme', $cookie);
+                    setcookie('rememberme', $cookie, time() + (86400 * 30));
                 }
             } else {
                 $login_success = false;

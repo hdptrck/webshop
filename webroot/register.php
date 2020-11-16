@@ -115,21 +115,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password = password_hash($password, PASSWORD_DEFAULT); // Generate PW hash
 
         do {
-            $id = bin2hex(random_bytes(128)); //Create random id
+            $token = bin2hex(random_bytes(128)); //Create random token
 
             //Try to select id in DB
-            $query = "SELECT * FROM webShopUser WHERE idWebShopUser=?;";
+            $query = "SELECT * FROM webShopUser WHERE userToken=?;";
             $stmt = $mysqli->prepare($query);
-            $stmt->bind_param("s", $id);
+            $stmt->bind_param("s", $token);
             $stmt->execute();
             $result = $stmt->get_result();
-        } while ($result->num_rows); //Generate new id if id already exists (pretty unlikely though)
+        } while ($result->num_rows); //Generate new token if token already exists (pretty unlikely though)
 
-        $query = "INSERT INTO webShopUser (idWebShopUser, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?);";
+        $query = "INSERT INTO webShopUser (userToken, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?);";
         if (!($stmt2 = $mysqli->prepare($query))) {
             echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
         } else {
-            $stmt2->bind_param("sssss", $id, $firstname, $lastname, $email, $password);
+            $stmt2->bind_param("sssss", $token, $firstname, $lastname, $email, $password);
             $stmt2->execute();
         }
     }
