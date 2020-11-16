@@ -64,7 +64,7 @@ if (isset($_GET["token"])) {
                     $stmt = $mysqli->prepare($query);
                     $stmt->bind_param("si", $password, $webShopUser);
                     if ($stmt->execute()) { //Update to DB was succesful
-                        header("Location: login.php?reson=resetsuccessful"); //Forward to login-page with custom message
+                        header("Location: login.php?reason=resetsuccessful"); //Forward to login-page with custom message
 
                         //Token is one-time-use. Delete token after use
                         $query = "DELETE FROM passwordResetToken WHERE token=?;";
@@ -77,13 +77,13 @@ if (isset($_GET["token"])) {
                 }
             }
         } else {
-            header("Location: forgot_password.php?reason=tokenexpired"); //Forward to forgot-page with custom message
+            header("Location: forgotPassword.php?reason=tokenexpired"); //Forward to forgot-page with custom message
         }
     } else {
-        header("Location: forgot_password.php?reason=tokeninvalid"); //Forward to forgot-page with custom message
+        header("Location: forgotPassword.php?reason=tokeninvalid"); //Forward to forgot-page with custom message
     }
 } else {
-    header("Location: forgot_password.php"); //Forward to forgot-page because there is no token in link
+    header("Location: forgotPassword.php"); //Forward to forgot-page because there is no token in link
 }
 ?>
 

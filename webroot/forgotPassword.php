@@ -11,8 +11,19 @@ require('includes/PHPMailer/SMTP.php');
 
 $success = false;
 $error_message = "";
+$message = "";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if(isset($_GET["reason"])) {
+        switch ($_GET["reason"]) {
+            case "tokenexpired":
+                $message = "Dieser Link zum Zurücksetzen des Passworts ist abgelaufen. Bitte fordere einen neuen an.";
+                break;
+            case "tokeninvalid":
+                $message = "Dieser Link zum Zurücksetzen des Passworts ist ungültig. Bitte fordere einen neuen an.";
+        }
+    }
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['email'])) {
         if (!empty(trim($_POST['email'])) || filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL)) { //Is it a valid email?
             if (strlen(htmlspecialchars(trim($_POST['email']))) <= 100) {
@@ -129,6 +140,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="row justify-content-center align-items-center h-100-vh">
             <div class="col-lg-5 col-md-7 col-sm-10 col-12">
                 <h1 class="text-center mb-5">Passwort vergessen</h1>
+                <?php
+                echo '<p class="text-center';
+                echo '">' . $message . '</p>';
+                ?>
                 <p class="text-center mb-5">Trage deine E-Mail Adresse ein um das Passwort zurückzusetzen. Anschliessend wird dir ein Link zugeschickt, mit welchem du dein Passwort zurücksetzen kannst.</p>
                 <form method="post">
                     <!-- Email input -->
@@ -139,13 +154,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label class="form-label" for="email">E-Mail</label>
                     </div>
                     <?php
-                        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                            if($success) {
-                                echo "<div class=\"valid-feedback\">Wenn uns diese E-Mail-Adresse bekannt ist, so haben wir Dir soeben eine Nachricht mit weiteren Anweisungen geschickt.</div>";
-                            } else {
-                                echo "<div class=\"invalid-feedback\">" . $error_message . "</div>";
-                            }
+                    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                        if ($success) {
+                            echo "<div class=\"valid-feedback\">Wenn uns diese E-Mail-Adresse bekannt ist, so haben wir Dir soeben eine Nachricht mit weiteren Anweisungen geschickt.</div>";
+                        } else {
+                            echo "<div class=\"invalid-feedback\">" . $error_message . "</div>";
                         }
+                    }
                     ?>
 
                     <!-- Submit button -->
