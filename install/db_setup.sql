@@ -11,6 +11,8 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema webShop
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `webShop` ;
+
 CREATE SCHEMA IF NOT EXISTS `webShop` DEFAULT CHARACTER SET utf8 ;
 USE `webShop` ;
 
@@ -181,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `webShop`.`rememberMeToken` (
   `token` VARCHAR(256) NOT NULL,
   `webShopUser_idWebShopUser` INT NOT NULL,
   PRIMARY KEY (`token`),
-  INDEX `fk_rememberMeToken_webShopUser1_idx` (`webShopUser_idWebShopUser` ASC) VISIBLE,
+  INDEX `fk_rememberMeToken_webShopUser1_idx` (`webShopUser_idWebShopUser` ASC),
   CONSTRAINT `fk_rememberMeToken_webShopUser1`
     FOREIGN KEY (`webShopUser_idWebShopUser`)
     REFERENCES `webShop`.`webShopUser` (`idWebShopUser`)
