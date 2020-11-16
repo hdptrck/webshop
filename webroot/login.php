@@ -1,14 +1,37 @@
 <?php
-session_start();
 require("autoLoad.php");
+require("includes/pw.inc.php");
 
 $email_isset = true;
 $password_isset = true;
 $message = "";
 $login_success = true;
 
+session_start();
+
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    echo "hi";
+    $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : '';
+    if (isset($_SESSION["userId"])) {
+        echo "session valid";
+    } elseif ($cookie) {
+        list($user, $token, $mac) = explode(':', $cookie);
+        if (hash_equals(hash_hmac('sha256', $user . ':' . $token, $privateKey), $mac)) {
+
+            $query = "SELECT * FROM rememberMeToken WHERE token=?;";
+            $stmt = $mysqli->prepare($query);
+            $stmt->bind_param("s", $_POST["$token"]);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows) { //User exists
+                $row = $result->fetch_assoc();
+                $result->free();
+                if (hash_equals($row["userId"], $token)) {
+                    echo "rememberMe Valid";
+                }
+            }
+        }
+    }
 } elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["email"])) {
         if (empty(trim($_POST["email"]))) {
@@ -40,9 +63,29 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             if (password_verify($_POST["password"], $row["password"])) { //Checks if passwords match
                 $userId = $row["idWebShopUser"];
                 $_SESSION["userId"] = $userId;
+                session_regenerate_id(true);
 
                 if (isset($_POST["login-remember"])) { //Checks if remember me is set;
-                    // Remember me;
+                    do {
+                        $token = bin2hex(random_bytes(128)); //Create random token
+
+                        //Try to select token
+                        $query = "SELECT * FROM rememberMeToken WHERE token=?;";
+                        $stmt = $mysqli->prepare($query);
+                        $stmt->bind_param("s", $token);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                    } while ($result->num_rows); //Generate new token if token already exists (pretty unlikely though)
+
+                    $query = "INSERT INTO rememberMeToken VALUES (?, ?)";
+                    $stmt = $mysqli->prepare($query);
+                    $stmt->bind_param("s", $token, $userId);
+                    $stmt->execute();
+
+                    $cookie = $userId . ':' . $token;
+                    $mac = hash_hmac('sha256', $cookie, $privateKey); //Key is stored in pw.inc.php
+                    $cookie .= ':' . $mac;
+                    setcookie('rememberme', $cookie);
                 }
             } else {
                 $login_success = false;
@@ -83,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         <div class="row justify-content-center align-items-center h-100-vh">
             <div class="col-lg-4 col-md-7 col-sm-10 col-12">
                 <h1 class="text-center mb-5">Anmelden</h1>
-                <?php 
+                <?php
                 echo '<p class="text-center';
                 if (!$login_success) {
                     echo ' red-text';
