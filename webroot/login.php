@@ -1,17 +1,28 @@
 <?php
+session_start();
 require('../db.inc'); // Create database connection
 
 $email_isset = true;
 $password_isset = true;
 $message = "";
+$login_success = true;
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    echo "hi";
 } elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (!isset($_POST["email"])) {
+    if (isset($_POST["email"])) {
+        if (empty(trim($_POST["email"]))) {
+            $email_isset = false;
+        }
+    } else {
         $email_isset = false;
     }
 
     if (!isset($_POST["password"])) {
+        if (empty(trim($_POST["password"]))) {
+            $password_isset = false;
+        }
+    } else {
         $password_isset = false;
     }
 
@@ -27,7 +38,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $result->free();
 
             if (password_verify($_POST["password"], $row["password"])) { //Checks if passwords match
-                //Start session
+                $userId = $row["idWebShopUser"];
+                $_SESSION["userId"] = $userId;
+
+                if (isset($_POST["login-remember"])) { //Checks if remember me is set;
+                    // Remember me;
+                }
             } else {
                 $login_success = false;
             }
@@ -111,8 +127,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         <div class="col-md-6 d-flex justify-content-center">
                             <!-- Checkbox -->
                             <div class="form-check mb-3 mb-md-0">
-                                <input class="form-check-input" type="checkbox" value="" id="login-check" checked />
-                                <label class="form-check-label" for="login-check">
+                                <input name="login-remember" class="form-check-input" type="checkbox" value="" id="login-remember" checked />
+                                <label class="form-check-label" for="login-remember">
                                     Remember me
                                 </label>
                             </div>
