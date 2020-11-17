@@ -1,3 +1,3 @@
 <?php
-require("../db.inc.php");
+require("includes/db.inc.php");
 

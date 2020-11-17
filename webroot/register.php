@@ -229,10 +229,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <!-- Repeat Password input -->
                         <div class="form-outline mb-4">
-                            <input name="register-password-repeat" type="password" id="register-password-repeat" class="form-control <?php if (!$password_repeat_isValid) {
+                            <input name="register-password-repeat" type="password" id="register-password-repeat" class="form-control is-invalid<?php if (!$password_repeat_isValid) {
                                                                                                             echo "is-invalid";
                                                                                                         } ?>" value="<?php if (isset($_POST["register-password-repeat"])) { echo $_POST["register-password-repeat"]; }?>"/>
                             <label class="form-label" for="register-password-repeat">Passwort wiederholen</label>
+                            <div class="invalid-feedback">test</div>
                             <?php
                             if (!$password_repeat_isValid) {
                                 echo '<div class="invalid-feedback">' .
