@@ -1,5 +1,6 @@
 <?php
 require("includes/autoLoad.php");
+require("includes/sessionChecker.php");
 
 
 if (isset($_GET['id'])) {
