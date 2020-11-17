@@ -10,7 +10,7 @@ $login_success = true;
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    if(isset($_GET["reason"])) {
+    if (isset($_GET["reason"])) {
         switch ($_GET["reason"]) {
             case "resetsuccessful":
                 $message = "Das Zurücksetzen des Passworts war erfolgreich. Bitte melde Dich an.";
@@ -18,13 +18,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
     $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : '';
     if (isset($_SESSION["userId"])) {
-        echo "session valid";
+        redirectToRequestedPage();
     } elseif ($cookie) {
-        echo "checking cookie";
         list($user, $token, $mac) = explode(':', $cookie);
         if (hash_equals(hash_hmac('sha256', $user . ':' . $token, $privateKey), $mac)) {
-            echo "validated";
-
+            echo "cookie valid    ";
+            echo $user;
             $query = "SELECT rememberMeToken.token, webShopUser.* FROM rememberMeToken INNER JOIN webShopUser ON webShopUser.idWebShopUser=rememberMeToken.webShopUser_idWebShopUser AND webShopUser.userToken=?;";
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("s", $user);
@@ -32,11 +31,17 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $result = $stmt->get_result();
 
             if ($result->num_rows) { //User exists
-                $row = $result->fetch_assoc();
+                echo "   user exists ";
+                echo $token;
+                $rows = $result->fetch_all();
                 $result->free();
-                if (hash_equals($row["token"], $token)) {
-                    createSession($row);
-                    header("Location: shop.php");
+                foreach ($rows as $row) {
+                    if (hash_equals($row["token"], $token)) {
+                        echo "token correct";
+                        createSession($row);
+                        redirectToRequestedPage();
+                    break;
+                    }
                 }
             }
         }
@@ -71,9 +76,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $result->free();
 
             if (password_verify($_POST["password"], $row["password"])) { //Checks if passwords match
-                createSession($row["idWebShopUser"]);
+                createSession($row);
 
                 if (isset($_POST["login-remember"])) { //Checks if remember me is set;
+
                     do {
                         $token = bin2hex(random_bytes(128)); //Create random token
 
@@ -87,12 +93,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
                     $query = "INSERT INTO rememberMeToken VALUES (?, ?)";
                     $stmt = $mysqli->prepare($query);
-                    $stmt->bind_param("si", $token, $userId);
+                    $stmt->bind_param("si", $token, $row["idWebShopUser"]);
                     $stmt->execute();
 
                     $query = "SELECT * FROM webShopUser WHERE idWebShopUser=?;";
                     $stmt = $mysqli->prepare($query);
-                    $stmt->bind_param("s", $userId);
+                    $stmt->bind_param("s", $row["idWebShopUser"]);
                     $stmt->execute();
                     $result = $stmt->get_result();
                     $row = $result->fetch_assoc();
@@ -102,9 +108,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     $mac = hash_hmac('sha256', $cookie, $privateKey); //Key is stored in pw.inc.php
                     $cookie .= ':' . $mac;
                     setcookie('rememberme', $cookie, time() + (86400 * 30));
-
-                    header("Location: shop.php");
                 }
+                redirectToRequestedPage();
             } else {
                 $login_success = false;
             }
@@ -122,6 +127,15 @@ function createSession($row)
 {
     $_SESSION["userId"] = $row["idWebShopUser"];
     session_regenerate_id(true);
+}
+
+function redirectToRequestedPage()
+{
+    if (isset($_REQUEST["target"])) {
+        header("Location: " . $_REQUEST["target"]);
+    } else {
+        header("Location: shop.php");
+    }
 }
 
 ?>
