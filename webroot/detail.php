@@ -1,18 +1,24 @@
 <?php
 require("includes/autoLoad.php");
-require("includes/sessionChecker.php");
-
+// Session temporarly deactivated for development
+//require("includes/sessionChecker.php");
+$error = '';
 
 if (isset($_GET['id'])) {
     $id = preg_replace('#[^0-9]#i', "", $_GET['id']);
 
-    // DB request
-    $numOfRows = "";
-    $result = ""; // Should be an Object
- 
-    if ($numOfRows > 0) {
-        //get Product details
+    $query = "SELECT * FROM item WHERE idItem = ?;";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if (!$result->num_rows) {
+        header('Location: /404.html');
+        die();
     }
+
+    $item = $result->fetch_assoc();
 }
 
 ?>
@@ -36,24 +42,20 @@ if (isset($_GET['id'])) {
 </head>
 
 <body>
-    <!-- Navbar -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-white scrolling-navbar">
         <div class="container">
 
-            <!-- Brand -->
             <a class="navbar-brand" href="#" target="_blank">
                 <strong>Webshop</strong>
             </a>
 
-            <!-- Collapse -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Links -->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-                <!-- Left -->
+
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
                         <a class="nav-link waves-effect" href="#">Home
@@ -62,7 +64,6 @@ if (isset($_GET['id'])) {
                     </li>
                 </ul>
 
-                <!-- Right -->
                 <ul class="navbar-nav nav-flex-icons">
                     <li class="nav-item">
                         <a class="nav-link waves-effect">
@@ -90,7 +91,7 @@ if (isset($_GET['id'])) {
                 <!--Grid column-->
                 <div class="col-md-6 mb-4">
 
-                    <img src="https://picsum.photos/600/400" class="img-fluid" />
+                    <?php echo '<img class="img-fluid" src="' . $item['picture'] . '" />' ?>
 
                 </div>
                 <!--Grid column-->
@@ -102,20 +103,21 @@ if (isset($_GET['id'])) {
                     <div class="p-4">
                         <p class="lead">
                             <span>
-                                <?php echo $result->stock; ?>
+                                <?php echo $item['count']; ?>
+                                Stück an Lager
                             </span>
                         </p>
 
                         <p class="lead font-weight-bold">
-                        <?php echo $result->title; ?>
+                            <?php echo $item['title']; ?>
                         </p>
 
-                        <p><?php echo $result->desc; ?></p>
+                        <p><?php echo $item['description']; ?></p>
 
                         <form class="d-flex justify-content-left">
                             <!-- Default input -->
-                            <input type="number" value="1" aria-label="Search" class="form-control mr-2" style="width: 100px">
-                            <button class="btn btn-primary btn-md my-0 p" type="submit">Zum Warenkorb hinzufügen
+                            <input type="number" min="1" max="<?php echo $item['count']; ?>" value="1" aria-label="Search" class="form-control mr-2" style="width: 100px">
+                            <button class="btn btn-primary btn-md my-0 p" type="submit">Zur Bestellung hinzufügen
                                 <i class="fas fa-shopping-cart ml-1"></i>
                             </button>
 
