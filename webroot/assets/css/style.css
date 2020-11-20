@@ -2,6 +2,10 @@
     height: 100vh;
 }
 
-.bg-white {
-    background-color: white;
+.dropdown-toggle:after {
+    vertical-align: .455em!important;
+}
+
+.main-min-height {
+    min-height: calc(100vh - (4.5rem + 58px));
 }
