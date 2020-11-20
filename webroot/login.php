@@ -165,9 +165,11 @@ function redirectToRequestedPage()
             <div class="col-lg-4 col-md-7 col-sm-10 col-12">
                 <h1 class="text-center mb-5">Anmelden</h1>
                 <?php
-                echo '<p class="text-center';
+                echo '<p class="note ';
                 if (!$login_success) {
-                    echo ' red-text';
+                    echo 'note-danger';
+                } else {
+                    echo 'note-success';
                 }
                 echo '">' . $message . '</p>';
                 ?>
