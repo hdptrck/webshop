@@ -1,4 +1,10 @@
 <?php
+/*
+VAR to set:
+$siteName
+$numberOfItems
+*/
+
 $pages = [
     [
         'fileName' => 'shop.php',
@@ -31,24 +37,27 @@ foreach ($pages as $index => $page) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $site_name ?></title>
+    <title><?= $siteName ?></title>
 
-    <!-- Font Awesome -->
-    <link href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" rel="stylesheet" />
+    <!-- Google Material Design Icons https://material.io/resources/icons/ -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <!-- MDB -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.css" rel="stylesheet" />
     <!--https://mdbootstrap.com/docs/-->
+    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
+    
     <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
 </head>
 
 <body>
-    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-white scrolling-navbar">
+    <nav class="navbar fixed-top navbar-expand-md navbar-light bg-white scrolling-navbar">
         <div class="container">
 
             <!-- <a class="navbar-brand" href="#" target="_blank"> -->
-                <strong class="navbar-brand">Webshop</strong>
+            <strong class="navbar-brand">Webshop</strong>
             <!-- </a> -->
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,29 +68,40 @@ foreach ($pages as $index => $page) {
 
 
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link waves-effect" href="#">Home
-                            <span class="sr-only">(current)</span>
-                        </a>
-                    </li>
 
                     <?php
                     foreach ($pages as $page) {
                         echo $page['listItem'];
                     }
                     ?>
+
                 </ul>
 
-                <ul class="navbar-nav nav-flex-icons">
-                    <li class="nav-item">
-                        <a class="nav-link waves-effect">
-                            <span class="badge red z-depth-1 mr-1">1</span>
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="clearfix d-none d-sm-inline-block">Bestellungen</span>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
+                            <span class="material-icons-outlined">
+                                shopping_bag
+                            </span>
+
+                            <?php
+                            if (isset($numberOfItems)) {
+                                echo  "<span class=\"badge rounded-pill badge-notification bg-danger\">"  . $numberOfItems . "</span>";
+                            }
+                            ?>
+
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <button class="btn btn-primary">Account</button>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
+                            <span class="material-icons-outlined">
+                                account_circle
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="#">Mein Konto</a></li>
+                            <li><a class="dropdown-item" href="#">Abmelden</a></li>
+                        </ul>
                     </li>
                 </ul>
 
@@ -92,27 +112,4 @@ foreach ($pages as $index => $page) {
     <!-- Navbar -->
 
     <!--Main layout-->
-    <main class="mt-5 pt-4">
-
-    </main>
-    <!--Main layout-->
-
-    <!--Footer-->
-    <footer class="page-footer text-center font-small mt-4 fadeIn">
-
-        <hr class="my-4">
-
-        <!--Copyright-->
-        <div class="footer-copyright py-3">
-            © 2020 Copyright:
-        </div>
-        <!--/.Copyright-->
-
-    </footer>
-    <!--/.Footer-->
-
-    <!-- MDB -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
-</body>
-
-</html>
+    <main class="mt-5 pt-4 main-min-height">
