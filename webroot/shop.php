@@ -1,11 +1,26 @@
 <?php
 require("includes/autoLoad.php");
-require("includes/sessionChecker.php");
 
-$products = array(); //DB Query
+// Session temporarly deactivated for development
+//require("includes/sessionChecker.php");
 
+$items = [];
 
+// Get all Items from Database
+$stmt = "SELECT * FROM item;";
+if (!$result = $mysqli->query($stmt)) {
+    echo "Oops! Something went wrong. Please try again later.";
+    return false;
+}
+
+// Fetch result
+while ($row = $result->fetch_assoc()) {
+    $items[] = $row;
+}
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html lang="de">
@@ -26,24 +41,20 @@ $products = array(); //DB Query
 </head>
 
 <body>
-    <!-- Navbar -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-white scrolling-navbar">
         <div class="container">
 
-            <!-- Brand -->
             <a class="navbar-brand" href="#" target="_blank">
                 <strong>Webshop</strong>
             </a>
 
-            <!-- Collapse -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Links -->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-                <!-- Left -->
+
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
                         <a class="nav-link waves-effect" href="#">Home
@@ -52,7 +63,6 @@ $products = array(); //DB Query
                     </li>
                 </ul>
 
-                <!-- Right -->
                 <ul class="navbar-nav nav-flex-icons">
                     <li class="nav-item">
                         <a class="nav-link waves-effect">
@@ -79,27 +89,20 @@ $products = array(); //DB Query
             <div class="row fadeIn">
 
                 <?php
-                foreach ($products as $product) {
+                foreach ($items as $item) {
                 ?>
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                         <div class="card hover-overlay ripple" data-ripple-color="light">
                             <div class="bg-image">
-                                <!-- <img src="https://picsum.photos/214/143" class="img-fluid" /> -->
-                                <?php echo '<img class="img-fluid" src="' . $product->img . '" />' ?>
+                                <?php echo '<img class="img-fluid" src="' . $item['picture'] . '" />' ?>
                             </div>
                             <div class="card-body">
-                                <!-- <h5 class="card-title">Produkt</h5> -->
-                                <?php echo '<h5 class="card-title">' . $product->title . '</h5>' ?>
-                                <!-- <p class="card-text">
-                                Some quick example text to build on the card title and make up the bulk of the
-                                card's content.
-                            </p> -->
-                                <?php echo '<p class="card-text">' . $product->desc . '</p>' ?>
-                                <!-- <p>4 auf Lager</p> -->
-                                <!-- <p>4 auf Lager</p> -->
-                                <?php echo '<p>' . $product->stock . '</p>' ?>
+                                <?php echo '<h5 class="card-title">' . $item['title'] . '</h5>' ?>
+
+                                <?php echo '<p class="card-text">' . $item['description'] . '</p>' ?>
+                                <?php echo '<p>' . $item['count'] . '</p>' ?>
                             </div>
-                            <?php echo '<a href="detail.php?id=' . $product->id . '">' ?>
+                            <?php echo '<a href="detail.php?id=' . $item['idItem'] . '">' ?>
                             <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
                             </a>
                         </div>
