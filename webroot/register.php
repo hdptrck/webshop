@@ -159,7 +159,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container">
         <div class="row justify-content-center align-items-center h-100-vh">
-            <div class="col-lg-4 col-md-7 col-sm-10 col-12">
+            <div class="col-lg-5 col-md-7 col-sm-10 col-12">
                 <h1 class="text-center mb-5">Registrieren</h1>
                 <p class="note note-danger">
                     <strong>Note danger:</strong>

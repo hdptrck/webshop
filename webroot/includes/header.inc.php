@@ -16,9 +16,10 @@ $pages = [
     ],
 ];
 
+// Create Navigation Items
 foreach ($pages as $index => $page) {
     $listItem = "<li";
-    if ($_SERVER['SCRIPT_NAME'] == $page['fileName']) {
+    if ($_SERVER['SCRIPT_NAME'] == "/" . $page['fileName']) {
         $listItem .= "  class=\"nav-item active\" aria-current=\"page\"><a class=\"nav-link waves-effect\">";
     } else {
         $listItem .= "><a  class=\"nav-link waves-effect\" href=\"" . $page['fileName'] . "\">";
@@ -46,9 +47,9 @@ foreach ($pages as $index => $page) {
     <!-- MDB -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.css" rel="stylesheet" />
     <!--https://mdbootstrap.com/docs/-->
-    
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
-    
+
     <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
 </head>
 
@@ -99,7 +100,7 @@ foreach ($pages as $index => $page) {
                             </span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                            <li><a class="dropdown-item" href="#">Mein Konto</a></li>
+                            <li><a class="dropdown-item" href="account.php">Mein Konto</a></li>
                             <li><a class="dropdown-item" href="#">Abmelden</a></li>
                         </ul>
                     </li>
@@ -112,4 +113,11 @@ foreach ($pages as $index => $page) {
     <!-- Navbar -->
 
     <!--Main layout-->
-    <main class="mt-5 pt-4 main-min-height">
+    <main class="mt-5 pt-5 main-min-height">
+        <div class="container dark-grey-text">
+            <!--Grid row-->
+            <div class="row fadeIn mb-4">
+                <div class="col text-center">
+                    <h1><?php echo $siteName; ?></h1>
+                </div>
+            </div>

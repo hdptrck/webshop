@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         echo "token correct";
                         createSession($row);
                         redirectToRequestedPage();
-                    break;
+                        break;
                     }
                 }
             }
@@ -162,25 +162,31 @@ function redirectToRequestedPage()
 <body>
     <div class="container">
         <div class="row justify-content-center align-items-center h-100-vh">
-            <div class="col-lg-4 col-md-7 col-sm-10 col-12">
-                <h1 class="text-center mb-5">Anmelden</h1>
+            <div class="col-lg-5 col-md-7 col-sm-10 col-12">
+                <h1 class="text-center mb-4">Anmelden</h1>
                 <?php
-                echo '<p class="note ';
-                if (!$login_success) {
-                    echo 'note-danger';
-                } else {
-                    echo 'note-success';
+                if (!empty($message)) {
+                    echo '<p class="mb-4 note ';
+                    if (!$login_success) {
+                        echo 'note-danger';
+                    } else {
+                        echo 'note-success';
+                    }
+                    echo '">' . $message . '</p>';
                 }
-                echo '">' . $message . '</p>';
                 ?>
                 <form id="1" method="post">
                     <!-- Email input -->
                     <div class="form-outline mb-5">
-                        <input name="email" type="email" id="email" class="form-control <?php if (!$email_isset) {
-                                                                                            echo "is-invalid";
-                                                                                        } ?>" value="<?php if (isset($_POST["email"])) {
-                                                                                                            echo $_POST["email"];
-                                                                                                        } ?>" />
+                        <input name="email" type="email" id="email" class="form-control 
+                        <?php if (!$email_isset) {
+                            echo "is-invalid";
+                        } ?>
+                        " value="
+                        <?php if (isset($_POST["email"])) {
+                            echo $_POST["email"];
+                        } ?>
+                         " />
                         <label class="form-label" for="email">E-Mail</label>
                         <?php
                         if (!$email_isset) {

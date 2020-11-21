@@ -1,5 +1,5 @@
 <?php
-require("includes/autoLoad.php");
+require("./includes/autoLoad.php");
 // Session temporarly deactivated for development
 //require("includes/sessionChecker.php");
 $error = '';
@@ -32,49 +32,47 @@ include("./includes/header.inc.php");
 
 ?>
 
-<div class="container dark-grey-text mt-5">
-    <!--Grid row-->
-    <div class="row fadeIn">
-        <!--Grid column-->
-        <div class="col-md-6 mb-4">
+<div class="row fadeIn">
+    <!--Grid column-->
+    <div class="col-md-6 mb-4">
 
-            <?php echo '<img class="img-fluid" src="' . $item['picture'] . '" />' ?>
-
-        </div>
-        <!--Grid column-->
-
-        <!--Grid column-->
-        <div class="col-md-6 mb-4">
-
-            <!--Content-->
-            <div class="p-4">
-                <p class="lead">
-                    <span>
-                        <?php echo $item['count']; ?>
-                        Stück an Lager
-                    </span>
-                </p>
-
-                <p class="lead font-weight-bold">
-                    <?php echo $item['title']; ?>
-                </p>
-
-                <p><?php echo $item['description']; ?></p>
-
-                <form class="d-flex justify-content-left">
-                    <!-- Default input -->
-                    <input type="number" min="1" max="<?php echo $item['count']; ?>" value="1" aria-label="Search" class="form-control mr-2" style="width: 100px">
-                    <button class="btn btn-primary btn-md my-0 p" type="submit">Zur Bestellung hinzufügen</button>
-
-                </form>
-
-            </div>
-            <!--Content-->
-
-        </div>
-        <!--Grid column-->
+        <?php echo '<img class="img-fluid" src="' . $item['picture'] . '" />' ?>
 
     </div>
+    <!--Grid column-->
+
+    <!--Grid column-->
+    <div class="col-md-6 mb-4">
+
+        <!--Content-->
+        <div class="p-4">
+            <p class="lead">
+                <span>
+                    <?php echo $item['count']; ?>
+                    Stück an Lager
+                </span>
+            </p>
+
+            <p class="lead font-weight-bold">
+                <?php echo $item['title']; ?>
+            </p>
+
+            <p><?php echo $item['description']; ?></p>
+
+            <form class="d-flex justify-content-left">
+                <!-- Default input -->
+                <input type="number" min="1" max="<?php echo $item['count']; ?>" value="1" aria-label="Search" class="form-control mr-2" style="width: 100px">
+                <button class="btn btn-primary btn-md my-0 p" type="submit">Zur Bestellung hinzufügen</button>
+
+            </form>
+
+        </div>
+        <!--Content-->
+
+    </div>
+    <!--Grid column-->
+
+</div>
 
 </div>
 
