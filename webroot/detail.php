@@ -3,23 +3,25 @@ require("./includes/autoLoad.php");
 // Session temporarly deactivated for development
 //require("includes/sessionChecker.php");
 $error = '';
-
-if (isset($_GET['id'])) {
-    $id = preg_replace('#[^0-9]#i', "", $_GET['id']);
-
-    $query = "SELECT * FROM item WHERE idItem = ?;";
-    $stmt = $mysqli->prepare($query);
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if (!$result->num_rows) {
-        header('Location: /404.html');
-        die();
-    }
-
-    $item = $result->fetch_assoc();
+if (!isset($_GET['id'])) {
+    header('Location: 404.html');
+    die();
 }
+
+$id = preg_replace('#[^0-9]#i', "", $_GET['id']);
+
+$query = "SELECT * FROM item WHERE idItem = ?;";
+$stmt = $mysqli->prepare($query);
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if (!$result->num_rows) {
+    header('Location: /404.html');
+    die();
+}
+
+$item = $result->fetch_assoc();
 
 ?>
 
