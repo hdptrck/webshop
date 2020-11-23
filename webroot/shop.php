@@ -2,7 +2,7 @@
 require("includes/autoLoad.php");
 
 // Session temporarly deactivated for development
-//require("includes/sessionChecker.php");
+require("includes/sessionChecker.php");
 
 $items = [];
 

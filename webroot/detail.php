@@ -1,7 +1,7 @@
 <?php
 require("./includes/autoLoad.php");
 // Session temporarly deactivated for development
-//require("includes/sessionChecker.php");
+require("includes/sessionChecker.php");
 $error = '';
 if (!isset($_GET['id'])) {
     header('Location: 404.html');
