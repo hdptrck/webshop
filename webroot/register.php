@@ -125,12 +125,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $result = $stmt->get_result();
         } while ($result->num_rows); //Generate new token if token already exists (pretty unlikely though)
 
-        $query = "INSERT INTO webShopUser (userToken, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?);";
+        $query = "INSERT INTO webShopUser (userToken, firstname, lastname, email, password, role_idRole) VALUES (?, ?, ?, ?, ?, ?);";
         if (!($stmt2 = $mysqli->prepare($query))) {
             echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
         } else {
-            $stmt2->bind_param("sssss", $token, $firstname, $lastname, $email, $password);
+            $idRole = 0;
+            $stmt2->bind_param("sssssi", $token, $firstname, $lastname, $email, $password, $idRole);
             $stmt2->execute();
+            header("Location: login.php");
         }
     }
 }
