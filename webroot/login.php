@@ -22,25 +22,29 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     } elseif ($cookie) {
         list($user, $token, $mac) = explode(':', $cookie);
         if (hash_equals(hash_hmac('sha256', $user . ':' . $token, $privateKey), $mac)) {
-            echo "cookie valid    ";
-            echo $user;
-            $query = "SELECT rememberMeToken.token, webShopUser.* FROM rememberMeToken INNER JOIN webShopUser ON webShopUser.idWebShopUser=rememberMeToken.webShopUser_idWebShopUser AND webShopUser.userToken=?;";
+            $query = "SELECT rememberMeToken.token, rememberMeToken.expire, webShopUser.* FROM rememberMeToken INNER JOIN webShopUser ON webShopUser.idWebShopUser=rememberMeToken.webShopUser_idWebShopUser AND webShopUser.userToken=?;";
+            echo $mysqli->error;;
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("s", $user);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows) { //User exists
-                echo "   user exists ";
-                echo $token;
-                $rows = $result->fetch_all();
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
-                foreach ($rows as $row) {
+                foreach ($rows as $row) { //Goes over all tokens which user has
                     if (hash_equals($row["token"], $token)) {
-                        echo "token correct";
-                        createSession($row);
-                        redirectToRequestedPage();
-                        break;
+                        $expDate = date("Y-m-d H:i:s", strtotime($row["expire"])); //Read expire-date from DB
+
+                        //Create current date
+                        $Format = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+                        $Date = date("Y-m-d H:i:s", $Format);
+
+                        if ($expDate > $Date) { // Check if Remember Me is not expired
+                            createSession($row);
+                            redirectToRequestedPage();
+                            break;
+                        }
                     }
                 }
             }
@@ -91,9 +95,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         $result = $stmt->get_result();
                     } while ($result->num_rows); //Generate new token if token already exists (pretty unlikely though)
 
-                    $query = "INSERT INTO rememberMeToken VALUES (?, ?)";
+                    //Remember Me is only 30 days valid
+                    $expFormat = mktime(date("H"), date("i"), date("s"), date("m"), date("d") + 30, date("Y"));
+                    $expDate = date("Y-m-d H:i:s", $expFormat);
+
+                    $query = "INSERT INTO rememberMeToken VALUES (?, ?, ?)";
                     $stmt = $mysqli->prepare($query);
-                    $stmt->bind_param("si", $token, $row["idWebShopUser"]);
+                    $stmt->bind_param("sis", $token, $row["idWebShopUser"], $expDate);
                     $stmt->execute();
 
                     $query = "SELECT * FROM webShopUser WHERE idWebShopUser=?;";

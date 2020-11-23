@@ -20,9 +20,9 @@ if (isset($_GET["token"])) {
         $row = $result->fetch_assoc();
         $result->free();
 
-        $expDate = date("Y-m-d H:i:s", $row["expire"]); //Store expire-date from DB
+        $expDate = date("Y-m-d H:i:s", strtotime($row["expire"])); //Read expire-date from DB
 
-        $Format = mktime(date("H"), date("i") - 15, date("s"), date("m"), date("d"), date("Y"));
+        $Format = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
         $Date = date("Y-m-d H:i:s", $Format);
 
         if ($expDate > $Date) { // Check if token is not expired
