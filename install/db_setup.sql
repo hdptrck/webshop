@@ -17,6 +17,18 @@ CREATE SCHEMA IF NOT EXISTS `webShop` DEFAULT CHARACTER SET utf8 ;
 USE `webShop` ;
 
 -- -----------------------------------------------------
+-- Table `webShop`.`role`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `webShop`.`role` ;
+
+CREATE TABLE IF NOT EXISTS `webShop`.`role` (
+  `idRole` INT NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idrole`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `webShop`.`webShopUser`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `webShop`.`webShopUser` ;
@@ -28,7 +40,15 @@ CREATE TABLE IF NOT EXISTS `webShop`.`webShopUser` (
   `lastname` VARCHAR(45) NULL,
   `email` VARCHAR(100) NOT NULL,
   `password` VARCHAR(256) NOT NULL,
-  PRIMARY KEY (`idWebShopUser`))
+  `role_idRole` INT NOT NULL,
+  PRIMARY KEY (`idWebShopUser`),
+  INDEX `fk_webShopUser_role1_idx` (`role_idRole` ASC),
+  UNIQUE INDEX `userToken_UNIQUE` (`userToken` ASC),
+  CONSTRAINT `fk_webShopUser_role1`
+    FOREIGN KEY (`role_idRole`)
+    REFERENCES `webShop`.`role` (`idrole`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -182,6 +202,7 @@ DROP TABLE IF EXISTS `webShop`.`rememberMeToken` ;
 CREATE TABLE IF NOT EXISTS `webShop`.`rememberMeToken` (
   `token` VARCHAR(256) NOT NULL,
   `webShopUser_idWebShopUser` INT NOT NULL,
+  `expire` DATETIME NOT NULL,
   PRIMARY KEY (`token`),
   INDEX `fk_rememberMeToken_webShopUser1_idx` (`webShopUser_idWebShopUser` ASC),
   CONSTRAINT `fk_rememberMeToken_webShopUser1`
@@ -196,8 +217,17 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
+-- -----------------------------------------------------
+-- User `webShopBackend`@`localhost`
+-- -----------------------------------------------------
 
 DROP USER IF EXISTS 'webShopBackend'@'localhost';
 
 CREATE USER 'webShopBackend'@'localhost' IDENTIFIED BY 'modul151webShop';
 GRANT INSERT, SELECT, UPDATE, DELETE ON webshop.* TO 'webShopBackend'@'localhost';
+
+-- -----------------------------------------------------
+-- Default role
+-- -----------------------------------------------------
+
+INSERT INTO role VALUES (0, 'default');
