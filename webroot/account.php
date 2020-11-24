@@ -1,52 +1,76 @@
 <?php
 require("includes/autoLoad.php");
 
-$password_isset = true;
+
 $error = "";
+$message = "";
 $login_success = true;
+
+
+$password_isValid = true;
+$password_error = "";
+$newPassword_isValid = true;
+$newPassword_error = "";
+$newPasswordConfirm_isValid = true;
+$newPasswordConfirm_error = "";
 
 // Session temporarly deactivated for development
 require("includes/sessionChecker.php");
 $user = [];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    // Check password
     if (!isset($_POST["password"]) || empty(trim($_POST["password"]))) {
-        $password_isset = false;
-        $error = "Bitte gib ein Passwort ein";
+        $password_isValid = false;
+        $password_error = "Bitte gib das aktuelle Passwort ein";
     }
 
-    if ($password_isset && isset($_SESSION["userId"])) {
+    // Check new password
+    if (!isset($_POST["new-password"]) || empty(trim($_POST["new-password"])) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))) {
+        $newPassword_isValid = false;
+        $newPassword_error = "Das Passwort muss aus mindestens acht Zeichen welche Gross-, Kleinbuchstaben Zahlen und Sonderzeichen bestehen";
+    }
+
+    // Check new confirm password
+    if (!isset($_POST["new-password-confirm"]) || empty(trim($_POST["new-password-confirm"])) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))) {
+        $newPasswordConfirm_isValid = false;
+        $newPasswordConfirm_error = "Das Passwort muss aus mindestens acht Zeichen welche Gross-, Kleinbuchstaben Zahlen und Sonderzeichen bestehen";
+    }
+
+    if ($_POST["new-password"] != $_POST["new-password-confirm"]) {
+        $newPassword_isValid = $newPasswordConfirm_isValid = false;
+        $newPassword_error = $newPasswordConfirm_error = "Die Passwörter stimmen nicht überein";
+    }
+
+    if ($password_isValid && isset($_SESSION["userId"]) && $newPassword_isValid) {
         $query = "SELECT password FROM webshopuser WHERE idWebShopUser = ?;";
         $stmt = $mysqli->prepare($query);
         $stmt->bind_param("i", $_SESSION["userId"]);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        if ($result->num_rows) {
-            $user = $result->fetch_assoc();
-            $result->free();
+        $result->num_rows;
+        $user = $result->fetch_assoc();
+        $result->free();
 
-            if (password_verify($_POST["password"], $user["password"])) { //Checks if passwords match
-                header('Location: shop.php');
-
-
-
-
-
-
-
-
-                
-            } else {
-                $login_success = false;
+        if (password_verify($_POST["password"], $user["password"])) { //Checks if passwords match
+            $query = "UPDATE webShopUser SET password = ? WHERE idWebShopUser = ?";
+            $stmt = $mysqli->prepare($query);
+            $stmt->bind_param("si", $_POST["new-password"], $_SESSION["userId"]);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($stmt->affected_rows) {
+                $message = "Passwort erfolgreich geändert";
+                unset($_POST['password']);
+                unset($_POST['new-password']);
+                unset($_POST['new-password-confirm']);
+                session_regenerate_id(true);
             }
         } else {
             $login_success = false;
-        }
-
-        if (!$login_success) {
-            $password_isset = false;
-            $error = "Das Passwort ist falsch";
+            $password_isValid = false;
+            $password_error = "Das Passwort ist falsch";
         }
     }
 }
@@ -87,15 +111,51 @@ include("./includes/header.inc.php");
                 <!-- Password input -->
                 <div class="form-outline mb-5">
                     <input name="password" type="password" id="password" class="form-control 
-                        <?php if (!$password_isset) {
+                        <?php if (!$password_isValid) {
                             echo "is-invalid";
                         } ?>" value="<?php if (isset($_POST["password"])) {
                                             echo $_POST["password"];
                                         } ?>" />
                     <label class="form-label" for="password">Password</label>
                     <?php
-                    if (!$password_isset) {
-                        echo '<div class="invalid-feedback">' . $error . '</div>';
+                    if (!$password_isValid) {
+                        echo '<div class="invalid-feedback">' . $password_error . '</div>';
+                    }
+                    ?>
+                </div>
+
+                <!-- New password input -->
+                <div class="form-outline mb-5">
+                    <input name="new-password" type="password" id="new-password" class="form-control 
+                    <?php if (!$newPassword_isValid) {
+                        echo "is-invalid";
+                    } ?>" value="<?php if (isset($_POST["new-password"])) {
+                                        echo $_POST["new-password"];
+                                    } ?>" />
+                    <label class="form-label" for="new-password">Passwort</label>
+                    <?php
+                    if (!$newPassword_isValid) {
+                        echo '<div class="invalid-feedback">' .
+                            $newPassword_error .
+                            '</div>';
+                    }
+                    ?>
+                </div>
+
+                <!-- Confirm new password input -->
+                <div class="form-outline mb-5">
+                    <input name="new-password-confirm" type="password" id="new-password-confirm" class="form-control 
+                    <?php if (!$newPasswordConfirm_isValid) {
+                        echo "is-invalid";
+                    } ?>" value="<?php if (isset($_POST["new-password-confirm"])) {
+                                        echo $_POST["new-password-confirm"];
+                                    } ?>" />
+                    <label class="form-label" for="new-password-confirm">Passwort wiederholen</label>
+                    <?php
+                    if (!$newPasswordConfirm_isValid) {
+                        echo '<div class="invalid-feedback">' .
+                            $newPasswordConfirm_error .
+                            '</div>';
                     }
                     ?>
                 </div>
