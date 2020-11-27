@@ -48,8 +48,6 @@ foreach ($pages as $index => $page) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.css" rel="stylesheet" />
     <!--https://mdbootstrap.com/docs/-->
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
-
     <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
 </head>
 

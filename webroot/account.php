@@ -18,26 +18,27 @@ $newPasswordConfirm_error = "";
 require("includes/sessionChecker.php");
 $user = [];
 
+// Request Method POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
     // Check password
     if (!isset($_POST["password"]) || empty(trim($_POST["password"]))) {
         $password_isValid = false;
         $password_error = "Bitte gib das aktuelle Passwort ein";
     }
 
-    // Check new password
-    if (!isset($_POST["new-password"]) || empty(trim($_POST["new-password"])) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))) {
+    // Check new password  || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))
+    if (!isset($_POST["new-password"]) || empty(trim($_POST["new-password"]))) {
         $newPassword_isValid = false;
         $newPassword_error = "Das Passwort muss aus mindestens acht Zeichen welche Gross-, Kleinbuchstaben Zahlen und Sonderzeichen bestehen";
     }
 
-    // Check new confirm password
-    if (!isset($_POST["new-password-confirm"]) || empty(trim($_POST["new-password-confirm"])) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))) {
+    // Check new confirm password || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))
+    if (!isset($_POST["new-password-confirm"]) || empty(trim($_POST["new-password-confirm"])) ) {
         $newPasswordConfirm_isValid = false;
         $newPasswordConfirm_error = "Das Passwort muss aus mindestens acht Zeichen welche Gross-, Kleinbuchstaben Zahlen und Sonderzeichen bestehen";
     }
 
+    // Check if passwords are equal
     if ($_POST["new-password"] != $_POST["new-password-confirm"]) {
         $newPassword_isValid = $newPasswordConfirm_isValid = false;
         $newPassword_error = $newPasswordConfirm_error = "Die Passwörter stimmen nicht überein";
@@ -54,14 +55,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $result->fetch_assoc();
         $result->free();
 
+        echo "<br><pre class=\"mt-5\">";
+        print_r($_POST);
+        print_r($user);
+        echo "Passwort neu:" . $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        echo "</pre>";
+
         if (password_verify($_POST["password"], $user["password"])) { //Checks if passwords match
+            $password = password_hash($_POST["new-password"], PASSWORD_DEFAULT);
+
             $query = "UPDATE webShopUser SET password = ? WHERE idWebShopUser = ?";
             $stmt = $mysqli->prepare($query);
-            $stmt->bind_param("si", $_POST["new-password"], $_SESSION["userId"]);
+            $stmt->bind_param("si", $password, $_SESSION["userId"]);
             $stmt->execute();
             $result = $stmt->get_result();
             if ($stmt->affected_rows) {
-                $message = "Passwort erfolgreich geändert";
+                $message = "Das Passwort wurde erfolgreich geändert";
                 unset($_POST['password']);
                 unset($_POST['new-password']);
                 unset($_POST['new-password-confirm']);
@@ -83,7 +92,12 @@ include("./includes/header.inc.php");
 
 ?>
 <div class="row justify-content-center">
-    <div class="col-lg-4 col-md-7 col-sm-10 col-12">
+    <div class="col-lg-6 col-md-7 col-sm-10 col-12">
+        <?php
+        if ($message) {
+            echo '<p class="note note-success mb-4">' . $message . '</p>';
+        }
+        ?>
         <form method="post">
             <div class="text-center mb-3">
                 <!-- Name input -->
@@ -169,8 +183,9 @@ include("./includes/header.inc.php");
     </div>
 </div>
 </div>
-<!-- MDB -->
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
+
 </body>
 
 </html>
