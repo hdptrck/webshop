@@ -99,7 +99,7 @@ foreach ($pages as $index => $page) {
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item" href="account.php">Mein Konto</a></li>
-                            <li><a class="dropdown-item" href="#">Abmelden</a></li>
+                            <li><a class="dropdown-item" href="logout.php">Abmelden</a></li>
                         </ul>
                     </li>
                 </ul>
