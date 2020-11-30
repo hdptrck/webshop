@@ -60,7 +60,6 @@ include("./includes/header.inc.php");
     ?>
 
 </div>
-</div>
 
 <?php
 include("./includes/footer.inc.php");
