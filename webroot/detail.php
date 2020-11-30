@@ -23,6 +23,17 @@ if (!$result->num_rows) {
 
 $item = $result->fetch_assoc();
 
+if ($_SERVER["REQUEST_METHOD"] == "POST" and isset($_POST["number"])) {
+    if (!isset($_SESSION["shoppingCart"]) and !is_array($_SESSION["shoppingCart"])) {
+        $shoppingCart = array();
+    } else {
+        $shoppingCart = $_SESSION["shoppingCart"];
+    }
+    $order = array("count" => $_POST["number"], "id" => $_GET["id"]);
+    $shoppingCart[] = $order;
+    $_SESSION["shoppingCart"] = $shoppingCart;
+}
+
 ?>
 
 <?php
@@ -61,9 +72,9 @@ include("./includes/header.inc.php");
 
             <p><?php echo $item['description']; ?></p>
 
-            <form class="d-flex justify-content-left">
+            <form class="d-flex justify-content-left" method="post">
                 <!-- Default input -->
-                <input type="number" min="1" max="<?php echo $item['count']; ?>" value="1" aria-label="Search" class="form-control mr-2" style="width: 100px">
+                <input name="number" type="number" min="1" max="<?php echo $item['count']; ?>" value="1" aria-label="Search" class="form-control mr-2" style="width: 100px">
                 <button class="btn btn-primary btn-md my-0 p" type="submit">Zur Bestellung hinzufügen</button>
 
             </form>
