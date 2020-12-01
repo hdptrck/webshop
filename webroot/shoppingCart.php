@@ -117,7 +117,7 @@ if (isset($_SESSION["shoppingCart"]) and is_array($_SESSION["shoppingCart"])) {
         }, false);
     }
 
-    var ends = document.getElementsByClassName('start');
+    var ends = document.getElementsByClassName('end');
 
     for (var i = 0; i < ipt.length; i++) {
         ends[i].addEventListener('change', updatedTimeSpan(), false);

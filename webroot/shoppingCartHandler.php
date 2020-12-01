@@ -26,8 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($item["id"] == $_POST["id"]) {
                     if (isset($_POST["count"])) {
                         $item["count"] = $_POST["count"];
-                        
-            echo var_dump($shoppingCart);
+
+                        echo var_dump($shoppingCart);
                     }
                     unset($_SESSION["shoppingCart"]);
                     $_SESSION["shoppingCart"] = $shoppingCart;
@@ -36,6 +36,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     } else if (isset($_POST["changeTime"])) {
-        echo "tschauaa";
+        if (isset($_POST["startDate"]) && isset($_POST["startTime"]) && isset($_POST["endDate"]) && isset($_POST["startTime"])) {
+            $startDateTime = DateTime::createFromFormat("Y-m-d H:i", $_POST["startDate"] . " " . $_POST["startTime"]);
+            $endDateTime = DateTime::createFromFormat("Y-m-d H:i", $_POST["endDate"] . " " . $_POST["endTime"]);
+            $timeSpan = array("start" => $startDateTime->format('d.m.Y H:i'), "end" => $endDateTime->format('d.m.Y H:i'));
+            if (isset($_SESSION["timeSpan"])) {
+                unset($_SESSION["timeSpan"]);
+            }
+            $_SESSION["timeSpan"] = $timeSpan;
+
+            //Create JOIN Statement
+            $query = "SELECT * FROM item WHERE idItem=?;";
+            $stmt = $mysqli->prepare($query);
+            $stmt->bind_param("s", $item["id"]);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        }
     }
 }
