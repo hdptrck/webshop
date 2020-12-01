@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             $_SESSION["timeSpan"] = $timeSpan;
 
-            //Create JOIN Statement
+            //Create JOIN Statement: SELECT order_has_item.quantity FROM order_has_item LEFT JOIN order ON order_has_item.order_idOrder=order.idOrder AND order.pickUpDatetime<=? AND order.returnDatetime>= AND order_has_item.item_idItem=?;
             $query = "SELECT * FROM item WHERE idItem=?;";
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("s", $item["id"]);
