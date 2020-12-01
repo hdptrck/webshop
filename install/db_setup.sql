@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `webShop`.`role` ;
 CREATE TABLE IF NOT EXISTS `webShop`.`role` (
   `idRole` INT NOT NULL,
   `name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`idrole`))
+  PRIMARY KEY (`idRole`))
 ENGINE = InnoDB;
 
 
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `webShop`.`webShopUser` (
   UNIQUE INDEX `userToken_UNIQUE` (`userToken` ASC),
   CONSTRAINT `fk_webShopUser_role1`
     FOREIGN KEY (`role_idRole`)
-    REFERENCES `webShop`.`role` (`idrole`)
+    REFERENCES `webShop`.`role` (`idRole`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -92,6 +92,8 @@ CREATE TABLE IF NOT EXISTS `webShop`.`order` (
   `pickUpDatetime` DATETIME NOT NULL,
   `returnDatetime` DATETIME NOT NULL,
   `orderLocation_idOrderLocation` INT NOT NULL,
+  `isReady` TINYINT NOT NULL,
+  `isReturned` TINYINT NOT NULL,	
   PRIMARY KEY (`idOrder`),
   INDEX `fk_orders_webShopUsers1_idx` (`webShopUser_idWebShopUser` ASC),
   INDEX `fk_orders_orderLocations1_idx` (`orderLocation_idOrderLocation` ASC),
@@ -116,6 +118,7 @@ DROP TABLE IF EXISTS `webShop`.`order_has_item` ;
 CREATE TABLE IF NOT EXISTS `webShop`.`order_has_item` (
   `order_idOrder` INT NOT NULL,
   `item_idItem` INT NOT NULL,
+  `quantity` INT NOT NULL,
   PRIMARY KEY (`order_idOrder`, `item_idItem`),
   INDEX `fk_orders_has_items_items1_idx` (`item_idItem` ASC),
   INDEX `fk_orders_has_items_orders1_idx` (`order_idOrder` ASC),
