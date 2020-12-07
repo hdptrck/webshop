@@ -49,18 +49,37 @@ if (isset($_SESSION["shoppingCart"]) and is_array($_SESSION["shoppingCart"])) {
 ?>
 
 <script>
-    function callHandler(formData) {
-        var url = 'shoppingCartHandler.php';
-        result = fetch(url, {
-            method: 'POST',
-            body: formData
-        }).then(function(response) {
-            return response.text();
-        });
-        return result;
+    //https://stackoverflow.com/questions/41946457/getting-text-from-fetch-response-object
+    async function getTextFromStream(readableStream) {
+        let reader = readableStream.getReader();
+        let utf8Decoder = new TextDecoder();
+        let nextChunk;
+
+        let resultStr = '';
+
+        while (!(nextChunk = await reader.read()).done) {
+            let partialData = nextChunk.value;
+            resultStr += utf8Decoder.decode(partialData);
+        }
+
+        return resultStr;
     }
 
-    function updatedTimeSpan() {
+    async function callHandler(formData) {
+        const url = 'shoppingCartHandler.php';
+        let res;
+        await fetch(url, {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+            .then(data => {
+                res = data;
+                console.log(res)
+            });
+        return res;
+    }
+
+    async function updatedTimeSpan() {
         var start_date = document.getElementById('start_date');
         var start_time = document.getElementById('start_time');
         var end_date = document.getElementById('end_date');
@@ -72,7 +91,23 @@ if (isset($_SESSION["shoppingCart"]) and is_array($_SESSION["shoppingCart"])) {
         formData.append('startTime', start_time.value);
         formData.append('endDate', end_date.value);
         formData.append('endTime', end_time.value);
-        console.log(callHandler(formData));
+        //var feedback = Array.from(JSON.parse(callHandler(formData)));
+        feedback = await callHandler(formData);
+
+        let elements = document.getElementsByClassName('number');
+
+        //Hier weiter
+        feedback.forEach(function(item) {
+            console.log("hi");
+            elements.forEach((element) => {
+                if (element.id == item.id) {
+                    let target = element;
+                }
+            });
+            target.setAttribute('max', item.max);
+        });
+
+
     }
 
     var btn = document.getElementsByClassName('remove')

@@ -1,5 +1,5 @@
 <?php
-//require("./includes/autoLoad.php");
+require("./includes/autoLoad.php");
 require("includes/sessionChecker.php");
 ?>
 
@@ -45,12 +45,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             $_SESSION["timeSpan"] = $timeSpan;
 
-            //Create JOIN Statement: SELECT order_has_item.quantity FROM order_has_item LEFT JOIN order ON order_has_item.order_idOrder=order.idOrder AND order.pickUpDatetime<=? AND order.returnDatetime>= AND order_has_item.item_idItem=?;
-            $query = "SELECT * FROM item WHERE idItem=?;";
-            $stmt = $mysqli->prepare($query);
-            $stmt->bind_param("s", $item["id"]);
-            $stmt->execute();
-            $result = $stmt->get_result();
+            if (isset($_SESSION["shoppingCart"]) and is_array($_SESSION["shoppingCart"])) {
+                $startStr = $startDateTime->format('Y-m-d H:i');
+                $endStr = $endDateTime->format('Y-m-d H:i');
+                //Create JOIN Statement: SELECT order_has_item.quantity, order_has_item.item_idItem FROM order_has_item INNER JOIN order ON order_has_item.order_idOrder=order.idOrder AND order.pickUpDatetime<=? AND order.returnDatetime>=?;
+                $query = "SELECT order_has_item.quantity, item.idItem, item.count FROM order_has_item INNER JOIN tbl_order ON order_has_item.order_idOrder=tbl_order.idOrder RIGHT JOIN item ON order_has_item.item_idItem=item.idItem AND tbl_order.pickUpDatetime<=? AND tbl_order.returnDatetime>=?;";
+                $stmt = $mysqli->prepare($query);
+                $stmt->bind_param("ss", $endStr, $startStr);
+                $stmt->execute();
+                $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+                $shoppingCart = $_SESSION["shoppingCart"];
+                $feedback = array();
+
+                foreach ($shoppingCart as $item) {
+                    $id = $item["id"];
+                    foreach ($result as $order) {
+                        if ($order["idItem"] == $id) {
+                            if (!isset($max)) {
+                                $max = $order["count"];
+                            }
+                            if (isset($order["quantity"])) {
+                                $max -= $order["quantity"];
+                            }
+                        }
+                    }
+                    $feedback[] = array("id"=>$id,"max"=>$max);
+                }
+
+                header('Content-type: application/json');
+                echo json_encode($feedback);
+            }
         }
     }
 }

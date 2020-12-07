@@ -82,9 +82,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `webShop`.`order`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `webShop`.`order` ;
+DROP TABLE IF EXISTS `webShop`.`tlb_order` ;
 
-CREATE TABLE IF NOT EXISTS `webShop`.`order` (
+CREATE TABLE IF NOT EXISTS `webShop`.`tbl_order` (
   `idOrder` INT NOT NULL AUTO_INCREMENT,
   `webShopUser_idWebShopUser` INT NOT NULL,
   `eventName` VARCHAR(45) NOT NULL,
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `webShop`.`order_has_item` (
   INDEX `fk_orders_has_items_orders1_idx` (`order_idOrder` ASC),
   CONSTRAINT `fk_orders_has_items_orders1`
     FOREIGN KEY (`order_idOrder`)
-    REFERENCES `webShop`.`order` (`idOrder`)
+    REFERENCES `webShop`.`tbl_order` (`idOrder`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_orders_has_items_items1`
