@@ -1,8 +1,6 @@
 <?php
 require("includes/autoLoad.php");
 
-
-$error = "";
 $message = "";
 $login_success = true;
 
@@ -54,12 +52,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result->num_rows;
         $user = $result->fetch_assoc();
         $result->free();
-
-        echo "<br><pre class=\"mt-5\">";
-        print_r($_POST);
-        print_r($user);
-        echo "Passwort neu:" . $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        echo "</pre>";
 
         if (password_verify($_POST["password"], $user["password"])) { //Checks if passwords match
             $password = password_hash($_POST["new-password"], PASSWORD_DEFAULT);

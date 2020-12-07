@@ -62,7 +62,8 @@ CREATE TABLE IF NOT EXISTS `webShop`.`item` (
   `count` INT NOT NULL,
   `title` VARCHAR(45) NOT NULL,
   `description` VARCHAR(512) NULL,
-  `picture` LONGTEXT NULL,
+  `picture` VARCHAR(512),
+  `thumb` VARCHAR(512),
   PRIMARY KEY (`idItem`))
 ENGINE = InnoDB;
 
