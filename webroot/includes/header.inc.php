@@ -16,6 +16,16 @@ $pages = [
     ],
 ];
 
+/*
+    TODO Admin Priv
+*/
+if ($_SESSION['userRole'] == 0) {
+    $pages[] = [
+        'fileName' => 'addProduct.php',
+        'displayText' => 'Produkt hinzufügen',
+    ];
+}
+
 // Create Navigation Items
 foreach ($pages as $index => $page) {
     $listItem = "<li";
