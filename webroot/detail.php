@@ -38,7 +38,11 @@ include("./includes/header.inc.php");
     <!--Grid column-->
     <div class="col-md-6 mb-4">
 
-        <?php echo '<img class="img-fluid" src="' . $item['picture'] . '" />' ?>
+        <?php
+        echo '<img class="img-fluid" src="';
+        echo ($item['thumb'] == null) ? './img/products/1.jpg' : $item['picture'];
+        echo '" />';
+        ?>
 
     </div>
     <!--Grid column-->

@@ -54,12 +54,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST['submit'])) {
         // Ausgabe von Debugg-Informationen
-        echo '<pre>';
-        echo 'Debugg-Info $_FILE:';
-        print_r($_FILES);
-        echo 'Debugg-Info $_POST:';
-        print_r($_POST);
-        echo '</pre>';
+        // echo '<pre>';
+        // echo 'Debugg-Info $_FILE:';
+        // print_r($_FILES);
+        // echo 'Debugg-Info $_POST:';
+        // print_r($_POST);
+        // echo '</pre>';
 
         /*
          * $_Files['userfile']['name'] = ursprüngliche Dateiname beim Benutzer
@@ -144,14 +144,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $data = $result->fetch_assoc();
                 $nextId = $data['Auto_increment'];
 
-                echo "<pre>" . $nextId . "</pre>";
-
                 // original Filename
                 $fileName = pathinfo($_FILES['userfile']['name'])['extension'];
 
                 // zusammensetzten von Pfad und Filename
                 $uploadFile = $uploadDirectory . $nextId . '.' . $fileName;
-                echo $uploadFile;
+
                 //verkleinertes bild
                 $imageFile = $imageDirectory . $nextId . '.' . $fileName;
 
@@ -298,7 +296,7 @@ include("./includes/header.inc.php");
     <div class="col-lg-6 col-md-7 col-sm-10 col-12">
         <?php
         if ($error) {
-            echo '<p class="note note-error mb-4">' . $error . '</p>';
+            echo '<p class="note note-danger mb-4">' . $error . '</p>';
         } elseif ($message)
             echo '<p class="note note-success mb-4">' . $message . '</p>';
         ?>
@@ -313,18 +311,63 @@ include("./includes/header.inc.php");
             </div>
 
             <div class="form-outline mb-5">
-                <input type="text" id="title" name="title" class="form-control" maxlength="45" />
+                <input type="text" id="title" name="title" maxlength="45" class="form-control
+                <?php if (!$title_isValid) {
+                    echo "is-invalid";
+                } ?>
+                " value="
+                <?php if (isset($_POST["title"])) {
+                    echo $_POST["title"];
+                } ?>
+                " />
                 <label class="form-label" for="title">Titel</label>
+                <?php
+                if (!$title_isValid) {
+                    echo '<div class="invalid-feedback">' .
+                        $title_error .
+                        '</div>';
+                }
+                ?>
             </div>
 
             <div class="form-outline mb-5">
-                <textarea type="text" id="description" name="description" class="form-control" rows="4" maxlength="512"></textarea>
+                <textarea type="text" id="description" name="description" rows="4" maxlength="512" class="form-control
+                <?php if (!$description_isValid) {
+                    echo "is-invalid";
+                } ?>
+                " value="
+                <?php if (isset($_POST["description"])) {
+                    echo $_POST["description"];
+                } ?>
+                "></textarea>
                 <label class="form-label" for="description">Beschreibung</label>
+                <?php
+                if (!$description_isValid) {
+                    echo '<div class="invalid-feedback">' .
+                        $description_error .
+                        '</div>';
+                }
+                ?>
             </div>
 
             <div class="form-outline mb-5">
-                <input type="number" id="count" name="count" class="form-control" min="1" value="1" />
+                <input type="number" id="count" name="count" min="1" value="1" class="form-control
+                <?php if (!$count_isValid) {
+                    echo "is-invalid";
+                } ?>
+                " value="
+                <?php if (isset($_POST["count"])) {
+                    echo $_POST["count"];
+                } ?>
+                " />
                 <label class="form-label" for="count">Bestand</label>
+                <?php
+                if (!$count_isValid) {
+                    echo '<div class="invalid-feedback">' .
+                        $count_error .
+                        '</div>';
+                }
+                ?>
             </div>
 
             <!-- Submit button -->
