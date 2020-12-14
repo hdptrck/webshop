@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     //Validation of password and repeated password.
     if (isset($_POST['register-password'])) {
-        if (!empty(trim($_POST['register-password'])) || preg_match("#(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$#", trim($_POST['register-password']))) {
+        if (!empty(trim($_POST['register-password'])) || !preg_match("#(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$#", trim($_POST['register-password']))) {
             if (strlen($_POST['register-password']) <= 256) {
                 if (isset($_POST['register-password-repeat'])) {
                     if ($_POST['register-password'] == $_POST['register-password-repeat']) {
@@ -167,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <strong>Note danger:</strong>
                 </p>
                 <form method="post">
-                    <div class="text-center mb-3">
+                    <div class="text-center mb-4">
                         <!-- Name input -->
                         <div class="row mb-4">
                             <div class="col">
