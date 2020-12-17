@@ -14,6 +14,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (($key = array_search($item, $shoppingCart)) !== false) {
                         unset($shoppingCart[$key]);
                     }
+
+                    header('Content-type: application/json');
+                    echo json_encode($shoppingCart);
+
                     $_SESSION["shoppingCart"] = $shoppingCart;
                     break;
                 }
@@ -27,7 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (isset($_POST["count"])) {
                         $item["count"] = $_POST["count"];
 
-                        echo var_dump($shoppingCart);
+                        header('Content-type: application/json');
+                        echo json_encode($shoppingCart);
                     }
                     unset($_SESSION["shoppingCart"]);
                     $_SESSION["shoppingCart"] = $shoppingCart;
@@ -70,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             }
                         }
                     }
-                    $feedback[] = array("id"=>$id,"max"=>$max);
+                    $feedback[] = array("id" => $id, "max" => $max);
                 }
 
                 header('Content-type: application/json');
