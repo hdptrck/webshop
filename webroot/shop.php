@@ -40,7 +40,9 @@ include("./includes/header.inc.php");
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card hover-overlay ripple" data-ripple-color="light">
                 <div class="bg-image">
-                    <?php echo '<img class="img-fluid" src="' . $item['picture'] . '" />' ?>
+                    <?php echo '<img class="img-fluid" src="';
+                    echo ($item['thumb'] == null) ? './img/products/1.jpg' : $item['thumb'];
+                    echo '" />'; ?>
                 </div>
                 <div class="card-body">
                     <?php echo '<h5 class="card-title">' . $item['title'] . '</h5>' ?>
@@ -59,7 +61,6 @@ include("./includes/header.inc.php");
     }
     ?>
 
-</div>
 </div>
 
 <?php

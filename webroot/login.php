@@ -134,6 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 function createSession($row)
 {
     $_SESSION["userId"] = $row["idWebShopUser"];
+    $_SESSION["userRole"] = $row["role_idRole"];
     session_regenerate_id(true);
 }
 

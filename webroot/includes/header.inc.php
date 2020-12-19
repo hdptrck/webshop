@@ -17,6 +17,16 @@ $pages = [
     ],
 ];
 
+/*
+    TODO Admin Priv
+*/
+if ($_SESSION['userRole'] == 0) {
+    $pages[] = [
+        'fileName' => 'addProduct.php',
+        'displayText' => 'Produkt hinzufügen',
+    ];
+}
+
 // Create Navigation Items
 foreach ($pages as $index => $page) {
     $listItem = "<li";
@@ -48,8 +58,6 @@ foreach ($pages as $index => $page) {
     <!-- MDB -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.css" rel="stylesheet" />
     <!--https://mdbootstrap.com/docs/-->
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
 </head>
@@ -109,7 +117,7 @@ foreach ($pages as $index => $page) {
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item" href="account.php">Mein Konto</a></li>
-                            <li><a class="dropdown-item" href="#">Abmelden</a></li>
+                            <li><a class="dropdown-item" href="logout.php">Abmelden</a></li>
                         </ul>
                     </li>
                 </ul>
