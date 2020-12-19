@@ -23,3 +23,23 @@ INSERT INTO item(`count`, `title`, `description`)
 	   (2, 'Lorem Ipsum 3', 'Lorem ipsum dolor sit amet'),
 	   (28, 'Lorem Ipsum 4', 'Lorem ipsum dolor sit amet'),
 	   (121, 'Lorem Ipsum 5', 'Lorem ipsum dolor sit amet');
+
+-- -----------------------------------------------------
+-- orderLocation
+-- -----------------------------------------------------
+
+INSERT INTO orderLocation (name) VALUES ('Test');
+
+-- -----------------------------------------------------
+-- order
+-- -----------------------------------------------------
+
+INSERT INTO tbl_order (webShopUser_idWebShopUser, eventName, eventPlace, pickUpDatetime, returnDatetime, orderLocation_idOrderLocation, isReady, isReturned)
+	VALUES
+		(1, 'TestAnlass', 'Baseloderso', '2020-12-07 12:00', '2020-12-08 12:00', 1, FALSE, FALSE);
+
+-- -----------------------------------------------------
+-- order_has_item
+-- -----------------------------------------------------
+
+INSERT INTO order_has_item VALUES (1, 1, 3);

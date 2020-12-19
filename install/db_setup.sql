@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `webShop`.`role` ;
 CREATE TABLE IF NOT EXISTS `webShop`.`role` (
   `idRole` INT NOT NULL,
   `name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`idrole`))
+  PRIMARY KEY (`idRole`))
 ENGINE = InnoDB;
 
 
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `webShop`.`webShopUser` (
   UNIQUE INDEX `userToken_UNIQUE` (`userToken` ASC),
   CONSTRAINT `fk_webShopUser_role1`
     FOREIGN KEY (`role_idRole`)
-    REFERENCES `webShop`.`role` (`idrole`)
+    REFERENCES `webShop`.`role` (`idRole`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -83,9 +83,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `webShop`.`order`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `webShop`.`order` ;
+DROP TABLE IF EXISTS `webShop`.`tlb_order` ;
 
-CREATE TABLE IF NOT EXISTS `webShop`.`order` (
+CREATE TABLE IF NOT EXISTS `webShop`.`tbl_order` (
   `idOrder` INT NOT NULL AUTO_INCREMENT,
   `webShopUser_idWebShopUser` INT NOT NULL,
   `eventName` VARCHAR(45) NOT NULL,
@@ -93,6 +93,8 @@ CREATE TABLE IF NOT EXISTS `webShop`.`order` (
   `pickUpDatetime` DATETIME NOT NULL,
   `returnDatetime` DATETIME NOT NULL,
   `orderLocation_idOrderLocation` INT NOT NULL,
+  `isReady` TINYINT NOT NULL,
+  `isReturned` TINYINT NOT NULL,	
   PRIMARY KEY (`idOrder`),
   INDEX `fk_orders_webShopUsers1_idx` (`webShopUser_idWebShopUser` ASC),
   INDEX `fk_orders_orderLocations1_idx` (`orderLocation_idOrderLocation` ASC),
@@ -117,12 +119,13 @@ DROP TABLE IF EXISTS `webShop`.`order_has_item` ;
 CREATE TABLE IF NOT EXISTS `webShop`.`order_has_item` (
   `order_idOrder` INT NOT NULL,
   `item_idItem` INT NOT NULL,
+  `quantity` INT NOT NULL,
   PRIMARY KEY (`order_idOrder`, `item_idItem`),
   INDEX `fk_orders_has_items_items1_idx` (`item_idItem` ASC),
   INDEX `fk_orders_has_items_orders1_idx` (`order_idOrder` ASC),
   CONSTRAINT `fk_orders_has_items_orders1`
     FOREIGN KEY (`order_idOrder`)
-    REFERENCES `webShop`.`order` (`idOrder`)
+    REFERENCES `webShop`.`tbl_order` (`idOrder`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_orders_has_items_items1`
