@@ -1,9 +1,13 @@
 <?php
 require("./includes/autoLoad.php");
-require("includes/sessionChecker.php");
+require("./includes/sessionChecker.php");
+require("./includes/itemChecker.inc.php");
 
-$name_isValid = true;
-$name_error = "";
+//All triggers and messages for server-side validation
+$eventName_isValid = true;
+$eventName_error = "";
+$eventPlace_isValid = true;
+$eventPlace_error = "";
 $startDate_isValid = true;
 $startDate_error = "";
 $startTime_isValid = true;
@@ -12,13 +16,197 @@ $endDate_isValid = true;
 $endDate_error = "";
 $endTime_isValid = true;
 $endTime_error = "";
+$orderLocation_isValid = true;
+$orderLocation_error = "";
+$items_exist = true;
+$items_error = "";
+$itemsMax_inLimit = true;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['name'])) {
+//Selects orderLocations whitch later get filled in dropdown
+$query = "SELECT * FROM orderLocation;";
+$stmt = $mysqli->prepare($query);
+$stmt->execute();
+$orderLocations = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    if (isset($_POST['eventName'])) {
+        if (!empty(trim($_POST['eventName']))) { // Not only whitespaces?
+            if (strlen(htmlspecialchars(trim($_POST['eventName']))) >= 45) { // Max length which can get filled in db
+                $eventName_isValid = false;
+                $eventName_error = "Der Name deines Anlasses ist zu lang.";
+            }
+        } else {
+            $eventName_isValid = false;
+            $eventName_error = "Bitte gib deinem Anlass einen gültigen Namen.";
+        }
     } else {
-        $name_isValid = false;
-        $name_error = "Bitte gib deinem Anlass einen Namen.";
+        $eventName_isValid = false;
+        $eventName_error = "Bitte gib deinem Anlass einen Namen.";
+    }
+
+    // Same validation as eventName
+    if (isset($_POST['eventPlace'])) {
+        if (!empty(trim($_POST['eventPlace']))) {
+            if (strlen(htmlspecialchars(trim($_POST['eventPlace']))) >= 45) {
+                $eventPlace_isValid = false;
+                $eventPlace_error = "Die Ortsangabe deines Anlasses ist zu lang.";
+            }
+        } else {
+            $eventPlace_isValid = false;
+            $eventPlace_error = "Bitte gib einen gültigen Ort ein.";
+        }
+    } else {
+        $eventPlace_isValid = false;
+        $eventPlace_error = "Bitte teile uns mit, wo der Anlass stattfindet.";
+    }
+
+    // Validation of startdate
+    if (isset($_POST['start_date'])) {
+        if (empty(trim($_POST['start_date'])) || !preg_match("#\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$#", htmlspecialchars(trim($_POST['start_date'])))) { // Valid date?
+            $startDate_isValid = false;
+            $startDate_error = "Bitte gib ein gültiges Abholdatum ein.";
+        }
+    } else {
+        $startDate_isValid = false;
+        $startDate_error = "Bitte teile uns mit, wann das Material abgeholt wird.";
+    }
+
+    // Same validation as startdate exepts it's time
+    if (isset($_POST['start_time'])) {
+        if (empty(trim($_POST['start_time'])) || !preg_match("#([0-1]?[0-9]|2[0-3]):[0-5][0-9]$#", htmlspecialchars(trim($_POST['start_time'])))) {
+            $startTime_isValid = false;
+            $startTime_error = "Bitte gib eine gültige Abholzeit ein.";
+        }
+    } else {
+        $startTime_isValid = false;
+        $startTime_error = "Bitte teile uns mit, wann das Material abgeholt wird.";
+    }
+
+    // Same validation as enddate
+    if (isset($_POST['end_date'])) {
+        if (empty(trim($_POST['end_date'])) || !preg_match("#\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$#", htmlspecialchars(trim($_POST['end_date'])))) {
+            $endDate_isValid = false;
+            $endDate_error = "Bitte gib ein gültiges Zurückbringdatum ein.";
+        }
+    } else {
+        $endDate_isValid = false;
+        $endDate_error = "Bitte teile uns mit, wann das Material zurückgebracht wird.";
+    }
+
+    // Same validation as starttime
+    if (isset($_POST['end_time'])) {
+        if (empty(trim($_POST['end_time'])) || !preg_match("#([0-1]?[0-9]|2[0-3]):[0-5][0-9]$#", htmlspecialchars(trim($_POST['end_time'])))) {
+            $endTime_isValid = false;
+            $endTime_error = "Bitte gib eine gültige Zurückbringzeit ein.";
+        }
+    } else {
+        $endTime_isValid = false;
+        $endTime_error = "Bitte teile uns mit, wann das Material zurückgebracht wird.";
+    }
+
+    // Validation of orderLocation
+    if (isset($_POST['orderLocation'])) {
+        // Select all orderLocations from DB
+        $query = "SELECT idOrderLocation FROM orderLocation;";
+        $stmt = $mysqli->prepare($query);
+        $stmt->execute();
+        $results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $betterresults = array();
+
+        foreach ($results as $result) { // Puts only IDs in simple array
+            $betterresults[] = $result['idOrderLocation'];
+        }
+
+        if (!in_array($_POST['orderLocation'], $betterresults)) { // Selected id is present in DB
+            $orderLocation_isValid = false;
+            $orderLocation_error = "Dieser Bereitstellungsort steht nicht zur Auswahl.";
+        }
+    }
+
+    // All dates and times are possible dates
+    if ($startDate_isValid && $startTime_isValid && $endDate_isValid && $endTime_isValid) {
+        $startDateTime = DateTime::createFromFormat("Y-m-d H:i", $_POST['start_date'] . " " . $_POST['start_time']);
+        $endDateTime = DateTime::createFromFormat("Y-m-d H:i", $_POST['end_date'] . " " . $_POST['end_time']);
+
+        if ($startDateTime >= $endDateTime) { // enddatetime is before startdatetime
+            $endDate_isValid = true;
+            $endDate_error = "Die Dauer der Ausleihe ist ungültig.";
+        }
+
+        if (isset($_POST['id']) and isset($_POST['number']) and is_array($_POST['id']) and is_array($_POST['number']) and count($_POST['id']) > 0 and count($_POST['number']) > 0) { // Are items present in shopping cart?
+            $ids = $_POST['id'];
+            $numbers = $_POST['number'];
+            if (count($ids) == count($numbers)) { // Theese values have to be the same, because there should be the same amount of html-elements. Under normal conditions there shouldn't be a difference
+                $items = array();
+                foreach ($ids as $key => $id) { // Creates one array out of two
+                    $items[] = array('id' => $id, 'count' => $numbers[$key]);
+                }
+                $startStr = $startDateTime->format("Y-m-d H:i");
+                $endStr = $endDateTime->format("Y-m-d H:i");
+                $maxs = checkItemsInTimeSpan($mysqli, $startStr, $endStr, $items); // Function present in itemChecker.inc.php / returns maximum avaiable quantity for selected timespan
+
+                foreach ($items as &$item) {
+                    $limit = 0;
+                    foreach ($maxs as $max) { // Searches maximum quanitity in checkItemsInTimeSpan's returned array for $item
+                        if ($max['id'] == $item['id']) {
+                            $limit = $max['max'];
+                            break;
+                        }
+                    }
+                    if ($item['count'] > $limit) { // If choosen quantity is bigger than maximum available amount
+                        $itemsMax_inLimit = false;
+                        $item['msg'] = "Die maximale Anzahl dieses Gegenstandes für den gewählten Zeitraum ist überschritten."; // Add message to $item
+                    }
+                }
+            } else {
+                $items_exist = false;
+                $items_error = "Irgendetwas scheint hier nicht zu stimmen. Bitte lade die Seite neu und versuche es nochmal.";
+            }
+        } else {
+            $items_exist = false;
+            $items_error = "Es befinden sich keine Gegenstände im Warenkorb.";
+        }
+
+        if ($eventName_isValid && $eventPlace_isValid && $orderLocation_isValid && $items_exist && $itemsMax_inLimit) { // Is everything valid?
+            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT); // Enables error-throwing of mysqli
+            $mysqli->begin_transaction();
+            $orderSuccessful = false;
+            try { // Try putting order into DB
+                $query = "INSERT INTO tbl_order (webShopUser_idWebShopUser, eventName, eventPlace, pickUpDatetime, returnDatetime, orderLocation_idOrderLocation, isReady, isReturned) VALUES (?, ?, ?, ?, ?, ?, false, false);";
+                $stmt = $mysqli->prepare($query);
+                $stmt->bind_param("issssi", $_SESSION['userId'], $_POST['eventName'], $_POST['eventPlace'], $startStr, $endStr, $_POST['orderLocation']);
+                $stmt->execute();
+
+                $orderId = $mysqli->insert_id; // Get id of inserted order
+
+                $query = "INSERT INTO order_has_item VALUES (?, ?, ?);";
+                $stmt = $mysqli->prepare($query);
+                foreach ($items as $item) { // Put every ordered item into DB
+                    $stmt->bind_param("iii", $orderId, $item['id'], $item['count']);
+                    $stmt->execute();
+                }
+
+                $mysqli->commit();
+                $orderSuccessful = true;
+            } catch (mysqli_sql_exception $exception) { // Something failed while putting order into DB
+                $mysqli->rollback();
+                echo "Abschicken der Bestellung fehlgeschlagen. Bitte versuche es erneut.";
+            }
+            if ($orderSuccessful) { // Was order put into DB?
+                // Clear session values, because order was sent
+                if (isset($_SESSION['shoppingCart'])) {
+                    unset($_SESSION['shoppingCart']);
+                }
+                if (isset($_SESSION['timeSpan'])) {
+                    unset($_SESSION['timeSpan']);
+                }
+                if (isset($_SESSION['orderInfos'])) {
+                    unset($_SESSION['orderInfos']);
+                }
+                header("Location: shop.php");
+            }
+        }
     }
 }
 ?>
@@ -29,46 +217,113 @@ $siteName = "Warenkorb";
 // TODO: Implement shopping cart
 $numberOfItems = 2;
 include("./includes/header.inc.php");
-
 ?>
-<form method="post"> <!--Anlassort & Bereitstellungsort noch hinzufügen.-->
+
+<form method="post">
     <label>Anlassname</label><br />
-    <input type="text" name="name" maxlength="45" required />
+    <input type="text" id="eventName" name="eventName" maxlength="45" required <?php if (isset($_SESSION['orderInfos']['eventName'])) { // Maybe there is a name already present in session?
+                                                                                    echo 'value="' . $_SESSION['orderInfos']['eventName'] . '"';
+                                                                                } ?> class="orderInfo" /><br />
+    <?php if (!$eventName_isValid) { // Possible server-side validation violation?
+        echo '<p>' . $eventName_error . '</p>';
+    } ?>
+    <label>Anlassort</label><br />
+    <input type="text" id="eventPlace" name="eventPlace" maxlength="45" required <?php if (isset($_SESSION['orderInfos']['eventPlace'])) { // Maybe there is a place already present in session?
+                                                                                        echo 'value="' . $_SESSION['orderInfos']['eventPlace'] . '"';
+                                                                                    } ?> class="orderInfo" /><br />
+    <?php if (!$eventPlace_isValid) { // Possible server-side validation violation?
+        echo '<p>' . $eventPlace_error . '</p>';
+    } ?>
     <label>Abholdatum und -zeit</label><br />
-    <input class="start" type="date" id="start_date" name="trip-start" value="<?php echo date("Y-m-d", strtotime("next saturday")) ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" required />
-    <input class="start" type="time" id="start_time" name="appt" value="12:00" required /><br />
+    <input class="start" type="date" id="start_date" name="start_date" value="<?php if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a startdate already present in session?
+                                                                                    echo (DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("Y-m-d"));
+                                                                                } else {
+                                                                                    echo date("Y-m-d", strtotime("next saturday"));
+                                                                                } ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" required />
+    <input class="start" type="time" id="start_time" name="start_time" value="<?php if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a starttime already present in session?
+                                                                                    echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("H:i");
+                                                                                } else {
+                                                                                    echo "12:00";
+                                                                                } ?>" required /><br />
+    <?php if (!$startDate_isValid) { // Possible server-side validation violation?
+        echo '<p>' . $startDate_error . '</p>';
+    }
+    if (!$startTime_isValid) { // Possible server-side validation violation?
+        echo '<p>' . $startTime_error . '</p>';
+    } ?>
     <label>Zurückbringdatum und -zeit</label><br />
-    <input class="end" type="date" id="end_date" name="trip-start" value="<?php echo date("Y-m-d", strtotime("next saturday")) ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" required />
-    <input class="start" type="time" id="end_time" name="appt" value="19:00" min="12:00" required /><br />
+    <input class="end" type="date" id="end_date" name="end_date" value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a enddate already present in session?
+                                                                            echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("Y-m-d");
+                                                                        } else {
+                                                                            echo date("Y-m-d", strtotime("next saturday"));
+                                                                        } ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" required />
+    <input class="end" type="time" id="end_time" name="end_time" value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a endtime already present in session?
+                                                                            echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("H:i");
+                                                                        } else {
+                                                                            echo "19:00";
+                                                                        } ?>" min="12:00" required /><br />
+    <?php if (!$endDate_isValid) { // Possible server-side validation violation?
+        echo '<p>' . $endDate_error . '</p>';
+    }
+    if (!$endTime_isValid) { // Possible server-side validation violation?
+        echo '<p>' . $endTime_error . '</p>';
+    } ?>
+    <label>Bereitstellungsort</label><br />
+    <select id="orderLocation" name="orderLocation" required class="orderInfo" />
+    <?php
+    foreach ($orderLocations as $location) { // Foreach orderLocation which was selected in DB earlier there will be an option
+        $selected = "";
+        if (isset($_SESSION['orderInfos']['orderLocation']) and $_SESSION['orderInfos']['orderLocation'] == $location['idOrderLocation']) { // Is one option already selected in session? Will be selected again
+            $selected = "selected";
+        }
+        echo '<option value="' . $location['idOrderLocation'] . '" ' . $selected . '>' . $location['name'] . '</option>';
+    }
+    ?>
+    </select> <br />
+    <?php if (!$orderLocation_isValid) { // Possible server-side validation violation?
+        echo '<p>' . $orderLocation_error . '</p>';
+    } ?>
+
+    <?php if (!$items_exist) { // Possible server-side validation violation?
+        echo '<p>' . $items_error . '</p>';
+    } ?>
 
     <?php
-    if (isset($_SESSION["shoppingCart"]) and is_array($_SESSION["shoppingCart"]) and !empty($_SESSION["shoppingCart"])) {
-        $shoppingCart = $_SESSION["shoppingCart"];
-        echo "<ul>";
-        foreach ($shoppingCart as $item) {
+    if (isset($_SESSION['shoppingCart']) and is_array($_SESSION['shoppingCart']) and !empty($_SESSION['shoppingCart'])) { // Are there even items in shopping cart?
+        $shoppingCart = $_SESSION['shoppingCart'];
+        echo '<ul>';
+        foreach ($shoppingCart as $item) { // Every items will be displaced as listitem
             $query = "SELECT * FROM item WHERE idItem=?;";
             $stmt = $mysqli->prepare($query);
-            $stmt->bind_param("s", $item["id"]);
+            $stmt->bind_param("s", $item['id']);
             $stmt->execute();
             $result = $stmt->get_result();
-            if ($result->num_rows > 0) {
+            if ($result->num_rows > 0) { // Is ID valid?
                 $row = $result->fetch_assoc();
                 echo '<li>';
                 //Add display of picture
-                echo '<a href="detail.php?id=' . $row["idItem"] . '">' . $row["title"] . '</a>';
-                echo '<input id="' . $row["idItem"] . '" name="number" type="number" min="1" value="' . $item["count"] . '" aria-label="Search" class="form-control mr-2 number" style="width: 100px" required/>';
+                echo '<a href="detail.php?id=' . $row['idItem'] . '">' . $row['title'] . '</a>';
+                echo '<input name="id[]" type="hidden" value="' . $row['idItem'] . '"/>'; // Hidden input, so item-ID is present in post
+                echo '<input id="' . $row["idItem"] . '" name="number[]" type="number" min="1" value="' . $item['count'] . '" aria-label="Search" class="form-control mr-2 number" style="width: 100px" required/>';
+                if (isset($items) and is_array($items)) {
+                    foreach ($items as $item) {
+                        if ($item['id'] == $row['idItem'] and isset($item['msg'])) { // Display possible error from server-side validation
+                            echo '<p>' . $item['msg'] . '</p>';
+                        }
+                    }
+                }
                 echo '<button id="' . $row["idItem"] . '" class="remove">Löschen</button>';
                 echo '</li>';
             }
         }
-        echo "</ul>";
+        echo '</ul>';
     } else {
         //TODO: Nice view of no Items
         echo "Noch keine Dinge im Warenkorb";
     }
     ?>
-    <button type="submit" id="shoppingcart-submit" class="btn btn-primary btn-block mt-5" <?php if (!isset($shoppingCart)) {
-                                                                                                echo 'disabled';
+    <button type="submit" id="shoppingcart-submit" class="btn btn-primary btn-block mt-5" <?php if (!isset($shoppingCart)) { // Disable button when there are no items
+                                                                                                echo "disabled";
                                                                                             }  ?>>
         Bestellung abschicken
     </button>
@@ -76,31 +331,15 @@ include("./includes/header.inc.php");
 </form>
 
 <script>
-    //https://stackoverflow.com/questions/41946457/getting-text-from-fetch-response-object
-    async function getTextFromStream(readableStream) {
-        let reader = readableStream.getReader();
-        let utf8Decoder = new TextDecoder();
-        let nextChunk;
-
-        let resultStr = '';
-
-        while (!(nextChunk = await reader.read()).done) {
-            let partialData = nextChunk.value;
-            resultStr += utf8Decoder.decode(partialData);
-        }
-
-        return resultStr;
-    }
-
-    async function callHandler(formData) {
-        const url = 'shoppingCartHandler.php';
+    async function callHandler(formData) { // Function which calls php-handler
+        const url = "shoppingCartHandler.php";
         let res;
         await fetch(url, {
-            method: 'POST',
+            method: "POST",
             body: formData
         }).then(response => {
             const contentType = response.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
+            if (contentType && contentType.indexOf("application/json") !== -1) { // Was a JSON returned?
                 res = response.json();
             } else {
                 res = response.text();
@@ -109,132 +348,170 @@ include("./includes/header.inc.php");
         return res;
     }
 
-    async function updatedTimeSpan() {
-        var start_date = document.getElementById('start_date');
-        var start_time = document.getElementById('start_time');
-        var end_date = document.getElementById('end_date');
-        var end_time = document.getElementById('end_time');
+    async function updatedTimeSpan() { // Send timespan to backend and process feedback
+        let start_date = document.getElementById("start_date");
+        let start_time = document.getElementById("start_time");
+        let end_date = document.getElementById("end_date");
+        let end_time = document.getElementById("end_time");
 
-        var formData = new FormData();
-        formData.append('changeTime', '');
+        let formData = new FormData();
+        formData.append('action', "changeTime");
         formData.append('startDate', start_date.value);
         formData.append('startTime', start_time.value);
         formData.append('endDate', end_date.value);
         formData.append('endTime', end_time.value);
-        feedback = await callHandler(formData);
+        feedback = await callHandler(formData); // Tells server the new timespan and waits for feedback
 
-        let warnings = document.getElementsByClassName('warning');
+        let warnings = document.getElementsByClassName("warning");
 
-        Array.prototype.forEach.call(warnings, function(warning) {
+        Array.prototype.forEach.call(warnings, function(warning) { // Remove all warnings 
             warning.remove();
         });
 
-        let elements = document.getElementsByClassName('number');
+        if (typeof feedback == "object") { // Is feedback JSON?
+            let elements = document.getElementsByClassName("number");
 
-        feedback.forEach(function(item) {
-            Array.prototype.forEach.call(elements, function(element) {
-                if (element.id == item.id) {
-                    element.setAttribute('max', item.max);
-                    if (element.value > item.max) {
-                        let child = element.parentNode.appendChild(document.createElement('p'));
-                        child.classList.add('warning');
-                        if (item.max == 0) {
-                            child.innerHTML = 'Achtung, zum gewähltem Zeitraum sind keine Gegenstände verfügbar!';
-                        } else if (item.max == 1) {
-                            child.innerHTML = 'Achtung, zum gewähltem Zeitraum ist nur ein Gegenstand verfügbar!';
-                        } else {
-                            child.innerHTML = 'Achtung, zum gewähltem Zeitraum sind nur '.concat(item.max).concat(' Gegenstände verfügbar!');
+            feedback.forEach(function(item) {
+                Array.prototype.forEach.call(elements, function(element) {
+                    if (element.id == item.id) { // Match item-ID to fitting element-ID
+                        element.setAttribute("max", item.max); // Set new max
+                        if (element.value > item.max) { // Is there too much count than actually possible?
+                            // Create warning
+                            let child = element.parentNode.appendChild(document.createElement("p"));
+                            child.setAttribute('count', item.max);
+                            child.classList.add("warning");
+                            switch (item.max) {
+                                case 0:
+                                    child.innerHTML = "Achtung, zum gewählten Zeitraum sind keine Gegenstände verfügbar!";
+                                    break;
+                                case 1:
+                                    child.innerHTML = "Achtung, zum gewählten Zeitraum ist nur ein Gegenstand verfügbar!";
+                                    break;
+                                default:
+                                    child.innerHTML = "Achtung, zum gewählten Zeitraum sind nur ".concat(item.max).concat(" Gegenstände verfügbar!");
+                            }
+
+                            // Disable send-button, because there is a warning present
+                            let btn = document.getElementById("shoppingcart-submit");
+                            btn.setAttribute('disabled', "");
                         }
-
                     }
-                }
+                });
             });
-        });
-
-
+        }
     }
 
-    var btn = document.getElementsByClassName('remove')
+    let orderInfos = document.getElementsByClassName("orderInfo");
+    Array.prototype.forEach.call(orderInfos, function(orderInfo) { // Some basic orderInfo got changed and everything will be sent to backend
+        orderInfo.addEventListener("change", function(e) {
+            var eventName = document.getElementById("eventName");
+            var eventPlace = document.getElementById("eventPlace");
+            var orderLocation = document.getElementById("orderLocation");
 
-    for (var i = 0; i < btn.length; i++) {
-        btn[i].addEventListener('click', async function(e) {
+            var formData = new FormData();
+            formData.append('action', "changeOrderInfos");
+            formData.append('eventName', eventName.value);
+            formData.append('eventPlace', eventPlace.value);
+            formData.append('orderLocation', orderLocation.value);
+            callHandler(formData);
+        }, false);
+    });
+
+    let removes = document.getElementsByClassName("remove") // All remove-buttons
+    Array.prototype.forEach.call(removes, function(remove) {
+        remove.addEventListener("click", async function(e) { // Remove item
             e.currentTarget.parentNode.remove();
 
             var formData = new FormData();
-            formData.append('remove', '');
+            formData.append('action', "remove");
             formData.append('id', e.currentTarget.id);
-            feedback = await callHandler(formData);
+            feedback = await callHandler(formData); // Inform backend and wait for feedback
 
-            if (Object.keys(feedback).length == 0) {
-                let btn = document.getElementById('shoppingcart-submit');
-                btn.setAttribute('disabled', '');
+            if (Object.keys(feedback).length == 0) { // Are there no items left? Disable send-button then
+                let btn = document.getElementById("shoppingcart-submit");
+                btn.setAttribute('disabled', "");
             }
         }, false);
-    }
+    });
 
-    var ipt = document.getElementsByClassName('number')
-
-    for (var i = 0; i < ipt.length; i++) {
-        ipt[i].addEventListener('change', async function(e) {
-            var formData = new FormData();
-            formData.append('changeCount', '');
+    let numbers = document.getElementsByClassName("number"); // All number input-fields
+    Array.prototype.forEach.call(numbers, function(number) {
+        number.addEventListener("change", async function(e) { // Count changed
+            let formData = new FormData();
+            formData.append('action', "changeCount");
             formData.append('id', e.currentTarget.id);
             formData.append('count', e.currentTarget.value);
-            feedback = await callHandler(formData);
+            feedback = await callHandler(formData); // Inform backend and wait for feedback
 
-            let elements = document.getElementsByClassName('number');
-
-            Array.prototype.forEach.call(elements, function(element) {
+            let numbers2 = document.getElementsByClassName("number");
+            Array.prototype.forEach.call(numbers2, function(number2) { // Push feedback from backend to frontend. Under normal conditions there shouldn't be a change
                 let itemExists = false;
                 feedback.forEach(function(item) {
-                    if (element.id == item.id) {
-                        element.value = item.count;
+                    if (number2.id == item.id) {
+                        number2.value = item.count;
                         itemExists = true;
                     }
                 });
-                if (!itemExists) {
-                    element.parentNode.remove();
+
+                let parent = number2.parentNode;
+                if (!itemExists) { // Remove item if it doesn't exist
+                    parent.remove();
+                } else { // Else check if warning is present and still needed
+                    let msgs = parent.getElementsByClassName("warning");
+                    if (msgs.length == 1) { // Can only be 0 or 1
+                        if (msgs[0].getAttribute('count') <= number2.value) {
+                            msgs[0].remove();
+                        }
+                    }
+
+                    msgs = document.getElementsByClassName("warning"); // Check if there are any warning on the whole page
+                    if (msgs.length == 0) { // If not enable send-button again
+                        let btn = document.getElementById("shoppingcart-submit");
+                        btn.removeAttribute('disabled');
+                    }
                 }
             });
 
         }, false);
-    }
+    });
 
-    var starts = document.getElementsByClassName('start');
+    let starts = document.getElementsByClassName("start");
+    Array.prototype.forEach.call(starts, function(start) { // Update enddate and endtime based one new startdate/-time
+        start.addEventListener("change", function(e) {
+            let start_date = document.getElementById("start_date");
+            let start_time = document.getElementById("start_time");
+            let end_date = document.getElementById("end_date");
+            let end_time = document.getElementById("end_time");
 
-    for (var i = 0; i < starts.length; i++) {
-        starts[i].addEventListener('change', function(e) {
-            var start_date = document.getElementById('start_date');
-            var start_time = document.getElementById('start_time');
-            var end_date = document.getElementById('end_date');
-            var end_time = document.getElementById('end_time');
+            end_date.min = start_date.value; // Minimun enddate has to be startdate
+            if (start_date.value == end_date.value) { // Same day?
+                end_time.min = start_time.value; // So minimun endtime has to be starttime
 
-            end_date.min = start_date.value;
-            if (start_date.value == end_date.value) {
-                end_time.min = start_time.value;
-
-                if (start_time.value > end_time.value) {
-                    end_time.value = start_time.value;
+                if (start_time.value > end_time.value) { // If starttime is more in future than endtime
+                    end_time.value = start_time.value; // endtime gets set to starttime
                 }
 
             } else {
                 end_time.min = "";
             }
 
-            if (start_date.value > end_date.value) {
-                end_date.value = start_date.value;
+            if (start_date.value > end_date.value) { // If startdate is more in futire thand enddate
+                end_date.value = start_date.value; // enddate gets set to startdate
             }
 
             updatedTimeSpan();
 
         }, false);
-    }
+    });
 
-    var ends = document.getElementsByClassName('end');
+    let ends = document.getElementsByClassName("end");
+    Array.prototype.forEach.call(ends, function(end) { // Call updatedTimeSpan when enddate/-time changed
+        end.addEventListener("change", function(e) {
+            updatedTimeSpan();
+        }, false);
+    });
 
-    for (var i = 0; i < ipt.length; i++) {
-        ends[i].addEventListener('change', updatedTimeSpan(), false);
-    }
+    updatedTimeSpan();
 </script>
 
 <?php

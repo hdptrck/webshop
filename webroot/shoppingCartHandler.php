@@ -1,86 +1,79 @@
 <?php
 require("./includes/autoLoad.php");
-require("includes/sessionChecker.php");
+require("./includes/sessionChecker.php");
+require("./includes/itemChecker.inc.php");
 ?>
 
 <?php
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["remove"])) {
-        if ((isset($_SESSION["shoppingCart"]) and is_array($_SESSION["shoppingCart"]) && isset($_POST["id"]))) {
-            $shoppingCart = $_SESSION["shoppingCart"];
-            foreach ($shoppingCart as $item) {
-                if ($item["id"] == $_POST["id"]) {
-                    if (($key = array_search($item, $shoppingCart)) !== false) {
-                        unset($shoppingCart[$key]);
+if ($_SERVER['REQUEST_METHOD'] == "POST") { // Should only be called as post
+    if (isset($_POST['action'])) {
+        switch ($_POST['action']) {
+            case 'changeOrderInfos':
+                if (isset($_POST['eventName']) && isset($_POST['eventPlace']) && isset($_POST['orderLocation'])) {
+                    // Store all basic informations in session
+                    $orderInfos = array('eventName' => $_POST['eventName'], 'eventPlace' => $_POST['eventPlace'], 'orderLocation' => $_POST['orderLocation']);
+                    if (isset($_SESSION['orderInfos'])) {
+                        unset($_SESSION['orderInfos']);
                     }
-
-                    header('Content-type: application/json');
-                    echo json_encode($shoppingCart);
-
-                    $_SESSION["shoppingCart"] = $shoppingCart;
-                    break;
+                    $_SESSION['orderInfos'] = $orderInfos;
                 }
-            }
-        }
-    } else if (isset($_POST["changeCount"])) {
-        if ((isset($_SESSION["shoppingCart"]) and is_array($_SESSION["shoppingCart"]) && isset($_POST["id"]))) {
-            $shoppingCart = $_SESSION["shoppingCart"];
-            foreach ($shoppingCart as &$item) {
-                if ($item["id"] == $_POST["id"]) {
-                    if (isset($_POST["count"])) {
-                        $item["count"] = $_POST["count"];
-
-                        header('Content-type: application/json');
-                        echo json_encode($shoppingCart);
-                    }
-                    unset($_SESSION["shoppingCart"]);
-                    $_SESSION["shoppingCart"] = $shoppingCart;
-                    break;
-                }
-            }
-        }
-    } else if (isset($_POST["changeTime"])) {
-        if (isset($_POST["startDate"]) && isset($_POST["startTime"]) && isset($_POST["endDate"]) && isset($_POST["startTime"])) {
-            $startDateTime = DateTime::createFromFormat("Y-m-d H:i", $_POST["startDate"] . " " . $_POST["startTime"]);
-            $endDateTime = DateTime::createFromFormat("Y-m-d H:i", $_POST["endDate"] . " " . $_POST["endTime"]);
-            $timeSpan = array("start" => $startDateTime->format('d.m.Y H:i'), "end" => $endDateTime->format('d.m.Y H:i'));
-            if (isset($_SESSION["timeSpan"])) {
-                unset($_SESSION["timeSpan"]);
-            }
-            $_SESSION["timeSpan"] = $timeSpan;
-
-            if (isset($_SESSION["shoppingCart"]) and is_array($_SESSION["shoppingCart"])) {
-                $startStr = $startDateTime->format('Y-m-d H:i');
-                $endStr = $endDateTime->format('Y-m-d H:i');
-                //Create JOIN Statement: SELECT order_has_item.quantity, order_has_item.item_idItem FROM order_has_item INNER JOIN order ON order_has_item.order_idOrder=order.idOrder AND order.pickUpDatetime<=? AND order.returnDatetime>=?;
-                $query = "SELECT order_has_item.quantity, item.idItem, item.count FROM order_has_item INNER JOIN tbl_order ON order_has_item.order_idOrder=tbl_order.idOrder RIGHT JOIN item ON order_has_item.item_idItem=item.idItem AND tbl_order.pickUpDatetime<=? AND tbl_order.returnDatetime>=?;";
-                $stmt = $mysqli->prepare($query);
-                $stmt->bind_param("ss", $endStr, $startStr);
-                $stmt->execute();
-                $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-                $shoppingCart = $_SESSION["shoppingCart"];
-                $feedback = array();
-
-                foreach ($shoppingCart as $item) {
-                    $id = $item["id"];
-                    foreach ($result as $order) {
-                        if ($order["idItem"] == $id) {
-                            if (!isset($max)) {
-                                $max = $order["count"];
+            case 'remove':
+                if ((isset($_SESSION['shoppingCart']) and is_array($_SESSION['shoppingCart']) && isset($_POST['id']))) {
+                    $shoppingCart = $_SESSION['shoppingCart'];
+                    foreach ($shoppingCart as $item) {
+                        if ($item['id'] == $_POST['id']) { // Search item which shall be removed
+                            if (($key = array_search($item, $shoppingCart)) !== false) {
+                                unset($shoppingCart[$key]); // Remove item from session
                             }
-                            if (isset($order["quantity"])) {
-                                $max -= $order["quantity"];
-                            }
+
+                            header("Content-type: application/json");
+                            echo json_encode($shoppingCart); // Send updated cart as feedback
+
+                            $_SESSION['shoppingCart'] = $shoppingCart;
+                            break;
                         }
                     }
-                    $feedback[] = array("id" => $id, "max" => $max);
                 }
+            case 'changeCount':
+                if ((isset($_SESSION['shoppingCart']) and is_array($_SESSION['shoppingCart']) && isset($_POST['id']))) {
+                    $shoppingCart = $_SESSION['shoppingCart'];
+                    foreach ($shoppingCart as &$item) {
+                        if ($item['id'] == $_POST['id']) { // Search for item which has a new count
+                            if (isset($_POST['count'])) {
+                                $item['count'] = $_POST['count']; // Update count
+                            }
+                            header("Content-type: application/json");
+                            echo json_encode($shoppingCart); // Send updated cart as feedback 
+                            unset($_SESSION['shoppingCart']);
+                            $_SESSION['shoppingCart'] = $shoppingCart;
+                            break;
+                        }
+                    }
+                }
+            case 'changeTime':
+                if (isset($_POST['startDate']) && isset($_POST['startTime']) && isset($_POST['endDate']) && isset($_POST['startTime'])) {
+                    $startDateTime = DateTime::createFromFormat("Y-m-d H:i", $_POST['startDate'] . " " . $_POST['startTime']);
+                    $endDateTime = DateTime::createFromFormat("Y-m-d H:i", $_POST['endDate'] . " " . $_POST['endTime']);
+                    $timeSpan = array('start' => $startDateTime->format("d.m.Y H:i"), 'end' => $endDateTime->format("d.m.Y H:i"));
+                    if (isset($_SESSION['timeSpan'])) {
+                        unset($_SESSION['timeSpan']);
+                    }
+                    $_SESSION['timeSpan'] = $timeSpan; // Store updated timespan
 
-                header('Content-type: application/json');
-                echo json_encode($feedback);
-            }
+                    if (isset($_SESSION['shoppingCart']) and is_array($_SESSION['shoppingCart'])) {
+                        $startStr = $startDateTime->format("Y-m-d H:i");
+                        $endStr = $endDateTime->format("Y-m-d H:i");
+                        $shoppingCart = $_SESSION['shoppingCart'];
+
+                        $feedback = checkItemsInTimeSpan($mysqli, $startStr, $endStr, $shoppingCart); // Check items in new timespan. Function in itemChecker.inc.php
+
+                        header("Content-type: application/json"); // Send feedback
+                        echo json_encode($feedback);
+                    }
+                }
         }
     }
+} else {
+    header("Location: shoppingCart.php");
 }

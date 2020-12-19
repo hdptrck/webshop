@@ -2,7 +2,8 @@
 /*
 VAR to set:
 $siteName
-$numberOfItems
+$numberOfItems - Not anymore, is calucalted now. But in some cases it might be set before, because of prevous version
+SESSION has to be initialized
 */
 
 $pages = [
@@ -80,15 +81,22 @@ foreach ($pages as $index => $page) {
 
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle hidden-arrow" href="shoppingCart.php" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
                             <span class="material-icons-outlined">
                                 shopping_bag
                             </span>
 
                             <?php
                             if (isset($numberOfItems)) {
-                                echo  "<span class=\"badge rounded-pill badge-notification bg-danger\">"  . $numberOfItems . "</span>";
+                                unset($numberOfItems);
                             }
+                            if (isset($_SESSION['shoppingCart']) and is_array($_SESSION['shoppingCart'])) {
+                                $numberOfItems = count($_SESSION['shoppingCart']);
+                            }
+                            if (!isset($numberOfItems) or $numberOfItems == 0){
+                                $numberOfItems = "";
+                            }
+                            echo  "<span class=\"badge rounded-pill badge-notification bg-danger\">"  . $numberOfItems . "</span>";
                             ?>
 
                         </a>
