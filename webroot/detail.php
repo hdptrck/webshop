@@ -24,7 +24,7 @@ if (!$result->num_rows) {
 $item = $result->fetch_assoc();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" and isset($_POST["number"])) {
-    if (!isset($_SESSION["shoppingCart"]) and !is_array($_SESSION["shoppingCart"])) {
+    if (!isset($_SESSION["shoppingCart"]) or !is_array($_SESSION["shoppingCart"])) {
         $shoppingCart = array();
     } else {
         $shoppingCart = $_SESSION["shoppingCart"];
