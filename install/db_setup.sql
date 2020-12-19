@@ -62,8 +62,8 @@ CREATE TABLE IF NOT EXISTS `webShop`.`item` (
   `count` INT NOT NULL,
   `title` VARCHAR(45) NOT NULL,
   `description` VARCHAR(512) NULL,
-  `picture` VARCHAR(512),
-  `thumb` VARCHAR(512),
+  `picture` VARCHAR(512) NULL,
+  `thumb` VARCHAR(512) NULL,
   PRIMARY KEY (`idItem`))
 ENGINE = InnoDB;
 
@@ -81,9 +81,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `webShop`.`order`
+-- Table `webShop`.`tbl_order`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `webShop`.`tlb_order` ;
+DROP TABLE IF EXISTS `webShop`.`tbl_order` ;
 
 CREATE TABLE IF NOT EXISTS `webShop`.`tbl_order` (
   `idOrder` INT NOT NULL AUTO_INCREMENT,
