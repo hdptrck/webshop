@@ -219,116 +219,149 @@ $numberOfItems = 2;
 include("./includes/header.inc.php");
 ?>
 
-<form method="post">
-    <label>Anlassname</label><br />
-    <input type="text" id="eventName" name="eventName" maxlength="45" required <?php if (isset($_SESSION['orderInfos']['eventName'])) { // Maybe there is a name already present in session?
-                                                                                    echo 'value="' . $_SESSION['orderInfos']['eventName'] . '"';
-                                                                                } ?> class="orderInfo" /><br />
-    <?php if (!$eventName_isValid) { // Possible server-side validation violation?
-        echo '<p>' . $eventName_error . '</p>';
-    } ?>
-    <label>Anlassort</label><br />
-    <input type="text" id="eventPlace" name="eventPlace" maxlength="45" required <?php if (isset($_SESSION['orderInfos']['eventPlace'])) { // Maybe there is a place already present in session?
-                                                                                        echo 'value="' . $_SESSION['orderInfos']['eventPlace'] . '"';
-                                                                                    } ?> class="orderInfo" /><br />
-    <?php if (!$eventPlace_isValid) { // Possible server-side validation violation?
-        echo '<p>' . $eventPlace_error . '</p>';
-    } ?>
-    <label>Abholdatum und -zeit</label><br />
-    <input class="start" type="date" id="start_date" name="start_date" value="<?php if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a startdate already present in session?
-                                                                                    echo (DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("Y-m-d"));
-                                                                                } else {
-                                                                                    echo date("Y-m-d", strtotime("next saturday"));
-                                                                                } ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" required />
-    <input class="start" type="time" id="start_time" name="start_time" value="<?php if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a starttime already present in session?
-                                                                                    echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("H:i");
-                                                                                } else {
-                                                                                    echo "12:00";
-                                                                                } ?>" required /><br />
-    <?php if (!$startDate_isValid) { // Possible server-side validation violation?
-        echo '<p>' . $startDate_error . '</p>';
-    }
-    if (!$startTime_isValid) { // Possible server-side validation violation?
-        echo '<p>' . $startTime_error . '</p>';
-    } ?>
-    <label>Zurückbringdatum und -zeit</label><br />
-    <input class="end" type="date" id="end_date" name="end_date" value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a enddate already present in session?
-                                                                            echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("Y-m-d");
-                                                                        } else {
-                                                                            echo date("Y-m-d", strtotime("next saturday"));
-                                                                        } ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" required />
-    <input class="end" type="time" id="end_time" name="end_time" value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a endtime already present in session?
-                                                                            echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("H:i");
-                                                                        } else {
-                                                                            echo "19:00";
-                                                                        } ?>" min="12:00" required /><br />
-    <?php if (!$endDate_isValid) { // Possible server-side validation violation?
-        echo '<p>' . $endDate_error . '</p>';
-    }
-    if (!$endTime_isValid) { // Possible server-side validation violation?
-        echo '<p>' . $endTime_error . '</p>';
-    } ?>
-    <label>Bereitstellungsort</label><br />
-    <select id="orderLocation" name="orderLocation" required class="orderInfo" />
-    <?php
-    foreach ($orderLocations as $location) { // Foreach orderLocation which was selected in DB earlier there will be an option
-        $selected = "";
-        if (isset($_SESSION['orderInfos']['orderLocation']) and $_SESSION['orderInfos']['orderLocation'] == $location['idOrderLocation']) { // Is one option already selected in session? Will be selected again
-            $selected = "selected";
-        }
-        echo '<option value="' . $location['idOrderLocation'] . '" ' . $selected . '>' . $location['name'] . '</option>';
-    }
-    ?>
-    </select> <br />
-    <?php if (!$orderLocation_isValid) { // Possible server-side validation violation?
-        echo '<p>' . $orderLocation_error . '</p>';
-    } ?>
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-7 col-sm-10 col-12">
+        <form method="post">
+            <div class="form-outline mb-5">
+                <input type="text" id="eventName" name="eventName" maxlength="45" class="orderInfo form-control" required <?php
+                                                                                                                            if (isset($_SESSION['orderInfos']['eventName'])) { // Maybe there is a name already present in session?
+                                                                                                                                echo 'value="' . $_SESSION['orderInfos']['eventName'] . '"';
+                                                                                                                            }
+                                                                                                                            ?> />
+                <label class="form-label" for="eventName">Anlassname</label>
+                <?php
+                if (!$eventName_isValid) { // Possible server-side validation violation?
+                    echo '<div class="invalid-feedback">'  . $eventName_error . '</div>';
+                }
+                ?>
+            </div>
 
-    <?php if (!$items_exist) { // Possible server-side validation violation?
-        echo '<p>' . $items_error . '</p>';
-    } ?>
+            <div class="form-outline mb-5">
+                <input type="text" id="eventPlace" name="eventPlace" maxlength="45" class="orderInfo form-control" required <?php if (isset($_SESSION['orderInfos']['eventPlace'])) { // Maybe there is a place already present in session?
+                                                                                                                                echo 'value="' . $_SESSION['orderInfos']['eventPlace'] . '"';
+                                                                                                                            } ?> />
+                <label class="form-label" for="eventPlace">Anlassort</label>
+                <?php
+                if (!$eventPlace_isValid) { // Possible server-side validation violation?
+                    echo '<div class="invalid-feedback">'  . $eventPlace_error . '</div>';
+                }
+                ?>
+            </div>
 
-    <?php
-    if (isset($_SESSION['shoppingCart']) and is_array($_SESSION['shoppingCart']) and !empty($_SESSION['shoppingCart'])) { // Are there even items in shopping cart?
-        $shoppingCart = $_SESSION['shoppingCart'];
-        echo '<ul>';
-        foreach ($shoppingCart as $item) { // Every items will be displaced as listitem
-            $query = "SELECT * FROM item WHERE idItem=?;";
-            $stmt = $mysqli->prepare($query);
-            $stmt->bind_param("s", $item['id']);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            if ($result->num_rows > 0) { // Is ID valid?
-                $row = $result->fetch_assoc();
-                echo '<li>';
-                //Add display of picture
-                echo '<a href="detail.php?id=' . $row['idItem'] . '">' . $row['title'] . '</a>';
-                echo '<input name="id[]" type="hidden" value="' . $row['idItem'] . '"/>'; // Hidden input, so item-ID is present in post
-                echo '<input id="' . $row["idItem"] . '" name="number[]" type="number" min="1" value="' . $item['count'] . '" aria-label="Search" class="form-control mr-2 number" style="width: 100px" required/>';
-                if (isset($items) and is_array($items)) {
-                    foreach ($items as $item) {
-                        if ($item['id'] == $row['idItem'] and isset($item['msg'])) { // Display possible error from server-side validation
-                            echo '<p>' . $item['msg'] . '</p>';
+            <div class="row mb-5">
+                <div class="col">
+                    <div class="form-outline">
+                        <label class="form-label" for="start_date">Abholdatum und -zeit</label><br />
+                        <input class="start" type="date" id="start_date" name="start_date" required value="<?php
+                                                                                                            if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a startdate already present in session?
+                                                                                                                echo (DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("Y-m-d"));
+                                                                                                            } else {
+                                                                                                                echo date("Y-m-d", strtotime("next saturday"));
+                                                                                                            }
+                                                                                                            ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" />
+                        <input class="start" type="time" id="start_time" name="start_time" value="<?php if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a starttime already present in session?
+                                                                                                        echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("H:i");
+                                                                                                    } else {
+                                                                                                        echo "12:00";
+                                                                                                    } ?>" required /><br />
+                        <?php if (!$startDate_isValid) { // Possible server-side validation violation?
+                            echo '<div class="invalid-feedback">' . $startDate_error . '</div>';
                         }
+                        if (!$startTime_isValid) { // Possible server-side validation violation?
+                            echo '<div class="invalid-feedback">' . $startTime_error . '</div>';
+                        } ?>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-outline">
+                        <label class="form-label" for="end_date">Zurückbringdatum und -zeit</label><br />
+                        <input class="end" type="date" id="end_date" name="end_date" required value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a enddate already present in session?
+                                                                                                            echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("Y-m-d");
+                                                                                                        } else {
+                                                                                                            echo date("Y-m-d", strtotime("next saturday"));
+                                                                                                        } ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" />
+                        <input class="end" type="time" id="end_time" name="end_time" required value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a endtime already present in session?
+                                                                                                            echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("H:i");
+                                                                                                        } else {
+                                                                                                            echo "19:00";
+                                                                                                        } ?>" min="12:00" />
+                        <?php if (!$endDate_isValid) { // Possible server-side validation violation?
+                            echo '<div class="invalid-feedback">' . $endDate_error . '</div>';
+                        }
+                        if (!$endTime_isValid) { // Possible server-side validation violation?
+                            echo '<div class="invalid-feedback">' . $endTime_error . '</div>';
+                        } ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-outline mb-5">
+                <label class="form-label" for="orderLocation">Bereitstellungsort</label><br />
+                <select id="orderLocation" name="orderLocation" required class="orderInfo">
+                    <?php
+                    foreach ($orderLocations as $location) { // Foreach orderLocation which was selected in DB earlier there will be an option
+                        $selected = "";
+                        if (isset($_SESSION['orderInfos']['orderLocation']) and $_SESSION['orderInfos']['orderLocation'] == $location['idOrderLocation']) { // Is one option already selected in session? Will be selected again
+                            $selected = "selected";
+                        }
+                        echo '<option value="' . $location['idOrderLocation'] . '" ' . $selected . '>' . $location['name'] . '</option>';
+                    }
+                    ?>
+                </select>
+                <?php if (!$orderLocation_isValid) { // Possible server-side validation violation?
+                    echo '<div class="invalid-feedback">' . $orderLocation_error . '</div>';
+                } ?>
+
+                <?php if (!$items_exist) { // Possible server-side validation violation?
+                    echo '<div class="invalid-feedback">' . $items_error . '</div>';
+                } ?>
+            </div>
+
+            <?php
+            if (isset($_SESSION['shoppingCart']) and is_array($_SESSION['shoppingCart']) and !empty($_SESSION['shoppingCart'])) { // Are there even items in shopping cart?
+                $shoppingCart = $_SESSION['shoppingCart'];
+                echo '<div class="row">';
+                foreach ($shoppingCart as $item) { // Every items will be displaced as listitem
+                    $query = "SELECT * FROM item WHERE idItem=?;";
+                    $stmt = $mysqli->prepare($query);
+                    $stmt->bind_param("s", $item['id']);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    if ($result->num_rows > 0) { // Is ID valid?
+                        $row = $result->fetch_assoc();
+                        echo '<div class="col-12">';
+                        //Add display of picture
+                        echo '<a href="detail.php?id=' . $row['idItem'] . '"><h4>' . $row['title'] . '</h4></a>';
+                        echo '<input name="id[]" type="hidden" value="' . $row['idItem'] . '"/>'; // Hidden input, so item-ID is present in post
+                        echo '<input id="' . $row["idItem"] . '" name="number[]" type="number" min="1" value="' . $item['count'] . '" aria-label="Search" class="form-control number float-left" style="width: 100px" required/>';
+                        if (isset($items) and is_array($items)) {
+                            foreach ($items as $item) {
+                                if ($item['id'] == $row['idItem'] and isset($item['msg'])) { // Display possible error from server-side validation
+                                    echo '<div class="invalid-feedback">' . $item['msg'] . '</div>';
+                                }
+                            }
+                        }
+                        echo '<button id="' . $row["idItem"] . '" class="float-right btn btn-danger btn-delete-padding"><span class="material-icons-outlined">delete</span></button>';
+                        echo '</div>';
                     }
                 }
-                echo '<button id="' . $row["idItem"] . '" class="remove">Löschen</button>';
-                echo '</li>';
+                echo '</div>';
+            } else {
+                //TODO: Nice view of no Items
+                echo "Noch keine Dinge im Warenkorb";
             }
-        }
-        echo '</ul>';
-    } else {
-        //TODO: Nice view of no Items
-        echo "Noch keine Dinge im Warenkorb";
-    }
-    ?>
-    <button type="submit" id="shoppingcart-submit" class="btn btn-primary btn-block mt-5" <?php if (!isset($shoppingCart)) { // Disable button when there are no items
-                                                                                                echo "disabled";
-                                                                                            }  ?>>
-        Bestellung abschicken
-    </button>
+            ?>
 
-</form>
+            <!-- Submit button -->
+            <button type="submit" id="shoppingcart-submit" class="btn btn-primary btn-block mt-5" <?php if (!isset($shoppingCart)) { // Disable button when there are no items
+                                                                                                        echo "disabled";
+                                                                                                    }  ?>>
+                Bestellung abschicken
+            </button>
+        </form>
+    </div>
+</div>
 
 <script>
     async function callHandler(formData) { // Function which calls php-handler

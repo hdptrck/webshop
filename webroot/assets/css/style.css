@@ -17,3 +17,7 @@
 .mb-55 {
     margin-bottom: 3.5rem!important;
 }
+
+.btn-delete-padding {
+  padding: .375rem .75rem!important;
+}
