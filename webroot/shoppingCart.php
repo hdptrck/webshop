@@ -213,9 +213,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 <?php
 $siteName = "Warenkorb";
-
-// TODO: Implement shopping cart
-$numberOfItems = 2;
 include("./includes/header.inc.php");
 ?>
 

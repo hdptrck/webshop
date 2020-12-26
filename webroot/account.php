@@ -77,9 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $siteName = "Konto";
-
-// TODO: Implement shopping cart
-$numberOfItems = 2;
 include("./includes/header.inc.php");
 
 ?>

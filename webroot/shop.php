@@ -18,15 +18,11 @@ while ($row = $result->fetch_assoc()) {
     $items[] = $row;
 }
 
-$scriptName2 = $_SERVER['SCRIPT_NAME'];
 ?>
 
 
 <?php
 $siteName = "Shop";
-
-// TODO: Implement shopping cart
-$numberOfItems = 2;
 include("./includes/header.inc.php");
 
 ?>
