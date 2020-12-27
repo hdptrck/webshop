@@ -30,7 +30,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" and isset($_POST["number"])) {
         $shoppingCart = $_SESSION["shoppingCart"];
     }
     $order = array("count" => $_POST["number"], "id" => $_GET["id"]);
-    $shoppingCart[] = $order;
+    $affected_entry = null;
+    foreach ($shoppingCart as &$entry) {
+        if ($entry['id'] == $order['id']) {
+            $affected_entry = &$entry;
+            break;
+        }
+    }
+
+    if ($affected_entry != null) {
+        $affected_entry['count'] = $affected_entry['count'] + $order['count'];
+    } else {
+        $shoppingCart[] = $order;
+    }
     $_SESSION["shoppingCart"] = $shoppingCart;
 }
 
