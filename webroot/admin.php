@@ -1,38 +1,9 @@
 <?php
 require("includes/autoLoad.php");
-
-// Session temporarly deactivated for development
 require("includes/sessionChecker.php");
 
 $orders = [];
 // Get all Items from Database
-
-if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
-    $id = preg_replace('#[^0-9]#i', "", $_GET['id']);
-    
-    if (isset($_GET["isReady"]) && !empty(trim($_GET["isReady"])) && $_GET["isReady"] == true) {
-        $query = "UPDATE tbl_order SET isReady = 1 WHERE idOrder = ?;";
-        $updatestmt = $mysqli->prepare($query);
-        $updatestmt->bind_param("i", $id);
-        $updatestmt->execute();
-
-        if (!$updatestmt->affected_rows) {
-            header('Location: /404.html');
-            die();
-        }
-    } else if (isset($_GET["isReturned"]) && !empty(trim($_GET["isReturned"])) && $_GET["isReturned"] == true) {
-        $query = "UPDATE tbl_order SET isReturned = 1 WHERE idOrder = ?;";
-        $updatestmt = $mysqli->prepare($query);
-        $updatestmt->bind_param("i", $id);
-        $updatestmt->execute();
-
-        if (!$updatestmt->affected_rows) {
-            header('Location: /404.html');
-            die();
-        }
-    }
-}
-
 
 $stmt = "SELECT * FROM tbl_order 
             LEFT JOIN webshopuser ON tbl_order.webShopUser_idWebShopUser = webShopUser.idWebshopUser
@@ -63,15 +34,20 @@ include("./includes/header.inc.php");
             <div class="card" data-ripple-color="light">
                 <div class="card-body">
                     <?php
-                    echo '<a href="orderDetail.php?id=' . $order['idOrder'] . '"><h5 class="card-title">' . $order['eventName'] . '</h5></a>';
+                    echo '<h5 class="card-title">' . $order['eventName'] . '</h5>';
                     echo '<p class="card-text">' . $order['email'] . '</p>';
                     echo '<p>Abholdatum: ' . $order['pickUpDatetime'] . '<br>';
                     echo 'Zurückbringdatum: ' . $order['returnDatetime'] . '</p>';
-                    echo '<a href="admin.php?id=' . $order['idOrder'] . '&';
+                    echo '<button class="btn btn-info mb-3">Details anzeigen</button>';
+                    echo '<div>
+                     
+                        </div>';
+
+                    echo '<button class="order-event btn btn-primary btn-block" data-order-id="' . $order['idOrder'] . '" data-order-action="';
                     if ($order['isReady'] == 0) {
-                        echo 'isReady=true" class="btn btn-primary btn-block">Bestellung bereitgestellen</a>';
+                        echo 'isReady">Bestellung bereitgestellen</button>';
                     } else {
-                        echo 'isReturned=true" class="btn btn-primary btn-block">Bestellung zurückgegeben</a>';
+                        echo 'isReturned">Bestellung zurückgegeben</button>';
                     }
                     ?>
                 </div>
@@ -86,7 +62,27 @@ include("./includes/header.inc.php");
 </div>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
+<script>
+    const orderActionItemList = document.querySelectorAll('.order-event');
 
+    const orderAction = event => {
+        const clickedItem = event.target;
+        fetch('adminOrderHandler.php?orderId=' + clickedItem.dataset.orderId + '&orderAction=' + clickedItem.dataset.orderAction)
+            .then(res => {
+                return res.json();
+            }).then(res => {
+                if (res.code != 200) {
+                    alert(res.description);
+                } else {
+                    location.reload();
+                }
+            });
+    };
+
+    orderActionItemList.forEach(item => {
+        item.addEventListener('click', orderAction);
+    });
+</script>
 </body>
 
 </html>
