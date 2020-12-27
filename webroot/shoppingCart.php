@@ -342,7 +342,7 @@ include("./includes/header.inc.php");
                                 }
                             }
                         }
-                        echo '<button id="' . $row["idItem"] . '" class="float-right btn btn-danger btn-delete-padding"><span class="material-icons-outlined">delete</span></button>';
+                        echo '<button id="' . $row["idItem"] . '" class="remove float-right btn btn-danger btn-delete-padding"><span class="material-icons-outlined">delete</span></button>';
                         echo '</div>';
                     }
                 }
