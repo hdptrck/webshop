@@ -59,11 +59,23 @@ include("./includes/header.inc.php");
     <div class="col-md-6 mb-4">
 
         <!--Content-->
-        <div class="p-4">
-            <p class="lead">
-                <span>
+        <div class="pl-md-4">
+            <p class="lead clearfix">
+                <span class="float-left">
                     <?php echo $item['count']; ?>
                     Stück an Lager
+                </span>
+                <span class="float-right">
+                    <a href="#" class="text-primary">
+                        <span class="material-icons-outlined">
+                            create
+                        </span>
+                    </a>
+                    <a href="#" class="text-danger">
+                        <span class="material-icons-outlined">
+                            delete
+                        </span>
+                    </a>
                 </span>
             </p>
 
