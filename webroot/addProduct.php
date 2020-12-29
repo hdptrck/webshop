@@ -1,6 +1,7 @@
 <?php
 require("./includes/autoLoad.php");
 require("includes/sessionChecker.php");
+require("includes/adminChecker.php");
 
 $error = $message = "";
 $login_success = true;

@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("si", $password, $_SESSION["userId"]);
             $stmt->execute();
-            $result = $stmt->get_result();
+            
             if ($stmt->affected_rows) {
                 $message = "Das Passwort wurde erfolgreich geändert";
                 unset($_POST['password']);

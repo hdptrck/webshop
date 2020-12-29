@@ -1,6 +1,7 @@
 <?php
 require("includes/autoLoad.php");
 require("includes/sessionChecker.php");
+require("includes/adminChecker.php");
 require("includes/class/Response.php");
 
 $response = new Response();

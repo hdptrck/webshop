@@ -7,7 +7,7 @@ require("includes/sessionChecker.php");
 $items = [];
 
 // Get all Items from Database
-$stmt = "SELECT * FROM item;";
+$stmt = "SELECT * FROM item WHERE isActive = 1;";
 if (!$result = $mysqli->query($stmt)) {
     echo "Oops! Something went wrong. Please try again later.";
     return false;

@@ -1,6 +1,7 @@
 <?php
 require("includes/autoLoad.php");
 require("includes/sessionChecker.php");
+require("includes/adminChecker.php");
 
 $orders = [];
 // Get all Items from Database
@@ -116,7 +117,7 @@ include("./includes/header.inc.php");
                 nextSibling.style.display = "none";
                 break;
         }
-    }
+    };
 
     const orderAction = event => {
         const clickedItem = event.target;

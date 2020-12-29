@@ -20,7 +20,7 @@ $pages = [
 /*
     TODO Admin Priv
 */
-if ($_SESSION['userRole'] == 0) {
+if ($_SESSION['userRole'] == 1) {
     $pages[] = [
         'fileName' => 'addProduct.php',
         'displayText' => 'Produkt hinzufügen',
