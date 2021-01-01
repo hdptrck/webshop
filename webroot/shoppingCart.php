@@ -218,7 +218,7 @@ include("./includes/header.inc.php");
 ?>
 
 <div class="row justify-content-center">
-    <div class="col-lg-6 col-md-7 col-sm-10 col-12">
+    <div class="col-lg-8 col-md-10 col-sm-10 col-12">
         <form method="post">
             <div class="form-outline mb-5">
                 <input type="text" id="eventName" name="eventName" maxlength="45" class="orderInfo form-control" required <?php
@@ -247,57 +247,72 @@ include("./includes/header.inc.php");
             </div>
 
             <div class="row mb-5">
-                <div class="col">
-                    <div class="form-outline">
-                        <label class="form-label" for="start_date">Abholdatum und -zeit</label><br />
-                        <input class="start" type="date" id="start_date" name="start_date" required value="<?php
-                                                                                                            if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a startdate already present in session?
-                                                                                                                echo (DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("Y-m-d"));
-                                                                                                            } else {
-                                                                                                                echo date("Y-m-d", strtotime("next saturday"));
-                                                                                                            }
-                                                                                                            ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" />
-                        <input class="start" type="time" id="start_time" name="start_time" value="<?php if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a starttime already present in session?
-                                                                                                        echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("H:i");
-                                                                                                    } else {
-                                                                                                        echo "12:00";
-                                                                                                    } ?>" required /><br />
-                        <?php if (!$startDate_isValid) { // Possible server-side validation violation?
-                            echo '<div class="invalid-feedback">' . $startDate_error . '</div>';
-                        }
-                        if (!$startTime_isValid) { // Possible server-side validation violation?
-                            echo '<div class="invalid-feedback">' . $startTime_error . '</div>';
-                        } ?>
+                <div class="col-md-6 col-12">
+                    <label class="form-label" for="start_date">Abholdatum und -zeit</label>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-outline">
+                                <input class="start form-control" type="date" id="start_date" name="start_date" required value="<?php
+                                                                                                                                if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a startdate already present in session?
+                                                                                                                                    echo (DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("Y-m-d"));
+                                                                                                                                } else {
+                                                                                                                                    echo date("Y-m-d", strtotime("next saturday"));
+                                                                                                                                }
+                                                                                                                                ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                <input class="start form-control" type="time" id="start_time" name="start_time" value="<?php if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a starttime already present in session?
+                                                                                                                            echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("H:i");
+                                                                                                                        } else {
+                                                                                                                            echo "12:00";
+                                                                                                                        } ?>" required />
+                                <?php if (!$startDate_isValid) { // Possible server-side validation violation?
+                                    echo '<div class="invalid-feedback">' . $startDate_error . '</div>';
+                                }
+                                if (!$startTime_isValid) { // Possible server-side validation violation?
+                                    echo '<div class="invalid-feedback">' . $startTime_error . '</div>';
+                                } ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="col">
-                    <div class="form-outline">
-                        <label class="form-label" for="end_date">Zurückbringdatum und -zeit</label><br />
-                        <input class="end" type="date" id="end_date" name="end_date" required value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a enddate already present in session?
-                                                                                                            echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("Y-m-d");
-                                                                                                        } else {
-                                                                                                            echo date("Y-m-d", strtotime("next saturday"));
-                                                                                                        } ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" />
-                        <input class="end" type="time" id="end_time" name="end_time" required value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a endtime already present in session?
-                                                                                                            echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("H:i");
-                                                                                                        } else {
-                                                                                                            echo "19:00";
-                                                                                                        } ?>" min="12:00" />
-                        <?php if (!$endDate_isValid) { // Possible server-side validation violation?
-                            echo '<div class="invalid-feedback">' . $endDate_error . '</div>';
-                        }
-                        if (!$endTime_isValid) { // Possible server-side validation violation?
-                            echo '<div class="invalid-feedback">' . $endTime_error . '</div>';
-                        } ?>
+                <div class="col-md-6 col-12 mt-md-0 mt-3">
+                    <label class="form-label" for="end_date">Zurückbringdatum und -zeit</label>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-outline">
+                                <input class="end form-control" type="date" id="end_date" name="end_date" required value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a enddate already present in session?
+                                                                                                                                echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("Y-m-d");
+                                                                                                                            } else {
+                                                                                                                                echo date("Y-m-d", strtotime("next saturday"));
+                                                                                                                            } ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                <input class="end form-control" type="time" id="end_time" name="end_time" required value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a endtime already present in session?
+                                                                                                                                echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("H:i");
+                                                                                                                            } else {
+                                                                                                                                echo "19:00";
+                                                                                                                            } ?>" min="12:00" />
+                                <?php if (!$endDate_isValid) { // Possible server-side validation violation?
+                                    echo '<div class="invalid-feedback">' . $endDate_error . '</div>';
+                                }
+                                if (!$endTime_isValid) { // Possible server-side validation violation?
+                                    echo '<div class="invalid-feedback">' . $endTime_error . '</div>';
+                                } ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
+            <label class="form-label" for="orderLocation">Bereitstellungsort</label><br />
             <div class="form-outline mb-5">
-                <label class="form-label" for="orderLocation">Bereitstellungsort</label><br />
-                <select id="orderLocation" name="orderLocation" required class="orderInfo">
-                <option value="">Auswählen...</option>
+                <select id="orderLocation" name="orderLocation" required class="orderInfo form-control">
+                    <option value="">Auswählen...</option>
                     <?php
                     foreach ($orderLocations as $location) { // Foreach orderLocation which was selected in DB earlier there will be an option
                         $selected = "";
