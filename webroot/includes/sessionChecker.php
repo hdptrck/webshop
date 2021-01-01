@@ -1,12 +1,12 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["userId"])) {
+if (!isset($_SESSION["userId"])) { // If session variable is not present it is a new session
     $login = realpath(__DIR__ . "/../login.php");
     $me = debug_backtrace()[0]["file"];
     $forward = getRelativePath($me, $login);
     $back = getRelativePath($login, $me);
-    header("Location: " . $forward . "?target=" . $back);
+    header("Location: " . $forward . "?target=" . $back); // Send user to login.php and tell login.php where he came from
     exit();
 }
 

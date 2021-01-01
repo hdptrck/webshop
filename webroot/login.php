@@ -9,27 +9,27 @@ $login_success = true;
 
 session_start();
 
+
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    if (isset($_GET["reason"])) {
+    if (isset($_GET["reason"])) { //resetPassword.php redirects to this page, in this case a message will be shown
         switch ($_GET["reason"]) {
             case "resetsuccessful":
                 $message = "Das Zurücksetzen des Passworts war erfolgreich. Bitte melde Dich an.";
         }
     }
-    $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : '';
-    if (isset($_SESSION["userId"])) {
+    $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : ''; // Is there a rememberMe Cookie
+    if (isset($_SESSION["userId"])) { // Is Session already present?
         redirectToRequestedPage();
-    } elseif ($cookie) {
+    } elseif ($cookie) { // RememberMe Cookie is present
         list($user, $token, $mac) = explode(':', $cookie);
-        if (hash_equals(hash_hmac('sha256', $user . ':' . $token, $privateKey), $mac)) {
-            $query = "SELECT rememberMeToken.token, rememberMeToken.expire, webShopUser.* FROM rememberMeToken INNER JOIN webShopUser ON webShopUser.idWebShopUser=rememberMeToken.webShopUser_idWebShopUser AND webShopUser.userToken=?;";
-            echo $mysqli->error;;
+        if (hash_equals(hash_hmac('sha256', $user . ':' . $token, $privateKey), $mac)) { // Cookie wasn't modified ($privateKey is from pw.inc.php)
+            $query = "SELECT rememberMeToken.token, rememberMeToken.expire, webShopUser.* FROM rememberMeToken INNER JOIN webShopUser ON webShopUser.idWebShopUser=rememberMeToken.webShopUser_idWebShopUser AND webShopUser.userToken=?;"; //Select all rememberMe Tokens from user in DB
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("s", $user);
             $stmt->execute();
             $result = $stmt->get_result();
 
-            if ($result->num_rows) { //User exists
+            if ($result->num_rows) { //User has tokens
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach ($rows as $row) { //Goes over all tokens which user has
@@ -64,7 +64,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $password_isset = false;
         }
     } else {
-        echo "hi";
         $password_isset = false;
     }
 
@@ -131,6 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
 }
 
+//Create a Session
 function createSession($row)
 {
     $_SESSION["userId"] = $row["idWebShopUser"];
@@ -138,6 +138,7 @@ function createSession($row)
     session_regenerate_id(true);
 }
 
+// If possible send user back from where he came from
 function redirectToRequestedPage()
 {
     if (isset($_REQUEST["target"])) {
@@ -155,7 +156,7 @@ function redirectToRequestedPage()
 <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Content">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
     <title>Anmelden</title>
 
     <!-- Font Awesome -->
@@ -249,7 +250,7 @@ function redirectToRequestedPage()
         </div>
     </div>
     <!-- MDB -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
 </body>
 
 </html>

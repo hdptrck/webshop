@@ -297,6 +297,7 @@ include("./includes/header.inc.php");
             <div class="form-outline mb-5">
                 <label class="form-label" for="orderLocation">Bereitstellungsort</label><br />
                 <select id="orderLocation" name="orderLocation" required class="orderInfo">
+                <option value="">Auswählen...</option>
                     <?php
                     foreach ($orderLocations as $location) { // Foreach orderLocation which was selected in DB earlier there will be an option
                         $selected = "";
@@ -320,7 +321,7 @@ include("./includes/header.inc.php");
             if (isset($_SESSION['shoppingCart']) and is_array($_SESSION['shoppingCart']) and !empty($_SESSION['shoppingCart'])) { // Are there even items in shopping cart?
                 $shoppingCart = $_SESSION['shoppingCart'];
                 echo '<div class="row">';
-                foreach ($shoppingCart as $item) { // Every items will be displaced as listitem
+                foreach ($shoppingCart as $item) { // Every items will be displayed as listitem
                     $query = "SELECT * FROM item WHERE idItem=?;";
                     $stmt = $mysqli->prepare($query);
                     $stmt->bind_param("s", $item['id']);
@@ -329,10 +330,10 @@ include("./includes/header.inc.php");
                     if ($result->num_rows > 0) { // Is ID valid?
                         $row = $result->fetch_assoc();
                         echo '<div class="col-12">';
-                        //Add display of picture
+                        //TODO:Add display of picture
                         echo '<a href="detail.php?id=' . $row['idItem'] . '"><h4>' . $row['title'] . '</h4></a>';
-                        echo '<input name="id[]" type="hidden" value="' . $row['idItem'] . '"/>'; // Hidden input, so item-ID is present in post
-                        echo '<input id="' . $row["idItem"] . '" name="number[]" type="number" min="1" value="' . $item['count'] . '" aria-label="Search" class="form-control number float-left" style="width: 100px" required/>';
+                        echo '<input name="id[]" type="hidden" value="' . $row['idItem'] . '" class="hidden"/>'; // Hidden input, so item-ID is present in post
+                        echo '<input name="number[]" type="number" min="1" value="' . $item['count'] . '" aria-label="Search" class="number form-control float-left" style="width: 100px" required/>';
                         if (isset($items) and is_array($items)) {
                             foreach ($items as $item) {
                                 if ($item['id'] == $row['idItem'] and isset($item['msg'])) { // Display possible error from server-side validation
@@ -468,9 +469,12 @@ include("./includes/header.inc.php");
     let numbers = document.getElementsByClassName("number"); // All number input-fields
     Array.prototype.forEach.call(numbers, function(number) {
         number.addEventListener("change", async function(e) { // Count changed
+
+            ids = e.currentTarget.parentNode.getElementsByClassName("hidden");
+
             let formData = new FormData();
             formData.append('action', "changeCount");
-            formData.append('id', e.currentTarget.id);
+            formData.append('id', ids[0].value);
             formData.append('count', e.currentTarget.value);
             feedback = await callHandler(formData); // Inform backend and wait for feedback
 

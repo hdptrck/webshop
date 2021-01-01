@@ -111,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password_error = "Bitte gib ein Password ein";
     }
 
-    if ($firstname_isValid && $lastname_isValid && $email_isValid && $password_isValid && $password_repeat_isValid) { // Everything is valid
+    if ($firstname_isValid && $lastname_isValid && $email_isValid && $password_isValid && $password_repeat_isValid) { // Everything is valid so write ne user in DB
         $password = password_hash($password, PASSWORD_DEFAULT); // Generate PW hash
 
         do {
@@ -145,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Content">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
     <title>Registrieren</title>
 
     <!-- Font Awesome -->
@@ -274,12 +274,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <a href="login.php" class="btn btn-outline-primary btn-block">
                             Anmelden
                         </a>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
     <!-- MDB -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
 </body>
 
 </html>

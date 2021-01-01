@@ -15,6 +15,7 @@ $success = false;
 $error_message = "";
 $message = "";
 
+// resetPassword.php redirects sometimes to this page. In this case one of the following reasons will be shown
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (isset($_GET["reason"])) {
         switch ($_GET["reason"]) {
@@ -72,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     $stmt->execute();
 
                     //Create mail content
-                    $link = "localhost/reset_password.php?token=" . $token;
+                    $link = "localhost/resetPassword.php?token=" . $token;
                     $output = "<p><a href=\"" . $link . "\">Zurücksetzen</a></p>";
                     $body = $output;
                     $subject = "Passwort zurücksetzen";
@@ -124,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Content">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
     <title>Passwort vergessen</title>
 
     <!-- Font Awesome -->
@@ -160,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         if ($success) {
                             echo '<div class="note note-success mb-4">Wenn uns diese E-Mail-Adresse bekannt ist, so haben wir Dir soeben eine Nachricht mit weiteren Anweisungen geschickt.</div>';
                         } else {
-                            echo '<div class="note note-danger mb-4"' . $error_message . '</div>';
+                            echo '<div class="note note-danger mb-4">' . $error_message . '</div>';
                         }
                     }
                     ?>
@@ -174,7 +175,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         </div>
     </div>
     <!-- MDB -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
 </body>
 
 </html>

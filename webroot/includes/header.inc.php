@@ -89,7 +89,7 @@ foreach ($pages as $index => $page) {
 
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle hidden-arrow" href="shoppingCart.php" id="navbarDropdownMenuLink" role="button">
+                        <a class="nav-link dropdown-toggle hidden-arrow" href="shoppingCart.php" role="button">
                             <span class="material-icons-outlined">
                                 shopping_bag
                             </span>

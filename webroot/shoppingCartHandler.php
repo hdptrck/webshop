@@ -74,6 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") { // Should only be called as post
                 }
         }
     }
-} else {
+} else { // If it was not called as POST
     header("Location: shoppingCart.php");
 }

@@ -59,7 +59,7 @@ include("./includes/header.inc.php");
     <div class="col-md-6 mb-4">
 
         <?php
-        echo '<img class="img-fluid" src="';
+        echo '<img class="img-fluid" alt="Produktbild" src="';
         echo ($item['thumb'] == null) ? './img/products/1.jpg' : $item['picture'];
         echo '" />';
         ?>
@@ -110,7 +110,6 @@ include("./includes/header.inc.php");
 
         </div>
     </div>
-</div>
 </div>
 
 <script>

@@ -1,3 +1,4 @@
+    </div>
 </main>
 <!--Footer-->
 <footer class="page-footer text-center font-small mt-4 fadeIn">
@@ -10,7 +11,7 @@
     </div>
 
 </footer>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
 
 </body>
 

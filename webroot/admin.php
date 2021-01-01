@@ -102,8 +102,9 @@ include("./includes/header.inc.php");
 
 </div>
 </div>
+</main>
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
 <script>
     const orderActionItemList = document.querySelectorAll('.order-event');
 

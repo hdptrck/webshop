@@ -5,6 +5,7 @@ $password_isValid = true;
 $password_error = "";
 $password_repeat_isValid = true;
 $password_repeat_error = "";
+$reset_successful = true;
 
 if (isset($_GET["token"])) {
     $token = $_GET["token"];
@@ -93,7 +94,7 @@ if (isset($_GET["token"])) {
 <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Content">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
     <title>Passwort zurücksetzen</title>
 
     <!-- Font Awesome -->
@@ -111,7 +112,7 @@ if (isset($_GET["token"])) {
         <div class="row justify-content-center align-items-center h-100-vh">
             <div class="col-lg-5 col-md-7 col-sm-10 col-12">
                 <h1 class="text-center mb-5">Passwort zurücksetzen</h1>
-                <p class="text-center mb-5">Setze nun ein neues Passwort. Anschliessend wirst du zur Anmelde-Seite weitergeleitet.</p>
+                <p class="text-center mb-5">Setze nun ein neues Passwort. Anschliessend wirst du zur Login-Seite weitergeleitet.</p>
                 <?php
                 if (!$reset_successful) {
                     echo '<div class="invalid-feedback"> Das Zurücksetzen war nicht erfolgreich, bitte versuche es später erneut. </div>';
@@ -160,7 +161,7 @@ if (isset($_GET["token"])) {
         </div>
     </div>
     <!-- MDB -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
 </body>
 
 </html>

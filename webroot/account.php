@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("si", $password, $_SESSION["userId"]);
             $stmt->execute();
-            
+
             if ($stmt->affected_rows) {
                 $message = "Das Passwort wurde erfolgreich geändert";
                 unset($_POST['password']);
@@ -119,7 +119,7 @@ include("./includes/header.inc.php");
                         } ?>" value="<?php if (isset($_POST["password"])) {
                                             echo $_POST["password"];
                                         } ?>" />
-                    <label class="form-label" for="password">Password</label>
+                    <label class="form-label" for="password">Altes Passwort</label>
                     <?php
                     if (!$password_isValid) {
                         echo '<div class="invalid-feedback">' . $password_error . '</div>';
@@ -135,7 +135,7 @@ include("./includes/header.inc.php");
                     } ?>" value="<?php if (isset($_POST["new-password"])) {
                                         echo $_POST["new-password"];
                                     } ?>" />
-                    <label class="form-label" for="new-password">Passwort</label>
+                    <label class="form-label" for="new-password">Neues Passwort</label>
                     <?php
                     if (!$newPassword_isValid) {
                         echo '<div class="invalid-feedback">' .
@@ -153,7 +153,7 @@ include("./includes/header.inc.php");
                     } ?>" value="<?php if (isset($_POST["new-password-confirm"])) {
                                         echo $_POST["new-password-confirm"];
                                     } ?>" />
-                    <label class="form-label" for="new-password-confirm">Passwort wiederholen</label>
+                    <label class="form-label" for="new-password-confirm">Neues Passwort wiederholen</label>
                     <?php
                     if (!$newPasswordConfirm_isValid) {
                         echo '<div class="invalid-feedback">' .
@@ -168,12 +168,14 @@ include("./includes/header.inc.php");
                 <button type="submit" id="register-submit" class="btn btn-primary btn-block mt-5">
                     Passwort ändern
                 </button>
+            </div>
         </form>
     </div>
 </div>
 </div>
+</main>
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
 
 </body>
 

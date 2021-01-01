@@ -406,7 +406,7 @@ include("./includes/header.inc.php");
             </div>
 
             <div class="form-outline mb-5">
-                <textarea type="text" id="description" name="description" rows="4" maxlength="512" class="form-control
+                <textarea id="description" name="description" rows="4" maxlength="512" class="form-control
                 <?php if (!$description_isValid) {
                     echo "is-invalid";
                 } ?>
