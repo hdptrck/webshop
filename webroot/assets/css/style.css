@@ -19,9 +19,13 @@
 }
 
 .btn-delete-padding {
-  padding: .375rem .75rem!important;
+    padding: .375rem .75rem!important;
 }
 
 .clickable-icon {
     cursor: pointer;
-  }
+}
+
+.unset-width {
+    width: auto!important;
+}

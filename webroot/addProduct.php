@@ -22,7 +22,7 @@ $maxImageSize = 1000;
 // maximale Thumnailbreite
 $maxTumbSize = 250;
 
-$userfile = '';
+$fileUpload = '';
 $imageType = '';
 $nextId;
 
@@ -101,17 +101,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // echo '</pre>';
 
         /*
-         * $_Files['userfile']['name'] = ursprüngliche Dateiname beim Benutzer
-         * $_Files['userfile']['type'] = MIME-Type des hochgeladenen Datei 
-         * $_FILES['userfile']['tmp_name'] = temprärer Pfad und Dateiname auf Server
-         * $_FILES['userfile']['error'] = Fehlercode -> http://php.net/manual/de/features.file-upload.errors.php
-         * $_FILES['userfile']['size'] = Grösse der Datei in Bytes
+         * $_Files['fileUpload']['name'] = ursprüngliche Dateiname beim Benutzer
+         * $_Files['fileUpload']['type'] = MIME-Type des hochgeladenen Datei 
+         * $_FILES['fileUpload']['tmp_name'] = temprärer Pfad und Dateiname auf Server
+         * $_FILES['fileUpload']['error'] = Fehlercode -> http://php.net/manual/de/features.file-upload.errors.php
+         * $_FILES['fileUpload']['size'] = Grösse der Datei in Bytes
         */
 
         // sind Fehler aufgetreten?
-        if ($_FILES['userfile']['error'] != 0) {
+        if ($_FILES['fileUpload']['error'] != 0) {
             // switch case über die Fehlernummer
-            switch ($_FILES['userfile']['error']) {
+            switch ($_FILES['fileUpload']['error']) {
                 case 1:
                     $error .= "Die hochgeladene Datei überschreitet die in der Anweisung upload_max_filesize in php.ini festgelegte Größe.<br />";
                     break;
@@ -141,28 +141,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // kein fehler
         } elseif ($hasImage) {
             //check filetype
-            if (exif_imagetype($_FILES['userfile']['tmp_name']) == IMAGETYPE_GIF) {
+            if (exif_imagetype($_FILES['fileUpload']['tmp_name']) == IMAGETYPE_GIF) {
                 $imageType = 'gif';
-            } elseif (exif_imagetype($_FILES['userfile']['tmp_name']) == IMAGETYPE_JPEG) {
+            } elseif (exif_imagetype($_FILES['fileUpload']['tmp_name']) == IMAGETYPE_JPEG) {
                 $imageType = 'jpg';
-            } elseif (exif_imagetype($_FILES['userfile']['tmp_name']) == IMAGETYPE_PNG) {
+            } elseif (exif_imagetype($_FILES['fileUpload']['tmp_name']) == IMAGETYPE_PNG) {
                 $imageType = 'png';
             } else {
                 $error .= "Filetype muss GIF / JPEG / PNG sein.<br />";
             }
 
             // check file weight
-            if (filesize($_FILES['userfile']['tmp_name']) > $maxFileSize) {
+            if (filesize($_FILES['fileUpload']['tmp_name']) > $maxFileSize) {
                 $error .= "Die Datei ist grösser als 1MB.<br />";
             }
 
             // check file weight
-            if (($_FILES['userfile']['size']) > $maxFileSize) {
+            if (($_FILES['fileUpload']['size']) > $maxFileSize) {
                 $error .= "Die Datei ist grösser als 3MB.<br />";
             }
 
             // check file size
-            list($width, $height, $type, $attr) = getimagesize($_FILES['userfile']['tmp_name']);
+            list($width, $height, $type, $attr) = getimagesize($_FILES['fileUpload']['tmp_name']);
             if ($width < $maxImageSize) {
                 if ($height < $maxImageSize) {
                     $error .= "Die Datei zu klein. Wählen Sie eine Datei mit mindestens 1000px in Höhe oder Breite.<br />";
@@ -183,7 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $nextId = $data['Auto_increment'];
 
                 // original Filename
-                $fileName = pathinfo($_FILES['userfile']['name'])['extension'];
+                $fileName = pathinfo($_FILES['fileUpload']['name'])['extension'];
 
                 // zusammensetzten von Pfad und Filename
                 $uploadFile = $uploadDirectory . $nextId . '.' . $fileName;
@@ -195,7 +195,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $thumbFile = $thumbDirectory . $nextId . '.' . $fileName;
 
                 //verschiebt die temporäre Datei an den richtigen Ort
-                if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadFile)) {
+                if (move_uploaded_file($_FILES['fileUpload']['tmp_name'], $uploadFile)) {
 
                     // gd image objekt erstellen
                     switch ($imageType) {
@@ -299,7 +299,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $count = trim(preg_replace('#[^0-9]#i', "", $_POST["count"]));
         $title = htmlspecialchars(trim(($_POST["title"])));
         $description = htmlspecialchars(trim($_POST["description"]));
-        if (empty($_FILES["userfile"]) || !isset($_FILES["userfile"]) && !$hasSamePicturePath) {
+        if (empty($_FILES["fileUpload"]) || !isset($_FILES["fileUpload"]) && !$hasSamePicturePath) {
             $imagePath = "/img/products/1.jpg";
         } elseif ($hasSamePicturePath) {
             $imagePath = $samePicturePath;
@@ -307,7 +307,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $imagePath = $imageFile;
         }
 
-        if (empty($_FILES["userfile"]) || !isset($_FILES["userfile"]) && !$hasSameThumbPath) {
+        if (empty($_FILES["fileUpload"]) || !isset($_FILES["fileUpload"]) && !$hasSameThumbPath) {
             $thumbPath = "/img/products/1.jpg";
         } elseif ($hasSameThumbPath) {
             $thumbPath = $sameThumbPath;
@@ -380,9 +380,9 @@ include("./includes/header.inc.php");
         <form enctype="multipart/form-data" method="post">
             <div class="form-file mb-5">
                 <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxFileSize ?>" />
-                <input type="file" class="form-file-input" id="userfile" name="userfile" accept="image/*" />
-                <label class="form-file-label" for="userfile">
-                    <span class="form-file-text">Bild hinzufügen...</span>
+                <input type="file" class="form-file-input" id="fileUpload" name="fileUpload" accept="image/*" />
+                <label class="form-file-label" for="fileUpload">
+                    <span id="fileUploadLabel" class="form-file-text">Bild hinzufügen...</span>
                     <span class="form-file-button">Browse</span>
                 </label>
             </div>
@@ -411,8 +411,8 @@ include("./includes/header.inc.php");
                     echo "is-invalid";
                 } ?>
                 "><?php if (isset($_POST["description"])) {
-                    echo $_POST["description"];
-                } ?></textarea>
+                        echo $_POST["description"];
+                    } ?></textarea>
                 <label class="form-label" for="description">Beschreibung</label>
                 <?php
                 if (!$description_isValid) {
@@ -450,6 +450,19 @@ include("./includes/header.inc.php");
         </form>
     </div>
 </div>
+
+<script>
+    const inputFileUpload = document.getElementById('fileUpload');
+    const labelFileUpload = document.getElementById('fileUploadLabel');
+
+    const showFileName = (event) => {
+        let inputFileUpload = event.srcElement;
+        let fileName = inputFileUpload.files[0].name;
+        labelFileUpload.innerText = fileName;
+    }
+
+    inputFileUpload.addEventListener('change', showFileName);
+</script>
 
 <?php
 include("./includes/footer.inc.php");
