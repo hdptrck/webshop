@@ -10,7 +10,7 @@ INSERT INTO webShopUser (userToken, firstname, lastname, email, password, role_i
 		'Test',
 		'Tester',
 		'a@a.a',
-		'$2y$10$AXNhJXjrubMu0/exfRQCz.jbKG7EfpR9Y8laPjXbXyJRIoZo25Yf2', 0);
+		'$2y$10$AXNhJXjrubMu0/exfRQCz.jbKG7EfpR9Y8laPjXbXyJRIoZo25Yf2', 1);
 
 -- -----------------------------------------------------
 -- Products

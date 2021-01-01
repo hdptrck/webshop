@@ -1,6 +1,7 @@
 <?php
 require("./includes/autoLoad.php");
 require("includes/sessionChecker.php");
+require("includes/adminChecker.php");
 
 $error = $message = "";
 $login_success = true;
@@ -25,6 +26,44 @@ $userfile = '';
 $imageType = '';
 $nextId;
 
+$imageFile = $thumbFile = '';
+
+$isUpdate = false;
+$isUpdateId = "";
+$hasImage = true;
+$hasSamePicturePath = false;
+$samePicturePath = "";
+$hasSameThumbPath = false;
+$sameThumbPath = "";
+$item = [];
+
+
+if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
+    $isUpdateId = preg_replace('#[^0-9]#i', "", $_GET['id']);
+    $isUpdateQuery = "SELECT * FROM item WHERE idItem = ?;";
+    $isUpdateStmt = $mysqli->prepare($isUpdateQuery);
+    $isUpdateStmt->bind_param("i", $isUpdateId);
+    $isUpdateStmt->execute();
+    $result = $isUpdateStmt->get_result();
+
+    if ($result->num_rows) {
+        $isUpdate = true;
+    }
+
+    if ($isUpdate) {
+        $item = $result->fetch_assoc();
+        if (empty($_POST)) {
+            $_POST["title"] = $item["title"];
+            $_POST["description"] = $item["description"];
+            $_POST["count"] = $item["count"];
+            $hasSamePicturePath = true;
+            $samePicturePath = $item["picture"];
+            $hasSameThumbPath = true;
+            $sameThumbPath = $item["thumb"];
+            $result->free();
+        }
+    }
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check title
@@ -71,7 +110,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // sind Fehler aufgetreten?
         if ($_FILES['userfile']['error'] != 0) {
-            $error .= 'Ein Fehler ist aufgetreten<br />';
             // switch case über die Fehlernummer
             switch ($_FILES['userfile']['error']) {
                 case 1:
@@ -84,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $error .= "Die Datei wurde nur teilweise hochgeladen.<br />";
                     break;
                 case 4:
-                    $error .= "Es wurde keine Datei hochgeladen.<br />";
+                    $hasImage = false;
                     break;
                 case 6:
                     $error .= "Fehlender temporärer Ordner. Eingeführt in PHP 5.0.3.<br />";
@@ -101,7 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $file_isValid = false;
             }
             // kein fehler
-        } else {
+        } elseif ($hasImage) {
             //check filetype
             if (exif_imagetype($_FILES['userfile']['tmp_name']) == IMAGETYPE_GIF) {
                 $imageType = 'gif';
@@ -247,6 +285,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     imagedestroy($thumbnail);
                     imagedestroy($original);
                     $message .= "Datei ist valide und wurde erfolgreich hochgeladen.<br />";
+                    $hasSamePicturePath = false;
+                    $hasSameThumbPath = false;
                 } else {
                     $error .= "Datei konnte nicht gespeichert werden.<br />";
                     $file_isValid = false;
@@ -259,24 +299,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $count = trim(preg_replace('#[^0-9]#i', "", $_POST["count"]));
         $title = htmlspecialchars(trim(($_POST["title"])));
         $description = htmlspecialchars(trim($_POST["description"]));
-        $imagePath = (empty($_FILES["userfile"]) || !isset($_FILES["userfile"])) ? "/img/products/1.jpg" : $imageFile;
-        $thumbPath = (empty($_FILES["userfile"]) || !isset($_FILES["userfile"])) ? "/img/products/1.jpg" : $thumbFile;
-
-        $query = "INSERT INTO item(`count`, `title`, `description`, `picture`, `thumb`) VALUES (?, ?, ?, ?,?);";
-        $stmt = $mysqli->prepare($query);
-        $stmt->bind_param(
-            "issss",
-            $count,
-            $title,
-            $description,
-            $imagePath,
-            $thumbPath
-        );
-
-        if ($stmt->execute()) {
-            $message = "Produkt wurde erfolgreich hinzugefügt";
+        if (empty($_FILES["userfile"]) || !isset($_FILES["userfile"]) && !$hasSamePicturePath) {
+            $imagePath = "/img/products/1.jpg";
+        } elseif ($hasSamePicturePath) {
+            $imagePath = $samePicturePath;
         } else {
-            $error = "Fehler beim einfügen in die Datenbank. Bitte versuche es erneut";
+            $imagePath = $imageFile;
+        }
+
+        if (empty($_FILES["userfile"]) || !isset($_FILES["userfile"]) && !$hasSameThumbPath) {
+            $thumbPath = "/img/products/1.jpg";
+        } elseif ($hasSameThumbPath) {
+            $thumbPath = $sameThumbPath;
+        } else {
+            $thumbPath = $thumbFile;
+        }
+
+        if (!$isUpdate) {
+            $query = "INSERT INTO item(`count`, `title`, `description`, `picture`, `thumb`) VALUES (?, ?, ?, ?,?);";
+            $stmt = $mysqli->prepare($query);
+            $stmt->bind_param(
+                "issss",
+                $count,
+                $title,
+                $description,
+                $imagePath,
+                $thumbPath
+            );
+
+            if ($stmt->execute()) {
+                $message = "Produkt wurde erfolgreich hinzugefügt";
+            } else {
+                $error = "Fehler beim Einfügen in die Datenbank. Bitte versuche es erneut";
+            }
+        } else {
+            echo "Update<br>Update ID: $isUpdateId<br>Titel neu: $title<br>Titel alt: " . $item['title'];
+            $query = "UPDATE item SET `count` = ?, `title` = ?, `description` = ?, `picture` = ?, `thumb` = ? WHERE idItem = ?;";
+            $stmt = $mysqli->prepare($query);
+            $stmt->bind_param(
+                "issssi",
+                $count,
+                $title,
+                $description,
+                $imagePath,
+                $thumbPath,
+                $isUpdateId
+            );
+
+            if ($stmt->execute()) {
+                echo "execute successful";
+                echo var_dump($stmt);
+            } else {
+                echo "exec problem";
+            }
+            if ($stmt->affected_rows) {
+                $message .= "Produkt wurde erfolgreich geändert";
+            } else {
+                $error .= "Der Titel konnte nicht angepasst werden. Bitte versuche es erneut";
+            }
         }
     }
 }
@@ -284,7 +364,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <?php
-$siteName = "Produkt hinzufügen";
+$siteName = ($isUpdate) ? "Produkt ändern" : "Produkt hinzufügen";;
 include("./includes/header.inc.php");
 
 ?>
@@ -312,11 +392,9 @@ include("./includes/header.inc.php");
                 <?php if (!$title_isValid) {
                     echo "is-invalid";
                 } ?>
-                " value="
-                <?php if (isset($_POST["title"])) {
-                    echo $_POST["title"];
-                } ?>
-                " />
+                " value="<?php if (isset($_POST["title"])) {
+                                echo $_POST["title"];
+                            } ?>" />
                 <label class="form-label" for="title">Titel</label>
                 <?php
                 if (!$title_isValid) {
@@ -348,15 +426,13 @@ include("./includes/header.inc.php");
             </div>
 
             <div class="form-outline mb-5">
-                <input type="number" id="count" name="count" min="1" value="1" class="form-control
+                <input type="number" id="count" name="count" min="1" class="form-control
                 <?php if (!$count_isValid) {
                     echo "is-invalid";
                 } ?>
-                " value="
-                <?php if (isset($_POST["count"])) {
-                    echo $_POST["count"];
-                } ?>
-                " />
+                " value="<?php if (isset($_POST["count"])) {
+                                echo $_POST["count"];
+                            } ?>" />
                 <label class="form-label" for="count">Bestand</label>
                 <?php
                 if (!$count_isValid) {
@@ -369,7 +445,9 @@ include("./includes/header.inc.php");
 
             <!-- Submit button -->
             <button type="submit" name="submit" id="submit" class="btn btn-primary btn-block mt-5">
-                Produkt hinzufügen
+                <?php
+                echo ($isUpdate) ? "Produkt ändern" : "Produkt hinzufügen";
+                ?>
             </button>
         </form>
     </div>

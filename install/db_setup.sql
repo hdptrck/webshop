@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS `webShop`.`item` (
   `count` INT NOT NULL,
   `title` VARCHAR(45) NOT NULL,
   `description` VARCHAR(512) NULL,
+  `isActive` INT DEFAULT 1,
   `picture` VARCHAR(512) NULL,
   `thumb` VARCHAR(512) NULL,
   PRIMARY KEY (`idItem`))
@@ -234,4 +235,4 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON webshop.* TO 'webShopBackend'@'localhost
 -- Default role
 -- -----------------------------------------------------
 
-INSERT INTO role VALUES (0, 'default');
+INSERT INTO role VALUES (0, 'Default'), (1, 'Administrator');

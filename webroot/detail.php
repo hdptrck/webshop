@@ -77,18 +77,22 @@ include("./includes/header.inc.php");
                     <?php echo $item['count']; ?>
                     Stück an Lager
                 </span>
-                <span class="float-right">
-                    <a href="#" class="text-primary">
-                        <span class="material-icons-outlined">
-                            create
-                        </span>
-                    </a>
-                    <a href="#" class="text-danger">
-                        <span class="material-icons-outlined">
-                            delete
-                        </span>
-                    </a>
-                </span>
+                <?php
+                if ($_SESSION['userRole'] == 1) {
+                    echo '<span class="float-right">
+                            <a href="addProduct.php?id=' . $item['idItem'] . '" class="text-primary">
+                                <span class="material-icons-outlined">
+                                    create
+                                </span>
+                            </a>
+                            <span onClick="deleteProduct(' . $item['idItem'] . ')" class="clickable-icon text-danger material-icons-outline">
+                                <span class="material-icons-outlined">
+                                    delete
+                                </span>
+                            </span>
+                        </span>';
+                }
+                ?>
             </p>
 
             <p class="lead font-weight-bold">
@@ -105,15 +109,28 @@ include("./includes/header.inc.php");
             </form>
 
         </div>
-        <!--Content-->
-
     </div>
-    <!--Grid column-->
-
+</div>
 </div>
 
-</div>
-
+<script>
+    const deleteProduct = (idItem) => {
+        if (confirm('Sind Sie sicher, dass Sie dieses Produkt löschen wollen?')) {
+            console.log("IdItem", idItem);
+            fetch('deleteItem.php?id=' + idItem)
+                .then(function(res) {
+                    return res.json();
+                }).then(res => {
+                    if (res.code != 200) {
+                        alert(res.description);
+                    } else {
+                        alert(res.description);
+                        window.location = "shop.php";
+                    }
+                });
+        }
+    };
+</script>
 
 <?php
 include("./includes/footer.inc.php");
