@@ -56,7 +56,7 @@ include("./includes/header.inc.php");
 
 <div class="row fadeIn">
     <!--Grid column-->
-    <div class="col-md-6 mb-4">
+    <div class="col-md-6 mb-4 d-flex justify-content-end">
 
         <?php
         echo '<img class="img-fluid" alt="Produktbild" src="';
