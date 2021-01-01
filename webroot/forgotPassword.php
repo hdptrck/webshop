@@ -1,6 +1,8 @@
 <?php
 require("includes/autoLoad.php");
-require("../../pw-private.inc.php");
+if ((include("../../pw-private.inc.php")) == FALSE) {
+    echo "Achtung, der Mailversand funktioniert aktuell nicht!";
+}
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -14,7 +16,7 @@ $error_message = "";
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    if(isset($_GET["reason"])) {
+    if (isset($_GET["reason"])) {
         switch ($_GET["reason"]) {
             case "tokenexpired":
                 $message = "Dieser Link zum Zurücksetzen des Passworts ist abgelaufen. Bitte fordere einen neuen an.";
@@ -156,9 +158,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     <?php
                     if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         if ($success) {
-                            echo "<div class=\"valid-feedback\">Wenn uns diese E-Mail-Adresse bekannt ist, so haben wir Dir soeben eine Nachricht mit weiteren Anweisungen geschickt.</div>";
+                            echo '<div class="note note-success mb-4">Wenn uns diese E-Mail-Adresse bekannt ist, so haben wir Dir soeben eine Nachricht mit weiteren Anweisungen geschickt.</div>';
                         } else {
-                            echo "<div class=\"invalid-feedback\">" . $error_message . "</div>";
+                            echo '<div class="note note-danger mb-4"' . $error_message . '</div>';
                         }
                     }
                     ?>

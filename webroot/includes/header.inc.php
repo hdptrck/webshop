@@ -10,11 +10,7 @@ $pages = [
     [
         'fileName' => 'shop.php',
         'displayText' => 'Shop',
-    ],
-    [
-        'fileName' => 'admin.php',
-        'displayText' => 'Bestellungen',
-    ],
+    ]
 ];
 
 /*
@@ -24,6 +20,10 @@ if ($_SESSION['userRole'] == 1) {
     $pages[] = [
         'fileName' => 'addProduct.php',
         'displayText' => 'Produkt hinzufügen',
+    ];
+    $pages[] = [
+        'fileName' => 'admin.php',
+        'displayText' => 'Bestellungen',
     ];
 }
 

@@ -6,7 +6,7 @@
 
     <!--Copyright-->
     <div class="footer-copyright py-3">
-        © 2020 Copyright: Webshop
+        © 2021 Copyright: Webshop
     </div>
 
 </footer>

@@ -182,8 +182,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
                 $query = "INSERT INTO order_has_item VALUES (?, ?, ?);";
                 $stmt = $mysqli->prepare($query);
-                foreach ($items as $item) { // Put every ordered item into DB
-                    $stmt->bind_param("iii", $orderId, $item['id'], $item['count']);
+                foreach ($items as $i) { // Put every ordered item into DB
+                    $stmt->bind_param("iii", $orderId, $i['id'], $i['count']);
                     $stmt->execute();
                 }
 
@@ -191,7 +191,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $orderSuccessful = true;
             } catch (mysqli_sql_exception $exception) { // Something failed while putting order into DB
                 $mysqli->rollback();
-                echo "Abschicken der Bestellung fehlgeschlagen. Bitte versuche es erneut.";
+                echo "<br><br><br>Abschicken der Bestellung fehlgeschlagen. Bitte versuche es erneut.";
+                echo $exception;
             }
             if ($orderSuccessful) { // Was order put into DB?
                 // Clear session values, because order was sent

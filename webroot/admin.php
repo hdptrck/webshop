@@ -87,7 +87,7 @@ include("./includes/header.inc.php");
 
                     echo '</div><button class="order-event btn btn-primary btn-block" data-order-id="' . $order['idOrder'] . '" data-order-action="';
                     if ($order['isReady'] == 0) {
-                        echo 'isReady">Bestellung bereitgestellen</button>';
+                        echo 'isReady">Bestellung bereitgestellt</button>';
                     } else {
                         echo 'isReturned">Bestellung zurückgegeben</button>';
                     }

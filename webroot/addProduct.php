@@ -333,7 +333,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $error = "Fehler beim Einfügen in die Datenbank. Bitte versuche es erneut";
             }
         } else {
-            echo "Update<br>Update ID: $isUpdateId<br>Titel neu: $title<br>Titel alt: " . $item['title'];
+            //echo "Update<br>Update ID: $isUpdateId<br>Titel neu: $title<br>Titel alt: " . $item['title'];
             $query = "UPDATE item SET `count` = ?, `title` = ?, `description` = ?, `picture` = ?, `thumb` = ? WHERE idItem = ?;";
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param(
@@ -410,11 +410,9 @@ include("./includes/header.inc.php");
                 <?php if (!$description_isValid) {
                     echo "is-invalid";
                 } ?>
-                " value="
-                <?php if (isset($_POST["description"])) {
+                "><?php if (isset($_POST["description"])) {
                     echo $_POST["description"];
-                } ?>
-                "></textarea>
+                } ?></textarea>
                 <label class="form-label" for="description">Beschreibung</label>
                 <?php
                 if (!$description_isValid) {
