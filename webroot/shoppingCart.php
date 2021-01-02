@@ -249,7 +249,7 @@ include("./includes/header.inc.php");
                 <div class="col-md-6 col-12">
                     <label class="form-label" for="start_date">Abholdatum und -zeit</label>
                     <div class="row">
-                        <div class="col">
+                        <div class="col mb-md-3">
                             <div class="form-outline">
                                 <input class="start form-control" type="date" id="start_date" name="start_date" required value="<?php
                                                                                                                                 if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a startdate already present in session?
@@ -281,7 +281,7 @@ include("./includes/header.inc.php");
                 <div class="col-md-6 col-12 mt-md-0 mt-3">
                     <label class="form-label" for="end_date">Zurückbringdatum und -zeit</label>
                     <div class="row">
-                        <div class="col">
+                        <div class="col mb-md-3">
                             <div class="form-outline">
                                 <input class="end form-control" type="date" id="end_date" name="end_date" required value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a enddate already present in session?
                                                                                                                                 echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("Y-m-d");
