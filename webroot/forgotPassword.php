@@ -146,8 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <div class="col-lg-5 col-md-7 col-sm-10 col-12">
                 <h1 class="text-center mb-5">Passwort vergessen</h1>
                 <?php
-                echo '<p class="text-center';
-                echo '">' . $message . '</p>';
+                    echo '<div class="note note-danger mb-4">' . $message . '</div>';
                 ?>
                 <p class="text-center mb-5">Trage deine E-Mail Adresse ein um das Passwort zurückzusetzen. Anschliessend wird dir ein Link zugeschickt, mit welchem du dein Passwort zurücksetzen kannst.</p>
                 <form method="post">
