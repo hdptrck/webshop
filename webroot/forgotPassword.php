@@ -81,18 +81,18 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
                     //Create Mail
                     $email_to = $email;
-                    $fromserver = "test@kkb.ch";
+                    $frommail = "test@kkb.ch";
                     $mail = new PHPMailer();
                     $mail->IsSMTP();
                     $mail->Host = "smtp.office365.com";
                     $mail->SMTPAuth = true;
-                    $mail->Username = "test@kkb.ch";
-                    $mail->Password = $password; //password is stored in pw.inc
+                    $mail->Username = $frommail;
+                    $mail->Password = $password; //password is stored in pw-private.inc.php
                     $mail->Port = 587;
                     $mail->IsHTML(true);
-                    $mail->From = "test@kkb.ch";
+                    $mail->From = $frommail;
                     $mail->FromName = "Reset";
-                    $mail->Sender = $fromserver;
+                    $mail->Sender = $frommail;
                     $mail->Subject = $subject;
                     $mail->Body = $body;
                     $mail->AddAddress($email_to);

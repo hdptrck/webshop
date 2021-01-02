@@ -60,11 +60,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" and isset($_POST["number"])) {
     }
 
     $_SESSION["shoppingCart"] = $shoppingCart;
+    $message = "Der Gegenstand wurde dem Warenkorb hinzugefügt.";
 }
 
 // Include header
 $siteName = "Detail";
 include("./includes/header.inc.php");
+?>
+
+<?php
+// Display message
+if (isset($message)) {
+    echo '<div id="message" class="note note-success mb-4"><p>' . $message . '</p></div>';
+}
 ?>
 
 <div class="row fadeIn">
@@ -142,6 +150,14 @@ include("./includes/header.inc.php");
                 });
         }
     };
+
+    //message fadeOut
+    setTimeout(function () {
+        document.getElementById("message").style.opacity = '0';
+    }, 1);
+    setTimeout(function () {
+        document.getElementById("message").remove();
+    }, 6001);
 </script>
 
 <?php

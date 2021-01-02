@@ -18,6 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 break;
             case "logoutsuccessful":
                 $message = "Du hast dich erfolgreich abgemeldet. Bitte melde Dich erneut an.";
+                break;
+                case "registersuccessful":
+                    $message = "Die Registrierung war erfolgreich. Bitte melde Dich an.";
         }
     }
     $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : ''; // Is there a rememberMe Cookie

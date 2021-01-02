@@ -205,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 if (isset($_SESSION['orderInfos'])) {
                     unset($_SESSION['orderInfos']);
                 }
-                header("Location: shop.php");
+                header("Location: shop.php?message=ordersuccessful");
             }
         }
     }
