@@ -235,4 +235,4 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON webshop.* TO 'webShopBackend'@'localhost
 -- Default role
 -- -----------------------------------------------------
 
-INSERT INTO role VALUES (0, 'Default'), (1, 'Administrator');
+INSERT INTO role VALUES (0, 'Default'), (1, 'Materialverwalter'), (2, 'Root');
