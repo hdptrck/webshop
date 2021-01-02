@@ -133,7 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $active = 1;
             $stmt2->bind_param("sssssii", $token, $firstname, $lastname, $email, $password, $idRole, $active);
             $stmt2->execute();
-            header("Location: login.php");
+            header("Location: login.php?reason=registersuccessful");
         }
     }
 }

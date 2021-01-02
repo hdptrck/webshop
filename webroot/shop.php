@@ -17,13 +17,27 @@ while ($row = $result->fetch_assoc()) {
     $items[] = $row;
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if (isset($_GET["message"])) {
+        switch ($_GET["message"]) {
+            case "ordersuccessful":
+                $message = "Die Bestellung wurde erfolgreich abgeschickt.";
+        }
+    }
+}
+
 // Include header
 $siteName = "Shop";
 include("./includes/header.inc.php");
+
+// Display message
+if (isset($message)) {
+    echo '<div id="message" class="note note-success mb-4"><p>' . $message . '</p></div>';
+}
+
 ?>
 
 <div class="row fadeIn">
-
     <?php
     // Create element for each item
     foreach ($items as $item) {
@@ -55,6 +69,16 @@ include("./includes/header.inc.php");
     ?>
 
 </div>
+
+<script>
+    //message fadeOut
+    setTimeout(function () {
+        document.getElementById("message").style.opacity = '0';
+    }, 1);
+    setTimeout(function () {
+        document.getElementById("message").remove();
+    }, 6001);
+</script>
 
 <?php
 include("./includes/footer.inc.php");
