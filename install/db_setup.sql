@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `webShop`.`item` (
   `count` INT NOT NULL,
   `title` VARCHAR(45) NOT NULL,
   `description` VARCHAR(512) NULL,
-  `isActive` INT DEFAULT 1,
+  `isActive` TINYINT NOT NULL DEFAULT 1,
   `picture` VARCHAR(512) NULL,
   `thumb` VARCHAR(512) NULL,
   PRIMARY KEY (`idItem`))

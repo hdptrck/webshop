@@ -124,16 +124,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->execute();
             $result = $stmt->get_result();
         } while ($result->num_rows); //Generate new token if token already exists (pretty unlikely though)
-
-        $query = "INSERT INTO webShopUser (userToken, firstname, lastname, email, password, role_idRole, active) VALUES (?, ?, ?, ?, ?, ?, ?);";
-        if (!($stmt2 = $mysqli->prepare($query))) {
-            echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
-        } else {
-            $idRole = 0;
-            $active = 1;
-            $stmt2->bind_param("sssssii", $token, $firstname, $lastname, $email, $password, $idRole, $active);
-            $stmt2->execute();
-            header("Location: login.php?reason=registersuccessful");
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT); // Mysqli throws error
+        try {
+            $query = "INSERT INTO webShopUser (userToken, firstname, lastname, email, password, role_idRole, active) VALUES (?, ?, ?, ?, ?, ?, ?);";
+            if (!($stmt2 = $mysqli->prepare($query))) {
+                echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+            } else {
+                $idRole = 1;
+                $active = 1;
+                $stmt2->bind_param("sssssii", $token, $firstname, $lastname, $email, $password, $idRole, $active);
+                $stmt2->execute();
+                header("Location: login.php?reason=registersuccessful");
+            }
+        } catch (mysqli_sql_exception $exception) {
+            $error = "Das Registrieren ist fehlgeschlagen. Bitte versuche es später erneut.";
         }
     }
 }
@@ -268,6 +272,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             ?>
                         </div>
 
+                        <?php
+                        if (isset($error)) {
+                            echo '<div class="note note-danger mb-4">' . $error . '</div>';
+                        }
+                        ?>
                         <!-- Submit button -->
                         <button type="submit" id="register-submit" class="btn btn-primary btn-block mt-5">
                             Registrieren

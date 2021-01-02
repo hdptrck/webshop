@@ -103,6 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     }
                 } else {
                     $result->free();
+                    $success = true; // Zwar wurde die Mailadresse nicht gefunden, dies muss der Benutzer aber nicht wissen.
                 }
             } else {
                 $email_isValid = false;
