@@ -14,7 +14,8 @@ require('includes/PHPMailer/SMTP.php');
 
 $success = false;
 $error_message = "";
-$message = "";
+$email_isValid = true;
+$email_error = "";
 
 // resetPassword.php redirects sometimes to this page. In this case one of the following reasons will be shown
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
@@ -146,22 +147,32 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <div class="col-lg-5 col-md-7 col-sm-10 col-12">
                 <h1 class="text-center mb-5">Passwort vergessen</h1>
                 <?php
+                if (isset($message)) {
                     echo '<div class="note note-danger mb-4">' . $message . '</div>';
+                }
                 ?>
                 <p class="text-center mb-5">Trage deine E-Mail Adresse ein um das Passwort zurückzusetzen. Anschliessend wird dir ein Link zugeschickt, mit welchem du dein Passwort zurücksetzen kannst.</p>
                 <form method="post">
                     <!-- Email input -->
                     <div class="form-outline mb-4">
-                        <input name="email" type="email" id="email" class="form-control" value="<?php if (isset($_POST["email"]) && !$success) {
-                                                                                                    echo $_POST["email"];
-                                                                                                } ?>" />
+                        <input name="email" type="email" id="email" class="form-control 
+                        <?php if (!$email_isValid) {
+                            echo "is-invalid";
+                        } ?>" value="<?php if (isset($_POST["email"]) && !$success) { 
+                            echo $_POST["email"];
+                        } ?>" required />
                         <label class="form-label" for="email">E-Mail</label>
+                        <?php
+                        if (!$email_isValid) {
+                            echo '<div class="invalid-feedback">' . $email_error . '</div>';
+                        }
+                        ?>
                     </div>
                     <?php
                     if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         if ($success) {
                             echo '<div class="note note-success mb-4">Wenn uns diese E-Mail-Adresse bekannt ist, so haben wir Dir soeben eine Nachricht mit weiteren Anweisungen geschickt.</div>';
-                        } else {
+                        } elseif ($email_isValid) {
                             echo '<div class="note note-danger mb-4">' . $error_message . '</div>';
                         }
                     }
