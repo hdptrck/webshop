@@ -31,7 +31,7 @@ if (isset($_GET["token"])) {
             if ($_SERVER["REQUEST_METHOD"] == "POST") { //Reset-Button was pressed
                 //Check if password is valid. Same criterias as in register.php
                 if (isset($_POST['reset-password'])) {
-                    if (!empty(trim($_POST['reset-password'])) || preg_match("#(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$#", trim($_POST['reset-password']))) {
+                    if (!empty(trim($_POST['reset-password'])) || preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST['reset-password']))) {
                         if (strlen($_POST['reset-password']) <= 256) {
                             if (isset($_POST['reset-password-repeat'])) {
                                 if ($_POST['reset-password'] == $_POST['reset-password-repeat']) {
@@ -50,7 +50,7 @@ if (isset($_GET["token"])) {
                         }
                     } else {
                         $password_isValid = false;
-                        $password_error = "Das Passwort muss aus mindestens acht Zeichen welche Gross-, Kleinbuchstaben Zahlen und Sonderzeichen bestehen";
+                        $password_error = "Das Passwort muss aus mindestens acht Zeichen welche Gross-, Kleinbuchstaben Zahlen und Sonderzeichen sind bestehen";
                     }
                 } else {
                     $password_isValid = false;
@@ -126,7 +126,7 @@ if (isset($_GET["token"])) {
                                                                                                                     echo "is-invalid";
                                                                                                                 } ?>" value="<?php if (isset($_POST["reset-password"])) {
                                                                                                                                     echo $_POST["reset-password"];
-                                                                                                                                } ?>" />
+                                                                                                                                } ?>" required />
                         <label class="form-label" for="reset-password">Neues Passwort</label>
                         <?php
                         if (!$password_isValid) {
@@ -143,7 +143,7 @@ if (isset($_GET["token"])) {
                                                                                                                                 echo "is-invalid";
                                                                                                                             } ?>" value="<?php if (isset($_POST["reset-password"])) {
                                                                                                                                                 echo $_POST["reset-password"];
-                                                                                                                                            } ?>" />
+                                                                                                                                            } ?>" required />
                         <label class="form-label" for="reset-password-repeat">Passwort wiederholen</label>
                         <?php
                         if (!$password_repeat_isValid) {
