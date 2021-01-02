@@ -191,8 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $orderSuccessful = true;
             } catch (mysqli_sql_exception $exception) { // Something failed while putting order into DB
                 $mysqli->rollback();
-                echo "<br><br><br>Abschicken der Bestellung fehlgeschlagen. Bitte versuche es erneut.";
-                echo $exception;
+                $error = "Abschicken der Bestellung fehlgeschlagen. Bitte versuche es erneut.";
             }
             if ($orderSuccessful) { // Was order put into DB?
                 // Clear session values, because order was sent
@@ -214,6 +213,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 // Include header
 $siteName = "Warenkorb";
 include("./includes/header.inc.php");
+
+if (isset($error)) {
+    echo '<div id="message" class="note note-danger mb-4"><p>' . $error . '</p></div>';
+}
 ?>
 
 <div class="row justify-content-center">
@@ -560,6 +563,14 @@ include("./includes/header.inc.php");
             updatedTimeSpan();
         }, false);
     });
+
+    //message fadeOut
+    setTimeout(function () {
+        document.getElementById("message").style.opacity = '0';
+    }, 1);
+    setTimeout(function () {
+        document.getElementById("message").remove();
+    }, 6001);
 
     updatedTimeSpan();
 </script>
