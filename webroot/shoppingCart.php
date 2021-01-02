@@ -220,11 +220,10 @@ include("./includes/header.inc.php");
     <div class="col-lg-8 col-md-10 col-sm-10 col-12">
         <form method="post">
             <div class="form-outline mb-5">
-                <input type="text" id="eventName" name="eventName" maxlength="45" class="orderInfo form-control" required <?php
-                                                                                                                            if (isset($_SESSION['orderInfos']['eventName'])) { // Maybe there is a name already present in session?
-                                                                                                                                echo 'value="' . $_SESSION['orderInfos']['eventName'] . '"';
+                <input type="text" id="eventName" name="eventName" maxlength="45" class="orderInfo form-control" required value="<?php if (isset($_SESSION['orderInfos']['eventName'])) { // Maybe there is a name already present in session?
+                                                                                                                                echo $_SESSION['orderInfos']['eventName'];
                                                                                                                             }
-                                                                                                                            ?> />
+                                                                                                                            ?>" />
                 <label class="form-label" for="eventName">Anlassname</label>
                 <?php
                 if (!$eventName_isValid) { // Possible server-side validation violation?
@@ -234,9 +233,9 @@ include("./includes/header.inc.php");
             </div>
 
             <div class="form-outline mb-5">
-                <input type="text" id="eventPlace" name="eventPlace" maxlength="45" class="orderInfo form-control" required <?php if (isset($_SESSION['orderInfos']['eventPlace'])) { // Maybe there is a place already present in session?
-                                                                                                                                echo 'value="' . $_SESSION['orderInfos']['eventPlace'] . '"';
-                                                                                                                            } ?> />
+                <input type="text" id="eventPlace" name="eventPlace" maxlength="45" class="orderInfo form-control" required value="<?php if (isset($_SESSION['orderInfos']['eventPlace'])) { // Maybe there is a place already present in session?
+                                                                                                                                echo  $_SESSION['orderInfos']['eventPlace'];
+                                                                                                                            } ?>" />
                 <label class="form-label" for="eventPlace">Anlassort</label>
                 <?php
                 if (!$eventPlace_isValid) { // Possible server-side validation violation?
@@ -309,9 +308,9 @@ include("./includes/header.inc.php");
                 </div>
             </div>
             <label class="form-label" for="orderLocation">Bereitstellungsort</label><br />
-            <div class="form-outline mb-5">
-                <select id="orderLocation" name="orderLocation" required class="orderInfo form-control">
-                    <option value="">Auswählen...</option>
+            <div class="mb-5">
+                <select id="orderLocation" name="orderLocation" required class="orderInfo custom-select">
+                    <option value="0">Auswählen...</option>
                     <?php
                     foreach ($orderLocations as $location) { // Foreach orderLocation which was selected in DB earlier there will be an option
                         $selected = "";

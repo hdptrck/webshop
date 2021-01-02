@@ -131,7 +131,7 @@ include("./includes/header.inc.php");
         // Change active state for db update
         let active;
         if (clickedItem.value == 1) {
-            active = 2;
+            active = 0;
         } else {
             active = 1;
         }
