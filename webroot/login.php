@@ -2,13 +2,13 @@
 require("includes/autoLoad.php");
 require("../pw.inc.php");
 
+// Declare var
 $email_isset = true;
 $password_isset = true;
 $message = "";
 $login_success = true;
 
 session_start();
-
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (isset($_GET["reason"])) { //resetPassword.php redirects to this page, in this case a message will be shown

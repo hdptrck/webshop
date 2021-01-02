@@ -2,9 +2,6 @@
 require("./includes/autoLoad.php");
 require("./includes/sessionChecker.php");
 require("./includes/itemChecker.inc.php");
-?>
-
-<?php
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") { // Should only be called as post
     if (isset($_POST['action'])) {

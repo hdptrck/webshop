@@ -1,15 +1,15 @@
 <?php
 require("../pw.inc.php");
-// Variabeln deklarieren
+// Set Var
 $host = 'localhost'; // host
 $username = 'webShopBackend'; // username
 $password = $pw_database; // password is stored in pw.inc.php
 $database = 'webshop'; // database
 
-// mit der Datenbank verbinden
+// Connect to the database
 $mysqli = new mysqli($host, $username, $password, $database);
 
-// Fehlermeldung, falls Verbindung fehl schlägt.
+// Error if there is a problem with the connection
 if ($mysqli->connect_error) {
     die('Connect Error (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
 }

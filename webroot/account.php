@@ -1,9 +1,9 @@
 <?php
 require("includes/autoLoad.php");
 
-$message = "";
+// Declare var
+$message = $error = "";
 $login_success = true;
-
 
 $password_isValid = true;
 $password_error = "";
@@ -12,9 +12,10 @@ $newPassword_error = "";
 $newPasswordConfirm_isValid = true;
 $newPasswordConfirm_error = "";
 
-// Session temporarly deactivated for development
-require("includes/sessionChecker.php");
 $user = [];
+
+// Check Session
+require("includes/sessionChecker.php");
 
 // Request Method POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -24,13 +25,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password_error = "Bitte gib das aktuelle Passwort ein";
     }
 
-    // Check new password  || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))
+    // Check new password
     if (!isset($_POST["new-password"]) || empty(trim($_POST["new-password"])) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))) {
         $newPassword_isValid = false;
         $newPassword_error = "Das Passwort muss aus mindestens acht Zeichen welche Gross-, Kleinbuchstaben Zahlen und Sonderzeichen bestehen";
     }
 
-    // Check new confirm password || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))
+    // Check new confirm password
     if (!isset($_POST["new-password-confirm"]) || empty(trim($_POST["new-password-confirm"])) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))) {
         $newPasswordConfirm_isValid = false;
         $newPasswordConfirm_error = "Das Passwort muss aus mindestens acht Zeichen welche Gross-, Kleinbuchstaben Zahlen und Sonderzeichen bestehen";
@@ -42,31 +43,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $newPassword_error = $newPasswordConfirm_error = "Die Passwörter stimmen nicht überein";
     }
 
+    // All correct until now?
     if ($password_isValid && isset($_SESSION["userId"]) && $newPassword_isValid) {
+        // Get user from database
         $query = "SELECT password FROM webshopuser WHERE idWebShopUser = ?;";
         $stmt = $mysqli->prepare($query);
         $stmt->bind_param("i", $_SESSION["userId"]);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        $result->num_rows;
-        $user = $result->fetch_assoc();
-        $result->free();
+        // If user is selected
+        if ($result->num_rows) {
+            // Set user
+            $user = $result->fetch_assoc();
+            $result->free();
+        } else {
+            $error .= "Benutzer konnte nicht abgerufen werden.<br />";
+        }
 
-        if (password_verify($_POST["password"], $user["password"])) { //Checks if passwords match
+        // Checks if passwords match
+        if (password_verify($_POST["password"], $user["password"])) {
             $password = password_hash($_POST["new-password"], PASSWORD_DEFAULT);
 
+            // Set new password
             $query = "UPDATE webShopUser SET password = ? WHERE idWebShopUser = ?";
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param("si", $password, $_SESSION["userId"]);
             $stmt->execute();
 
+            // Check if update was successful
             if ($stmt->affected_rows) {
                 $message = "Das Passwort wurde erfolgreich geändert";
                 unset($_POST['password']);
                 unset($_POST['new-password']);
                 unset($_POST['new-password-confirm']);
                 session_regenerate_id(true);
+            } else {
+                $error .= "Das Passwort konnte nicht geändert werden.";
             }
         } else {
             $login_success = false;
@@ -76,6 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
+// Include header
 $siteName = "Konto";
 include("./includes/header.inc.php");
 
@@ -83,9 +97,10 @@ include("./includes/header.inc.php");
 <div class="row justify-content-center">
     <div class="col-lg-6 col-md-7 col-sm-10 col-12">
         <?php
-        if ($message) {
+        if ($error) {
+            echo '<p class="note note-danger mb-4">' . $error . '</p>';
+        } elseif ($message)
             echo '<p class="note note-success mb-4">' . $message . '</p>';
-        }
         ?>
         <form method="post">
             <div class="text-center mb-3">
@@ -163,7 +178,6 @@ include("./includes/header.inc.php");
                     ?>
                 </div>
 
-
                 <!-- Submit button -->
                 <button type="submit" id="register-submit" class="btn btn-primary btn-block mt-5">
                     Passwort ändern
@@ -172,11 +186,7 @@ include("./includes/header.inc.php");
         </form>
     </div>
 </div>
-</div>
-</main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.js"></script>
-
-</body>
-
-</html>
+<?php
+include("./includes/footer.inc.php");
+?>

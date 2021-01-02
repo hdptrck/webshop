@@ -1,5 +1,6 @@
 <?php
 require("includes/autoLoad.php");
+
 if ((include("../../pw-private.inc.php")) == FALSE) {
     echo "Achtung, der Mailversand funktioniert aktuell nicht!";
 }

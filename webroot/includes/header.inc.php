@@ -1,11 +1,6 @@
 <?php
-/*
-VAR to set:
-$siteName
-$numberOfItems - Not anymore, is calucalted now. But in some cases it might be set before, because of prevous version
-SESSION has to be initialized
-*/
 
+// Pages
 $pages = [
     [
         'fileName' => 'shop.php',
@@ -13,9 +8,7 @@ $pages = [
     ]
 ];
 
-/*
-    TODO Admin Priv
-*/
+// Add pages for the admin
 if ($_SESSION['userRole'] == 1) {
     $pages[] = [
         'fileName' => 'addProduct.php',
@@ -27,21 +20,23 @@ if ($_SESSION['userRole'] == 1) {
     ];
 }
 
-// Create Navigation Items
+// Create navigation li items
 foreach ($pages as $index => $page) {
     $listItem = "<li";
+
+    // Check if current script is an active element
     if ($_SERVER['SCRIPT_NAME'] == "/" . $page['fileName']) {
         $listItem .= "  class=\"nav-item active\" aria-current=\"page\"><a class=\"nav-link waves-effect\">";
     } else {
         $listItem .= "><a  class=\"nav-link waves-effect\" href=\"" . $page['fileName'] . "\">";
     }
+
     $listItem .= $page['displayText'] . "</a></li>";
+
+    // Add element to pages array
     $pages[$index]['listItem'] = $listItem;
 }
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="de">
@@ -55,20 +50,18 @@ foreach ($pages as $index => $page) {
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    <!-- MDB -->
+    <!-- MDBootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/1.0.0/mdb.min.css" rel="stylesheet" />
-    <!--https://mdbootstrap.com/docs/-->
-
+    <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
 </head>
 
 <body>
+    <!-- Navigation -->
     <nav class="navbar fixed-top navbar-expand-md navbar-light bg-white scrolling-navbar">
         <div class="container">
 
-            <!-- <a class="navbar-brand" href="#" target="_blank"> -->
-            <strong class="navbar-brand">Webshop</strong>
-            <!-- </a> -->
+            <a href="shop.php"><strong class="navbar-brand">Webshop</strong></a>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -76,7 +69,7 @@ foreach ($pages as $index => $page) {
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-
+                <!-- Navigation elements -->
                 <ul class="navbar-nav mr-auto">
 
                     <?php
@@ -88,6 +81,7 @@ foreach ($pages as $index => $page) {
                 </ul>
 
                 <ul class="navbar-nav">
+                    <!-- Shopping cart -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle hidden-arrow" href="shoppingCart.php" role="button">
                             <span class="material-icons-outlined">
@@ -95,13 +89,16 @@ foreach ($pages as $index => $page) {
                             </span>
 
                             <?php
+                            // Displays number of items in the shopping cart
                             if (isset($numberOfItems)) {
                                 unset($numberOfItems);
                             }
+
                             if (isset($_SESSION['shoppingCart']) and is_array($_SESSION['shoppingCart'])) {
                                 $numberOfItems = count($_SESSION['shoppingCart']);
                             }
-                            if (!isset($numberOfItems) or $numberOfItems == 0){
+
+                            if (!isset($numberOfItems) or $numberOfItems == 0) {
                                 $numberOfItems = "";
                             }
                             echo  "<span class=\"badge rounded-pill badge-notification bg-danger\">"  . $numberOfItems . "</span>";
@@ -109,6 +106,8 @@ foreach ($pages as $index => $page) {
 
                         </a>
                     </li>
+
+                    <!-- Account -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
                             <span class="material-icons-outlined">
@@ -126,14 +125,15 @@ foreach ($pages as $index => $page) {
 
         </div>
     </nav>
-    <!-- Navbar -->
 
     <!--Main layout-->
     <main class="mt-5 pt-5 main-min-height">
         <div class="container dark-grey-text">
-            <!--Grid row-->
             <div class="row fadeIn mb-4">
                 <div class="col text-center">
+
+                    <!-- Print site name -->
                     <h1><?php echo $siteName; ?></h1>
+
                 </div>
             </div>

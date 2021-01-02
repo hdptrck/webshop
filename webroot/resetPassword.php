@@ -1,6 +1,7 @@
 <?php
 require("includes/autoLoad.php");
 
+// Declare var
 $password_isValid = true;
 $password_error = "";
 $password_repeat_isValid = true;
@@ -119,6 +120,7 @@ if (isset($_GET["token"])) {
                 }
                 ?>
                 <form method="post">
+                    <!-- Password input -->
                     <div class="form-outline mb-4">
                         <input name="reset-password" type="password" id="reset-password" class="form-control <?php if (!$password_isValid) {
                                                                                                                     echo "is-invalid";

@@ -3,23 +3,25 @@ require("./includes/autoLoad.php");
 require("includes/sessionChecker.php");
 require("includes/adminChecker.php");
 
+
+// Declare var
 $error = $message = "";
 $login_success = true;
 
 $file_isValid = $title_isValid = $description_isValid = $count_isValid = true;
 $file_error = $title_error = $descripion_error = $count_error = "";
 
-// maximale filegrösse > 3MB
+// Max filesize > 3MB
 $maxFileSize = 3048576;
-// upload directory > originaldatei
+// Upload directory > original file
 $uploadDirectory = './img/orig/';
-// directory für verkleinerstes bild
+// Directory for resized image
 $imageDirectory = './img/products/';
-// directory für thumbnail
+// Directory for thumbnail
 $thumbDirectory = './img/thumb/';
-// maximale Bildbreite
+// Max image width
 $maxImageSize = 1000;
-// maximale Thumnailbreite
+// Max thumbnail width
 $maxTumbSize = 250;
 
 $fileUpload = '';
@@ -37,22 +39,26 @@ $hasSameThumbPath = false;
 $sameThumbPath = "";
 $item = [];
 
-
+// Check GET parameters for updating a product. If there is no parametres it's a normal adding of a product,  not an update.
 if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
     $isUpdateId = preg_replace('#[^0-9]#i', "", $_GET['id']);
+    // Select requestet item
     $isUpdateQuery = "SELECT * FROM item WHERE idItem = ?;";
     $isUpdateStmt = $mysqli->prepare($isUpdateQuery);
     $isUpdateStmt->bind_param("i", $isUpdateId);
     $isUpdateStmt->execute();
     $result = $isUpdateStmt->get_result();
 
+    // Check if item exists, if not the link is manipulated
     if ($result->num_rows) {
         $isUpdate = true;
     }
 
+    // If item found
     if ($isUpdate) {
         $item = $result->fetch_assoc();
         if (empty($_POST)) {
+            // Set initial values for updating an item
             $_POST["title"] = $item["title"];
             $_POST["description"] = $item["description"];
             $_POST["count"] = $item["count"];
@@ -65,6 +71,7 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
     }
 }
 
+// Check POST Parameters
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check title
     if (!isset($_POST["title"]) || empty(trim($_POST["title"]))) {
@@ -85,32 +92,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $title_error = "Der Titel darf nicht länger als 45 Zeichen sein.";
     }
 
-    //Description
+    // Description
     if (isset($_POST["description"]) && strlen(trim($_POST["description"])) > 512) {
         $description_isValid = false;
         $description_error = "Die Beschreibung darf nicht länger als 512 Zeichen sein.";
     }
 
     if (isset($_POST['submit'])) {
-        // Ausgabe von Debugg-Informationen
-        // echo '<pre>';
-        // echo 'Debugg-Info $_FILE:';
-        // print_r($_FILES);
-        // echo 'Debugg-Info $_POST:';
-        // print_r($_POST);
-        // echo '</pre>';
-
-        /*
-         * $_Files['fileUpload']['name'] = ursprüngliche Dateiname beim Benutzer
-         * $_Files['fileUpload']['type'] = MIME-Type des hochgeladenen Datei 
-         * $_FILES['fileUpload']['tmp_name'] = temprärer Pfad und Dateiname auf Server
-         * $_FILES['fileUpload']['error'] = Fehlercode -> http://php.net/manual/de/features.file-upload.errors.php
-         * $_FILES['fileUpload']['size'] = Grösse der Datei in Bytes
-        */
-
-        // sind Fehler aufgetreten?
+        // Are there errors
         if ($_FILES['fileUpload']['error'] != 0) {
-            // switch case über die Fehlernummer
+            // Error numbers switch case
             switch ($_FILES['fileUpload']['error']) {
                 case 1:
                     $error .= "Die hochgeladene Datei überschreitet die in der Anweisung upload_max_filesize in php.ini festgelegte Größe.<br />";
@@ -122,6 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $error .= "Die Datei wurde nur teilweise hochgeladen.<br />";
                     break;
                 case 4:
+                    // If no image was uploaded use the default image
                     $hasImage = false;
                     break;
                 case 6:
@@ -138,9 +130,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (!empty($error)) {
                 $file_isValid = false;
             }
-            // kein fehler
+            // No error
         } elseif ($hasImage) {
-            //check filetype
+            // Check filetype
             if (exif_imagetype($_FILES['fileUpload']['tmp_name']) == IMAGETYPE_GIF) {
                 $imageType = 'gif';
             } elseif (exif_imagetype($_FILES['fileUpload']['tmp_name']) == IMAGETYPE_JPEG) {
@@ -151,17 +143,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $error .= "Filetype muss GIF / JPEG / PNG sein.<br />";
             }
 
-            // check file weight
+            // Check file weight
             if (filesize($_FILES['fileUpload']['tmp_name']) > $maxFileSize) {
                 $error .= "Die Datei ist grösser als 1MB.<br />";
             }
 
-            // check file weight
+            // Check file weight
             if (($_FILES['fileUpload']['size']) > $maxFileSize) {
                 $error .= "Die Datei ist grösser als 3MB.<br />";
             }
 
-            // check file size
+            // Check file size
             list($width, $height, $type, $attr) = getimagesize($_FILES['fileUpload']['tmp_name']);
             if ($width < $maxImageSize) {
                 if ($height < $maxImageSize) {
@@ -173,31 +165,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $file_isValid = false;
             }
 
-            // filetype und grösse stimmen
+            // Filetype und grösse stimmen
             if (empty($error)) {
-                // hier wird das hochgeladene File gespeichert -> relativ zum aktuellen Verzeichnis > Berechtigungen beachten !!!
+                // IMPORTANT: The file will be saved in your directory here. If you clone this repo check the privileges of the directory
 
-                // ID für File
+                // ID for the file
                 $result = $mysqli->query("SHOW TABLE STATUS LIKE 'item'");
                 $data = $result->fetch_assoc();
                 $nextId = $data['Auto_increment'];
 
-                // original Filename
+                // Original filename
                 $fileName = pathinfo($_FILES['fileUpload']['name'])['extension'];
 
-                // zusammensetzten von Pfad und Filename
+                // Create filename
                 $uploadFile = $uploadDirectory . $nextId . '.' . $fileName;
 
-                //verkleinertes bild
+                // Resized image
                 $imageFile = $imageDirectory . $nextId . '.' . $fileName;
 
-                //thumbnail
+                // Thumbnail
                 $thumbFile = $thumbDirectory . $nextId . '.' . $fileName;
 
-                //verschiebt die temporäre Datei an den richtigen Ort
+                // Move the temporary file to the correct directory
                 if (move_uploaded_file($_FILES['fileUpload']['tmp_name'], $uploadFile)) {
 
-                    // gd image objekt erstellen
+                    // create image object
                     switch ($imageType) {
                         case 'gif':
                             $original = imagecreatefromgif($uploadFile);
@@ -210,12 +202,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             break;
                     }
 
-                    // breite und höhe
+                    // Widht and height
                     $origWidth = imagesx($original);
                     $origHeight = imagesy($original);
 
-                    // hochformat / querformat / quadrat?
-                    //querformat
+                    // portrait  / landscape / square?
+                    //landscape
                     if ($origWidth > $origHeight) {
                         // bild ist zu breit und muss heruntergerechnet werden
                         if ($origWidth > $maxImageSize) {
@@ -230,7 +222,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $sourceY = 0;
                         $sourceWidth = $sourceHeight = $origHeight;
 
-                        //hochformat
+                        // portrait 
                     } elseif ($origWidth < $origHeight) {
                         // bild ist zu hoch und muss heruntergerechnet werden
                         if ($origHeight > $maxImageSize) {
@@ -244,7 +236,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $sourceY = ceil(($origHeight / 2) - ($origWidth / 2));
                         $sourceWidth = $sourceHeight = $origWidth;
 
-                        // quadrat
+                        // square
                     } elseif ($origWidth == $origHeight) {
                         if ($origWidth > $maxImageSize) {
                             $imageWidth = $maxImageSize;
@@ -256,7 +248,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $sourceY = 0;
                         $sourceWidth = $sourceHeight = $origWidth;
                     }
-                    // verkleinerstes Bild erstellen > $maxImageSize
+                    // create resized image > $maxImageSize
                     $image = imagecreatetruecolor($imageWidth, $imageHeight);
                     imagecopyresized($image, $original, 0, 0, 0, 0, $imageWidth, $imageHeight, $origWidth, $origHeight);
 
@@ -264,7 +256,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $thumbnail = imagecreatetruecolor($thumbWidth, $thumbHeight);
                     imagecopyresized($thumbnail, $original, 0, 0, $sourceX, $sourceY, $thumbWidth, $thumbHeight, $sourceWidth, $sourceHeight);
 
-                    // bild schreiben
+                    // Write image
                     switch ($imageType) {
                         case 'gif':
                             imagegif($image, $imageFile);
@@ -280,7 +272,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             break;
                     }
 
-                    // bilder löschen
+                    // Delete image
                     imagedestroy($image);
                     imagedestroy($thumbnail);
                     imagedestroy($original);
@@ -295,7 +287,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    // Check all inputs
     if ($file_isValid && $title_isValid && $description_isValid && $count_isValid) {
+        // Set the values for sql statement
         $count = trim(preg_replace('#[^0-9]#i', "", $_POST["count"]));
         $title = htmlspecialchars(trim(($_POST["title"])));
         $description = htmlspecialchars(trim($_POST["description"]));
@@ -307,6 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $imagePath = $imageFile;
         }
 
+        // Use default images when no image was uploaded
         if (empty($_FILES["fileUpload"]) || !isset($_FILES["fileUpload"]) && !$hasSameThumbPath) {
             $thumbPath = "/img/products/1.jpg";
         } elseif ($hasSameThumbPath) {
@@ -315,6 +310,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $thumbPath = $thumbFile;
         }
 
+        // Create new product
         if (!$isUpdate) {
             $query = "INSERT INTO item(`count`, `title`, `description`, `picture`, `thumb`) VALUES (?, ?, ?, ?,?);";
             $stmt = $mysqli->prepare($query);
@@ -327,13 +323,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $thumbPath
             );
 
+            // Check if query was successful
             if ($stmt->execute()) {
                 $message = "Produkt wurde erfolgreich hinzugefügt";
             } else {
                 $error = "Fehler beim Einfügen in die Datenbank. Bitte versuche es erneut";
             }
         } else {
-            //echo "Update<br>Update ID: $isUpdateId<br>Titel neu: $title<br>Titel alt: " . $item['title'];
+            // Update an existing product
             $query = "UPDATE item SET `count` = ?, `title` = ?, `description` = ?, `picture` = ?, `thumb` = ? WHERE idItem = ?;";
             $stmt = $mysqli->prepare($query);
             $stmt->bind_param(
@@ -346,24 +343,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $isUpdateId
             );
 
-            if ($stmt->execute()) {
-                echo "execute successful";
-                echo var_dump($stmt);
-            } else {
-                echo "exec problem";
-            }
+            $stmt->execute();
+
+            // Check if query was successful
             if ($stmt->affected_rows) {
                 $message .= "Produkt wurde erfolgreich geändert";
             } else {
-                $error .= "Der Titel konnte nicht angepasst werden. Bitte versuche es erneut";
+                $error .= "Das Produkt konnte nicht angepasst werden. Bitte versuche es erneut";
             }
         }
     }
 }
 
-?>
-
-<?php
+// Include header
 $siteName = ($isUpdate) ? "Produkt ändern" : "Produkt hinzufügen";;
 include("./includes/header.inc.php");
 
@@ -378,6 +370,7 @@ include("./includes/header.inc.php");
             echo '<p class="note note-success mb-4">' . $message . '</p>';
         ?>
         <form enctype="multipart/form-data" method="post">
+            <!-- File upload -->
             <div class="form-file mb-5">
                 <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxFileSize ?>" />
                 <input type="file" class="form-file-input" id="fileUpload" name="fileUpload" accept="image/*" />
@@ -387,6 +380,7 @@ include("./includes/header.inc.php");
                 </label>
             </div>
 
+            <!-- Title -->
             <div class="form-outline mb-5">
                 <input type="text" id="title" name="title" maxlength="45" class="form-control
                 <?php if (!$title_isValid) {
@@ -405,6 +399,7 @@ include("./includes/header.inc.php");
                 ?>
             </div>
 
+            <!-- Description -->
             <div class="form-outline mb-5">
                 <textarea id="description" name="description" rows="4" maxlength="512" class="form-control
                 <?php if (!$description_isValid) {
@@ -423,6 +418,7 @@ include("./includes/header.inc.php");
                 ?>
             </div>
 
+            <!-- Count -->
             <div class="form-outline mb-5">
                 <input type="number" id="count" name="count" min="1" class="form-control
                 <?php if (!$count_isValid) {
@@ -452,15 +448,18 @@ include("./includes/header.inc.php");
 </div>
 
 <script>
+    // Declare file upload input and label
     const inputFileUpload = document.getElementById('fileUpload');
     const labelFileUpload = document.getElementById('fileUploadLabel');
 
+    // Sets the filename to the label
     const showFileName = (event) => {
         let inputFileUpload = event.srcElement;
         let fileName = inputFileUpload.files[0].name;
         labelFileUpload.innerText = fileName;
     }
 
+    // Add eventlistener to file upload input
     inputFileUpload.addEventListener('change', showFileName);
 </script>
 

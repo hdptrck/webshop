@@ -210,9 +210,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         }
     }
 }
-?>
 
-<?php
+// Include header
 $siteName = "Warenkorb";
 include("./includes/header.inc.php");
 ?>
@@ -348,7 +347,7 @@ include("./includes/header.inc.php");
                         //TODO:Add display of picture
                         echo '<a href="detail.php?id=' . $row['idItem'] . '"><h4>' . $row['title'] . '</h4></a>';
                         echo '<input name="id[]" type="hidden" value="' . $row['idItem'] . '" class="hidden"/>'; // Hidden input, so item-ID is present in post
-                        echo '<input name="number[]" type="number" min="1" value="' . $item['count'] . '" aria-label="Search" class="number form-control float-left" style="width: 100px" required/>';
+                        echo '<input name="number" type="number" min="1" value="' . $item['count'] . '" aria-label="Search" class="number form-control float-left" style="width: 100px" required/>';
                         if (isset($items) and is_array($items)) {
                             foreach ($items as $item) {
                                 if ($item['id'] == $row['idItem'] and isset($item['msg'])) { // Display possible error from server-side validation
