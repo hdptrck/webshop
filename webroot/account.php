@@ -17,6 +17,22 @@ $user = [];
 // Check Session
 require("includes/sessionChecker.php");
 
+// Select user from DB
+$query = "SELECT * FROM webshopuser WHERE idWebShopUser = ?;";
+$stmt = $mysqli->prepare($query);
+$stmt->bind_param("i", $_SESSION["userId"]);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// If user is selected
+if ($result->num_rows) {
+    // Set user
+    $user = $result->fetch_assoc();
+    $result->free();
+} else {
+    $error .= "Benutzer konnte nicht abgerufen werden.<br />";
+}
+
 // Request Method POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check password
@@ -44,25 +60,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // All correct until now?
-    if ($password_isValid && isset($_SESSION["userId"]) && $newPassword_isValid) {
-        // Get user from database
-        $query = "SELECT password FROM webshopuser WHERE idWebShopUser = ?;";
-        $stmt = $mysqli->prepare($query);
-        $stmt->bind_param("i", $_SESSION["userId"]);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        // If user is selected
-        if ($result->num_rows) {
-            // Set user
-            $user = $result->fetch_assoc();
-            $result->free();
-        } else {
-            $error .= "Benutzer konnte nicht abgerufen werden.<br />";
-        }
+    if ($password_isValid && $newPassword_isValid) {
 
         // Checks if passwords match
-        if (password_verify($_POST["password"], $user["password"])) {
+        if (isset($user['password']) and password_verify($_POST["password"], $user["password"])) {
             $password = password_hash($_POST["new-password"], PASSWORD_DEFAULT);
 
             // Set new password
@@ -108,13 +109,13 @@ include("./includes/header.inc.php");
                 <div class="row mb-4">
                     <div class="col">
                         <div class="form-outline">
-                            <input disabled name="register-firstname" type="text" id="register-firstname" class="form-control" value="<?php echo "Max"; ?>" />
+                            <input disabled name="register-firstname" type="text" id="register-firstname" class="form-control" value="<?php if (isset($user['firstname'])) { echo $user['firstname'];} ?>" />
                             <label class="form-label" for="register-firstname">Vorname</label>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-outline">
-                            <input disabled name="register-lastname" type="text" id="register-lastname" class="form-control" value="<?php echo "Muster"; ?>" />
+                            <input disabled name="register-lastname" type="text" id="register-lastname" class="form-control" value="<?php if (isset($user['lastname'])) { echo $user['lastname'];} ?>" />
                             <label class=" form-label" for="register-lastname">Nachname</label>
                         </div>
                     </div>
@@ -122,7 +123,7 @@ include("./includes/header.inc.php");
 
                 <!-- Email input -->
                 <div class="form-outline mb-4">
-                    <input disabled name="register-email" type="email" id="register-email" class="form-control" value="<?php echo "max.muster@webshop.com"; ?>" />
+                    <input disabled name="register-email" type="email" id="register-email" class="form-control" value="<?php if (isset($user['email'])) { echo $user['email'];} ?>" />
                     <label class="form-label" for="register-email">E-Mail</label>
                 </div>
 

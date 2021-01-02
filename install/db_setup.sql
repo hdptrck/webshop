@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `webShop`.`webShopUser` (
   `lastname` VARCHAR(45) NULL,
   `email` VARCHAR(100) NOT NULL,
   `password` VARCHAR(256) NOT NULL,
-  `active` INT NOT NULL,
+  `active` TINYINT NOT NULL,
   `role_idRole` INT NOT NULL,
   PRIMARY KEY (`idWebShopUser`),
   INDEX `fk_webShopUser_role1_idx` (`role_idRole` ASC),
