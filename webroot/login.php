@@ -11,10 +11,13 @@ $login_success = true;
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    if (isset($_GET["reason"])) { //resetPassword.php redirects to this page, in this case a message will be shown
+    if (isset($_GET["reason"])) { //resetPassword.php and logout.php redirects to this page, in this case a message will be shown
         switch ($_GET["reason"]) {
             case "resetsuccessful":
                 $message = "Das Zurücksetzen des Passworts war erfolgreich. Bitte melde Dich an.";
+                break;
+            case "logoutsuccessful":
+                $message = "Du hast dich erfolgreich abgemeldet. Bitte melde Dich erneut an.";
         }
     }
     $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : ''; // Is there a rememberMe Cookie
@@ -196,7 +199,7 @@ function redirectToRequestedPage()
                         <?php if (isset($_POST["email"])) {
                             echo $_POST["email"];
                         } ?>
-                         " />
+                         " required />
                         <label class="form-label" for="email">E-Mail</label>
                         <?php
                         if (!$email_isset) {
@@ -212,7 +215,7 @@ function redirectToRequestedPage()
                             echo "is-invalid";
                         } ?>" value="<?php if (isset($_POST["password"])) {
                                             echo $_POST["password"];
-                                        } ?>" />
+                                        } ?>" required />
                         <label class="form-label" for="password">Password</label>
                         <?php
                         if (!$password_isset) {

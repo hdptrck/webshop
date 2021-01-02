@@ -228,7 +228,7 @@ include("./includes/header.inc.php");
                 <label class="form-label" for="eventName">Anlassname</label>
                 <?php
                 if (!$eventName_isValid) { // Possible server-side validation violation?
-                    echo '<div class="invalid-feedback">'  . $eventName_error . '</div>';
+                    echo '<div class="note note-danger mb-4">'  . $eventName_error . '</div>';
                 }
                 ?>
             </div>
@@ -240,7 +240,7 @@ include("./includes/header.inc.php");
                 <label class="form-label" for="eventPlace">Anlassort</label>
                 <?php
                 if (!$eventPlace_isValid) { // Possible server-side validation violation?
-                    echo '<div class="invalid-feedback">'  . $eventPlace_error . '</div>';
+                    echo '<div class="note note-danger mb-4">'  . $eventPlace_error . '</div>';
                 }
                 ?>
             </div>
@@ -268,10 +268,10 @@ include("./includes/header.inc.php");
                                                                                                                             echo "12:00";
                                                                                                                         } ?>" required />
                                 <?php if (!$startDate_isValid) { // Possible server-side validation violation?
-                                    echo '<div class="invalid-feedback">' . $startDate_error . '</div>';
+                                    echo '<div class="note note-danger mb-4">' . $startDate_error . '</div>';
                                 }
                                 if (!$startTime_isValid) { // Possible server-side validation violation?
-                                    echo '<div class="invalid-feedback">' . $startTime_error . '</div>';
+                                    echo '<div class="note note-danger mb-4">' . $startTime_error . '</div>';
                                 } ?>
                             </div>
                         </div>
@@ -298,10 +298,10 @@ include("./includes/header.inc.php");
                                                                                                                                 echo "19:00";
                                                                                                                             } ?>" min="12:00" />
                                 <?php if (!$endDate_isValid) { // Possible server-side validation violation?
-                                    echo '<div class="invalid-feedback">' . $endDate_error . '</div>';
+                                    echo '<div class="note note-danger mb-4">' . $endDate_error . '</div>';
                                 }
                                 if (!$endTime_isValid) { // Possible server-side validation violation?
-                                    echo '<div class="invalid-feedback">' . $endTime_error . '</div>';
+                                    echo '<div class="note note-danger mb-4">' . $endTime_error . '</div>';
                                 } ?>
                             </div>
                         </div>
@@ -323,11 +323,11 @@ include("./includes/header.inc.php");
                     ?>
                 </select>
                 <?php if (!$orderLocation_isValid) { // Possible server-side validation violation?
-                    echo '<div class="invalid-feedback">' . $orderLocation_error . '</div>';
+                    echo '<div class="note note-danger mb-4">' . $orderLocation_error . '</div>';
                 } ?>
 
                 <?php if (!$items_exist) { // Possible server-side validation violation?
-                    echo '<div class="invalid-feedback">' . $items_error . '</div>';
+                    echo '<div class="note note-danger mb-4">' . $items_error . '</div>';
                 } ?>
             </div>
 
@@ -347,11 +347,11 @@ include("./includes/header.inc.php");
                         //TODO:Add display of picture
                         echo '<a href="detail.php?id=' . $row['idItem'] . '"><h4>' . $row['title'] . '</h4></a>';
                         echo '<input name="id[]" type="hidden" value="' . $row['idItem'] . '" class="hidden"/>'; // Hidden input, so item-ID is present in post
-                        echo '<input name="number" type="number" min="1" value="' . $item['count'] . '" aria-label="Search" class="number form-control float-left" style="width: 100px" required/>';
+                        echo '<input name="number[]" type="number" min="1" value="' . $item['count'] . '" aria-label="Search" class="number form-control float-left" style="width: 100px" required/>';
                         if (isset($items) and is_array($items)) {
                             foreach ($items as $item) {
                                 if ($item['id'] == $row['idItem'] and isset($item['msg'])) { // Display possible error from server-side validation
-                                    echo '<div class="invalid-feedback">' . $item['msg'] . '</div>';
+                                    echo '<div class="note note-danger mb-4">' . $item['msg'] . '</div>';
                                 }
                             }
                         }
@@ -496,7 +496,8 @@ include("./includes/header.inc.php");
             Array.prototype.forEach.call(numbers2, function(number2) { // Push feedback from backend to frontend. Under normal conditions there shouldn't be a change
                 let itemExists = false;
                 feedback.forEach(function(item) {
-                    if (number2.id == item.id) {
+                    id = number2.parentNode.getElementsByClassName("hidden")[0].value;
+                    if (id == item.id) {
                         number2.value = item.count;
                         itemExists = true;
                     }
@@ -504,6 +505,7 @@ include("./includes/header.inc.php");
 
                 let parent = number2.parentNode;
                 if (!itemExists) { // Remove item if it doesn't exist
+                    console.log("nottt");
                     parent.remove();
                 } else { // Else check if warning is present and still needed
                     let msgs = parent.getElementsByClassName("warning");
