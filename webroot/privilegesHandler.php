@@ -34,16 +34,18 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             }
 
             // Update Active state
-        } elseif (isset($_GET["active"]) && !empty(trim($_GET["active"]))) {
+        } elseif (isset($_GET["active"])) {
             $response->description = "Der Benutzer konnte nicht angepasst werden";
             $active = preg_replace('#[^0-9]#i', "", $_GET['active']);
-            
+            if ($active != 1 && $active != 0) {
+                $active = 0;
+            }
             // Disable changes on the logged in user
             if ($id == $_SESSION['userId']) {
                 $response->code = 501;
                 $response->description = "Es können keine Änderungen am angemeldeten Benutzers vorgenommen werden";
             } else {
-                // Update active 1 = active, 2 = disabled
+                // Update active 1 = active, 0 = disabled
                 $query = "UPDATE webshopuser SET `active` = ? WHERE `idWebShopUser` = ?;";
                 $stmt = $mysqli->prepare($query);
                 $stmt->bind_param("ii", $active, $id);
