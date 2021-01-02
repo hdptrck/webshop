@@ -42,21 +42,22 @@
 }
 
 #message {
-	display: inline-block;
-	padding: 1.5em 2em;
-	margin: 1em;
-	width: auto;
-	position: fixed;
-	bottom: 0;
-	right: 0;
-	z-index: 2;
-	transition: opacity 1s ease 5s;
+    display: inline-block;
+    padding: 1.5em 2em;
+    margin: 1em;
+    width: auto;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 2;
+    transition: opacity 1s ease 5s;
 }
 
 #message p {
-	display: inline-block;
-	margin: 0;
+    display: inline-block;
+    margin: 0;
 }
+
 .custom-select {
     display: block;
     width: 100%;

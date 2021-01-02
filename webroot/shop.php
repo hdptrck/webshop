@@ -22,6 +22,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         switch ($_GET["message"]) {
             case "ordersuccessful":
                 $message = "Die Bestellung wurde erfolgreich abgeschickt.";
+                break;
+            case "deletesuccessful":
+                $message = "Das Produkt wurde erfolgreich gelöscht";
+                break;
         }
     }
 }
@@ -72,10 +76,10 @@ if (isset($message)) {
 
 <script>
     //message fadeOut
-    setTimeout(function () {
+    setTimeout(function() {
         document.getElementById("message").style.opacity = '0';
     }, 1);
-    setTimeout(function () {
+    setTimeout(function() {
         document.getElementById("message").remove();
     }, 6001);
 </script>

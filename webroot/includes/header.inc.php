@@ -122,7 +122,7 @@ foreach ($pages as $index => $page) {
                                 account_circle
                             </span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                        <ul class="dropdown-menu " aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item" href="account.php">Mein Konto</a></li>
                             <li><a class="dropdown-item" href="logout.php">Abmelden</a></li>
                         </ul>

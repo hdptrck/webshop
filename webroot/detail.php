@@ -141,21 +141,33 @@ if (isset($message)) {
                     return res.json();
                 }).then(res => {
                     if (res.code != 200) {
-                        alert(res.description);
+                        //alert(res.description);
+                        let div = document.createElement("div");
+                        let text = document.createTextNode(res.description)
+                        div.appendChild(text);
+                        div.classList.add("note", "note-danger");
+                        div.setAttribute("id", "message");
+                        document.body.appendChild(div);
+                        setInterval(() => {
+                            document.getElementById("message").style.opacity = '0';
+                        }, 1000);
+                        setTimeout(function() {
+                            document.getElementById("message").remove();
+                        }, 7001);
                     } else {
                         // Successful
-                        alert(res.description);
-                        window.location = "shop.php";
+                        //alert(res.description);
+                        window.location = "shop.php?message=deletesuccessful";
                     }
                 });
         }
     };
 
     //message fadeOut
-    setTimeout(function () {
+    setTimeout(function() {
         document.getElementById("message").style.opacity = '0';
     }, 1);
-    setTimeout(function () {
+    setTimeout(function() {
         document.getElementById("message").remove();
     }, 6001);
 </script>

@@ -35,10 +35,37 @@ while ($row = $result->fetch_assoc()) {
 
 $result->free();
 
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if (isset($_GET["message"])) {
+        switch ($_GET["message"]) {
+            case "roleError":
+                $message = "Die Rolle des Benutzers konnte nicht angepasst werden";
+                $noteClass = "note-danger";
+                break;
+            case "roleSuccess":
+                $message = "Die Rolle des Benutzer wurde erfolgreich angepasst";
+                $noteClass = "note-success";
+                break;
+            case "activateError":
+                $message = "Der Benutzer konnte nicht angepasst werden";
+                $noteClass = "note-danger";
+                break;
+            case "activateSuccess":
+                $message = "Der Benutzer wurde erfolgreich angepasst";
+                $noteClass = "note-success";
+                break;
+        }
+    }
+}
 
 // Include header
 $siteName = "Berechtigungen";
 include("./includes/header.inc.php");
+
+// Display message
+if (isset($message)) {
+    echo '<div id="message" class="note ' . $noteClass . ' mb-4"><p>' . $message . '</p></div>';
+}
 
 ?>
 <div class="row fadeIn">
@@ -102,6 +129,14 @@ include("./includes/header.inc.php");
 </div>
 
 <script>
+    //message fadeOut
+    setTimeout(function() {
+        document.getElementById("message").style.opacity = '0';
+    }, 1);
+    setTimeout(function() {
+        document.getElementById("message").remove();
+    }, 6001);
+
     // Get all user role select -events
     const userRoleSelectList = document.querySelectorAll('.user-role-select');
     const userActiveCheckboxList = document.querySelectorAll('.user-active-checkbox');
@@ -109,17 +144,16 @@ include("./includes/header.inc.php");
     // Changes the user role
     const roleAction = event => {
         const clickedItem = event.target;
-        
+
         // Create GET Request
         fetch('privilegesHandler.php?userId=' + clickedItem.dataset.userId + '&role=' + clickedItem.value)
             .then(res => {
                 return res.json();
             }).then(res => {
                 if (res.code != 200) {
-                    alert(res.description);
-                    location.reload();
+                    window.location = "privileges.php?message=roleError";
                 } else {
-                    alert(res.description);
+                    window.location = "privileges.php?message=roleSuccess";
                 }
             });
     };
@@ -127,7 +161,7 @@ include("./includes/header.inc.php");
     // Activates or deactivates users
     const activeAction = event => {
         const clickedItem = event.target;
-        
+
         // Change active state for db update
         let active;
         if (clickedItem.value == 1) {
@@ -144,10 +178,9 @@ include("./includes/header.inc.php");
                 return res.json();
             }).then(res => {
                 if (res.code != 200) {
-                    alert(res.description);
+                    window.location = "privileges.php?message=activateError";
                 } else {
-                    alert(res.description);
-                    location.reload();
+                    window.location = "privileges.php?message=activateSuccess";
                 }
             });
     };
