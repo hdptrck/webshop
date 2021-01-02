@@ -176,7 +176,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         echo "is-invalid";
                                     } ?>" value="<?php if (isset($_POST["register-firstname"])) {
                                                         echo $_POST["register-firstname"];
-                                                    } ?>" />
+                                                    } ?>" required />
                                     <label class="form-label" for="register-firstname">Vorname</label>
                                     <?php
                                     if (!$firstname_isValid) {
@@ -194,7 +194,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         echo "is-invalid";
                                     } ?>" value="<?php if (isset($_POST["register-lastname"])) {
                                                         echo $_POST["register-lastname"];
-                                                    } ?>" />
+                                                    } ?>" required />
                                     <label class="form-label" for="register-lastname">Nachname</label>
                                     <?php
                                     if (!$lastname_isValid) {
@@ -216,7 +216,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 echo "is-invalid";
                             } ?>" value="<?php if (isset($_POST["register-email"])) {
                                                 echo $_POST["register-email"];
-                                            } ?>" />
+                                            } ?>" required />
                             <label class="form-label" for="register-email">E-Mail</label>
                             <?php
                             if (!$email_isValid) {
@@ -236,7 +236,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 echo "is-invalid";
                             } ?>" value="<?php if (isset($_POST["register-password"])) {
                                                 echo $_POST["register-password"];
-                                            } ?>" />
+                                            } ?>" required />
                             <label class="form-label" for="register-password">Passwort</label>
                             <?php
                             if (!$password_isValid) {
@@ -256,7 +256,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 echo "is-invalid";
                             } ?>" value="<?php if (isset($_POST["register-password-repeat"])) {
                                                 echo $_POST["register-password-repeat"];
-                                            } ?>" />
+                                            } ?>" required />
                             <label class="form-label" for="register-password-repeat">Passwort wiederholen</label>
                             <?php
                             if (!$password_repeat_isValid) {
