@@ -44,13 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check new password
     if (!isset($_POST["new-password"]) || empty(trim($_POST["new-password"])) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))) {
         $newPassword_isValid = false;
-        $newPassword_error = "Das Passwort muss aus mindestens acht Zeichen welche Gross-, Kleinbuchstaben Zahlen und Sonderzeichen bestehen";
-    }
-
-    // Check new confirm password
-    if (!isset($_POST["new-password-confirm"]) || empty(trim($_POST["new-password-confirm"])) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", trim($_POST["new-password"]))) {
-        $newPasswordConfirm_isValid = false;
-        $newPasswordConfirm_error = "Das Passwort muss aus mindestens acht Zeichen welche Gross-, Kleinbuchstaben Zahlen und Sonderzeichen bestehen";
+        $newPassword_error = "Das Passwort muss aus mindestens acht Zeichen welche Gross-, Kleinbuchstaben Zahlen und Sonderzeichen sind bestehen";
     }
 
     // Check if passwords are equal
@@ -134,7 +128,7 @@ include("./includes/header.inc.php");
                             echo "is-invalid";
                         } ?>" value="<?php if (isset($_POST["password"])) {
                                             echo $_POST["password"];
-                                        } ?>" />
+                                        } ?>" required />
                     <label class="form-label" for="password">Altes Passwort</label>
                     <?php
                     if (!$password_isValid) {
@@ -150,7 +144,7 @@ include("./includes/header.inc.php");
                         echo "is-invalid";
                     } ?>" value="<?php if (isset($_POST["new-password"])) {
                                         echo $_POST["new-password"];
-                                    } ?>" />
+                                    } ?>" required />
                     <label class="form-label" for="new-password">Neues Passwort</label>
                     <?php
                     if (!$newPassword_isValid) {
@@ -168,7 +162,7 @@ include("./includes/header.inc.php");
                         echo "is-invalid";
                     } ?>" value="<?php if (isset($_POST["new-password-confirm"])) {
                                         echo $_POST["new-password-confirm"];
-                                    } ?>" />
+                                    } ?>" required />
                     <label class="form-label" for="new-password-confirm">Neues Passwort wiederholen</label>
                     <?php
                     if (!$newPasswordConfirm_isValid) {
