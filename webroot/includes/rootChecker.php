@@ -1,6 +1,6 @@
 <?php
 // Check if user is an Administrator
-if ($_SESSION['userRole'] != 1 && $_SESSION['userRole'] != 2) {
+if ($_SESSION['userRole'] != 2) {
     header('Location: index.php');
     die();
 }
