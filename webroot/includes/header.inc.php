@@ -9,7 +9,7 @@ $pages = [
 ];
 
 // Add pages for the admin
-if ($_SESSION['userRole'] >= 1 ) {
+if ($_SESSION['userRole'] >= 2 ) {
     $pages[] = [
         'fileName' => 'addProduct.php',
         'displayText' => 'Produkt hinzufügen',
@@ -21,7 +21,7 @@ if ($_SESSION['userRole'] >= 1 ) {
     ];
 }
 
-if ($_SESSION['userRole'] == 2) {
+if ($_SESSION['userRole'] == 3) {
     $pages[] = [
         'fileName' => 'privileges.php',
         'displayText' => 'Berechtigungen',

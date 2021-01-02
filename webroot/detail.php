@@ -89,7 +89,7 @@ include("./includes/header.inc.php");
 
                 <!-- Edit and delete product -->
                 <?php
-                if ($_SESSION['userRole'] == 1) {
+                if ($_SESSION['userRole'] >= 2) {
                     echo '<span class="float-right">
                             <a href="addProduct.php?id=' . $item['idItem'] . '" class="text-primary">
                                 <span class="material-icons-outlined">

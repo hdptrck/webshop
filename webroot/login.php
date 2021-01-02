@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
 
     if ($email_isset && $password_isset) {
-        $query = "SELECT * FROM webShopUser WHERE email=?;";
+        $query = "SELECT * FROM webShopUser WHERE email = ? AND active = 1;";
         $stmt = $mysqli->prepare($query);
         $stmt->bind_param("s", $_POST["email"]);
         $stmt->execute();
