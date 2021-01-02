@@ -54,6 +54,7 @@ include("./includes/header.inc.php");
                     <th scope="col">Name</th>
                     <th scope="col">E-Mail</th>
                     <th scope="col">Rolle</th>
+                    <th scope="col">Aktiv</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,7 +62,7 @@ include("./includes/header.inc.php");
                 // Create element for each user
                 $rowNumber = 1;
                 foreach ($users as $user) {
-                    // Create li element for each item
+                    // Create tabele row for each item
                 ?>
                     <tr>
                         <th scope="row"><?php echo  $rowNumber; ?></th>
@@ -69,6 +70,7 @@ include("./includes/header.inc.php");
                         <td><?php echo  $user['lastname']; ?></td>
                         <td><a href="mailto:<?php echo $user['email']; ?>"><?php echo $user['email']; ?></a></td>
                         <td>
+                            <!-- Select for user role -->
                             <select class="user-role-select" data-user-id="<?php echo $user["idWebShopUser"]; ?>">
                                 <?php
                                 foreach ($roles as $role) {
@@ -80,6 +82,10 @@ include("./includes/header.inc.php");
                                 }
                                 ?>
                             </select>
+                        </td>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input user-active-checkbox" type="checkbox" value="<?php echo $user["active"]; ?>" data-user-id="<?php echo $user["idWebShopUser"]; ?>" <?php echo ($user["active"] == 1) ? 'checked' : ''; ?> />
                         </td>
                     </tr>
                 <?php
@@ -94,17 +100,16 @@ include("./includes/header.inc.php");
     }
     ?>
 </div>
-</div>
-</div>
-</div>
 
 <script>
     // Get all user role select -events
-    const orderActionItemList = document.querySelectorAll('.user-role-select');
+    const userRoleSelectList = document.querySelectorAll('.user-role-select');
+    const userActiveCheckboxList = document.querySelectorAll('.user-active-checkbox');
 
     // Changes the user role
-    const orderAction = event => {
+    const roleAction = event => {
         const clickedItem = event.target;
+        
         // Create GET Request
         fetch('privilegesHandler.php?userId=' + clickedItem.dataset.userId + '&role=' + clickedItem.value)
             .then(res => {
@@ -112,17 +117,48 @@ include("./includes/header.inc.php");
             }).then(res => {
                 if (res.code != 200) {
                     alert(res.description);
+                    location.reload();
                 } else {
                     alert(res.description);
-                    //If successful reloads page
-                    //location.reload();
+                }
+            });
+    };
+
+    // Activates or deactivates users
+    const activeAction = event => {
+        const clickedItem = event.target;
+        
+        // Change active state for db update
+        let active;
+        if (clickedItem.value == 1) {
+            active = 2;
+        } else {
+            active = 1;
+        }
+
+        console.log("active", active);
+
+        // Create GET Request
+        fetch('privilegesHandler.php?userId=' + clickedItem.dataset.userId + '&active=' + active)
+            .then(res => {
+                return res.json();
+            }).then(res => {
+                if (res.code != 200) {
+                    alert(res.description);
+                } else {
+                    alert(res.description);
+                    location.reload();
                 }
             });
     };
 
     // Adds event listeners
-    orderActionItemList.forEach(item => {
-        item.addEventListener('change', orderAction);
+    userRoleSelectList.forEach(element => {
+        element.addEventListener('change', roleAction);
+    });
+
+    userActiveCheckboxList.forEach(element => {
+        element.addEventListener('change', activeAction);
     });
 </script>
 
