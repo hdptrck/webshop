@@ -326,6 +326,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Check if query was successful
             if ($stmt->execute()) {
                 $message = "Produkt wurde erfolgreich hinzugefügt";
+                unset($_POST);
             } else {
                 $error = "Fehler beim Einfügen in die Datenbank. Bitte versuche es erneut";
             }
