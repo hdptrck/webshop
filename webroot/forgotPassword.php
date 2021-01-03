@@ -144,17 +144,17 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 <body>
     <div class="container">
         <div class="row justify-content-center align-items-center h-100-vh">
-            <div class="col-lg-5 col-md-7 col-sm-10 col-12">
+            <div class="col-lg-6 col-md-8 col-12">
                 <h1 class="text-center mb-5">Passwort vergessen</h1>
                 <?php
                 if (isset($message)) {
-                    echo '<div class="note note-danger mb-4">' . $message . '</div>';
+                    echo '<div class="note note-danger mb-3">' . $message . '</div>';
                 }
                 ?>
-                <p class="text-center mb-5">Trage deine E-Mail Adresse ein um das Passwort zurückzusetzen. Anschliessend wird dir ein Link zugeschickt, mit welchem du dein Passwort zurücksetzen kannst.</p>
+                <p class="note note-info mb-5">Trage deine E-Mail Adresse ein um das Passwort zurückzusetzen. Anschliessend wird dir ein Link zugeschickt, mit welchem du dein Passwort zurücksetzen kannst.</p>
                 <form method="post">
                     <!-- Email input -->
-                    <div class="form-outline mb-4">
+                    <div class="form-outline mb-5">
                         <input name="email" type="email" id="email" class="form-control 
                         <?php if (!$email_isValid) {
                             echo "is-invalid";
@@ -179,8 +179,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     ?>
 
                     <!-- Submit button -->
-                    <button type="submit" id="email-submit" class="btn btn-primary btn-block mt-5">
-                        Zurücksetzen
+                    <button type="submit" id="email-submit" class="btn btn-primary btn-block">
+                        Link senden
                     </button>
                 </form>
             </div>

@@ -222,27 +222,27 @@ if (isset($error)) {
 <div class="row justify-content-center">
     <div class="col-lg-8 col-md-10 col-sm-10 col-12">
         <form method="post">
-            <div class="form-outline mb-5">
-                <input type="text" id="eventName" name="eventName" maxlength="45" class="orderInfo form-control" required value="<?php if (isset($_SESSION['orderInfos']['eventName'])) { // Maybe there is a name already present in session?
-                                                                                                                                echo $_SESSION['orderInfos']['eventName'];
-                                                                                                                            }
-                                                                                                                            ?>" />
+            <div class="form-outline <?php echo (!$eventName_isValid) ? "mb-5" : "mb-3"; ?>">
+                <input type="text" id="eventName" name="eventName" maxlength="45" class="orderInfo form-control <?php echo (!$eventName_isValid) ? "is-invalid" : ""; ?>" required value="<?php if (isset($_SESSION['orderInfos']['eventName'])) { // Maybe there is a name already present in session?
+                                                                                                                                                                                                echo $_SESSION['orderInfos']['eventName'];
+                                                                                                                                                                                            }
+                                                                                                                                                                                            ?>" />
                 <label class="form-label" for="eventName">Anlassname</label>
                 <?php
                 if (!$eventName_isValid) { // Possible server-side validation violation?
-                    echo '<div class="note note-danger mb-4">'  . $eventName_error . '</div>';
+                    echo '<div class="invalid-feedback">'  . $eventName_error . '</div>';
                 }
                 ?>
             </div>
 
             <div class="form-outline mb-5">
-                <input type="text" id="eventPlace" name="eventPlace" maxlength="45" class="orderInfo form-control" required value="<?php if (isset($_SESSION['orderInfos']['eventPlace'])) { // Maybe there is a place already present in session?
-                                                                                                                                echo  $_SESSION['orderInfos']['eventPlace'];
-                                                                                                                            } ?>" />
+                <input type="text" id="eventPlace" name="eventPlace" maxlength="45" class="orderInfo form-control <?php echo (!$eventPlace_isValid) ? "is-invalid" : ""; ?>" required value="<?php if (isset($_SESSION['orderInfos']['eventPlace'])) { // Maybe there is a place already present in session?
+                                                                                                                                                                                                    echo  $_SESSION['orderInfos']['eventPlace'];
+                                                                                                                                                                                                } ?>" />
                 <label class="form-label" for="eventPlace">Anlassort</label>
                 <?php
                 if (!$eventPlace_isValid) { // Possible server-side validation violation?
-                    echo '<div class="note note-danger mb-4">'  . $eventPlace_error . '</div>';
+                    echo '<div class="invalid-feedback">'  . $eventPlace_error . '</div>';
                 }
                 ?>
             </div>
@@ -251,30 +251,34 @@ if (isset($error)) {
                 <div class="col-md-6 col-12">
                     <label class="form-label" for="start_date">Abholdatum und -zeit</label>
                     <div class="row">
-                        <div class="col mb-md-3">
-                            <div class="form-outline">
-                                <input class="start form-control" type="date" id="start_date" name="start_date" required value="<?php
-                                                                                                                                if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a startdate already present in session?
-                                                                                                                                    echo (DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("Y-m-d"));
-                                                                                                                                } else {
-                                                                                                                                    echo date("Y-m-d", strtotime("next saturday"));
-                                                                                                                                }
-                                                                                                                                ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" />
+                        <div class="col">
+                            <div class="form-outline <?php echo (!$startDate_isValid) ? "mb-5" : "mb-3"; ?>">
+                                <input class="start form-control <?php echo (!$startDate_isValid) ? "is-invalid" : ""; ?>" type="date" id="start_date" name="start_date" required value="<?php
+                                                                                                                                                                                            if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a startdate already present in session?
+                                                                                                                                                                                                echo (DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("Y-m-d"));
+                                                                                                                                                                                            } else {
+                                                                                                                                                                                                echo date("Y-m-d", strtotime("next saturday"));
+                                                                                                                                                                                            }
+                                                                                                                                                                                            ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" />
+                                <?php
+                                if (!$startDate_isValid) { // Possible server-side validation violation?
+                                    echo '<div class="invalid-feedback">' . $startDate_error . '</div>';
+                                }
+                                ?>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="form-outline">
-                                <input class="start form-control" type="time" id="start_time" name="start_time" value="<?php if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a starttime already present in session?
-                                                                                                                            echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("H:i");
-                                                                                                                        } else {
-                                                                                                                            echo "12:00";
-                                                                                                                        } ?>" required />
-                                <?php if (!$startDate_isValid) { // Possible server-side validation violation?
-                                    echo '<div class="note note-danger mb-4">' . $startDate_error . '</div>';
-                                }
+                            <div class="form-outline <?php echo (!$startTime_isValid) ? "mb-5" : "mb-3"; ?>">
+                                <input class="start form-control <?php echo (!$startTime_isValid) ? "is-invalid" : ""; ?>" type="time" id="start_time" name="start_time" value="<?php if (isset($_SESSION['timeSpan']['start'])) { // Maybe there is a starttime already present in session?
+                                                                                                                                                                                    echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['start'])->format("H:i");
+                                                                                                                                                                                } else {
+                                                                                                                                                                                    echo "12:00";
+                                                                                                                                                                                } ?>" required />
+                                <?php
                                 if (!$startTime_isValid) { // Possible server-side validation violation?
-                                    echo '<div class="note note-danger mb-4">' . $startTime_error . '</div>';
-                                } ?>
+                                    echo '<div class="invalid-feedback">' . $startTime_error . '</div>';
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>
@@ -283,36 +287,41 @@ if (isset($error)) {
                 <div class="col-md-6 col-12 mt-md-0 mt-3">
                     <label class="form-label" for="end_date">Zurückbringdatum und -zeit</label>
                     <div class="row">
-                        <div class="col mb-md-3">
-                            <div class="form-outline">
-                                <input class="end form-control" type="date" id="end_date" name="end_date" required value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a enddate already present in session?
-                                                                                                                                echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("Y-m-d");
-                                                                                                                            } else {
-                                                                                                                                echo date("Y-m-d", strtotime("next saturday"));
-                                                                                                                            } ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" />
+                        <div class="col">
+                            <div class="form-outline <?php echo (!$endDate_isValid) ? "mb-5" : "mb-3"; ?>">
+                                <input class="end form-control <?php echo (!$endDate_isValid) ? "is-invalid" : ""; ?>" type="date" id="end_date" name="end_date" required value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a enddate already present in session?
+                                                                                                                                                                                        echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("Y-m-d");
+                                                                                                                                                                                    } else {
+                                                                                                                                                                                        echo date("Y-m-d", strtotime("next saturday"));
+                                                                                                                                                                                    } ?>" min="<?php echo date("Y-m-d", strtotime("now")) ?>" />
+                                <?php
+                                if (!$endDate_isValid) { // Possible server-side validation violation?
+                                    echo '<div class="invalid-feedback">' . $endDate_error . '</div>';
+                                }
+                                ?>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="form-outline">
-                                <input class="end form-control" type="time" id="end_time" name="end_time" required value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a endtime already present in session?
-                                                                                                                                echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("H:i");
-                                                                                                                            } else {
-                                                                                                                                echo "19:00";
-                                                                                                                            } ?>" min="12:00" />
-                                <?php if (!$endDate_isValid) { // Possible server-side validation violation?
-                                    echo '<div class="note note-danger mb-4">' . $endDate_error . '</div>';
-                                }
+                            <div class="form-outline <?php echo (!$endTime_isValid) ? "mb-5" : "mb-3"; ?>">
+                                <input class="end form-control <?php echo (!$endTime_isValid) ? "is-invalid" : ""; ?>" type="time" id="end_time" name="end_time" required value="<?php if (isset($_SESSION['timeSpan']['end'])) { // Maybe there is a endtime already present in session?
+                                                                                                                                                                                        echo DateTime::createFromFormat("d.m.Y H:i", $_SESSION['timeSpan']['end'])->format("H:i");
+                                                                                                                                                                                    } else {
+                                                                                                                                                                                        echo "19:00";
+                                                                                                                                                                                    } ?>" min="12:00" />
+                                <?php
                                 if (!$endTime_isValid) { // Possible server-side validation violation?
-                                    echo '<div class="note note-danger mb-4">' . $endTime_error . '</div>';
-                                } ?>
+                                    echo '<div class="invalid-feedback">' . $endTime_error . '</div>';
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <label class="form-label" for="orderLocation">Bereitstellungsort</label><br />
-            <div class="mb-5">
-                <select id="orderLocation" name="orderLocation" required class="orderInfo custom-select">
+            <div <?php echo (!$orderLocation_isValid || !$items_exist) ? 'class="mb-55"' : 'class="mb-5"'; ?>>
+                <select id="orderLocation" name="orderLocation" required class="orderInfo custom-select  <?php echo (!$orderLocation_isValid || !$items_exist) ? "is-invalid" : ""; ?>">
                     <option value="0">Auswählen...</option>
                     <?php
                     foreach ($orderLocations as $location) { // Foreach orderLocation which was selected in DB earlier there will be an option
@@ -325,18 +334,18 @@ if (isset($error)) {
                     ?>
                 </select>
                 <?php if (!$orderLocation_isValid) { // Possible server-side validation violation?
-                    echo '<div class="note note-danger mb-4">' . $orderLocation_error . '</div>';
+                    echo '<div class="invalid-feedback mt-1">' . $orderLocation_error . '</div>';
                 } ?>
 
                 <?php if (!$items_exist) { // Possible server-side validation violation?
-                    echo '<div class="note note-danger mb-4">' . $items_error . '</div>';
+                    echo '<div class="invalid-feedback mt-1">' . $items_error . '</div>';
                 } ?>
             </div>
 
             <?php
             if (isset($_SESSION['shoppingCart']) and is_array($_SESSION['shoppingCart']) and !empty($_SESSION['shoppingCart'])) { // Are there even items in shopping cart?
                 $shoppingCart = $_SESSION['shoppingCart'];
-                echo '<div class="row">';
+                echo '<div class="row mb-5">';
                 foreach ($shoppingCart as $item) { // Every items will be displayed as listitem
                     $query = "SELECT * FROM item WHERE idItem=?;";
                     $stmt = $mysqli->prepare($query);
@@ -345,9 +354,9 @@ if (isset($error)) {
                     $result = $stmt->get_result();
                     if ($result->num_rows > 0) { // Is ID valid?
                         $row = $result->fetch_assoc();
-                        echo '<div class="col-12">';
+                        echo '<div class="col-12 mb-3 card"><div class="card-body">';
                         //TODO:Add display of picture
-                        echo '<a href="detail.php?id=' . $row['idItem'] . '"><h4>' . $row['title'] . '</h4></a>';
+                        echo '<a href="detail.php?id=' . $row['idItem'] . '"><h5 class="card-title">' . $row['title'] . '</h5></a>';
                         echo '<input name="id[]" type="hidden" value="' . $row['idItem'] . '" class="hidden"/>'; // Hidden input, so item-ID is present in post
                         echo '<input name="number[]" type="number" min="1" value="' . $item['count'] . '" aria-label="Search" class="number form-control float-left" style="width: 100px" required/>';
                         if (isset($items) and is_array($items)) {
@@ -357,21 +366,21 @@ if (isset($error)) {
                                 }
                             }
                         }
-                        echo '<button id="' . $row["idItem"] . '" class="remove float-right btn btn-danger btn-delete-padding"><span class="material-icons-outlined">delete</span></button>';
-                        echo '</div>';
+                        echo '<a id="' . $row["idItem"] . '" class="remove float-right text-danger clickable-icon"><span class="material-icons-outlined">delete</span></a>';
+                        echo '</div></div>';
                     }
                 }
                 echo '</div>';
             } else {
                 //TODO: Nice view of no Items
-                echo "Noch keine Dinge im Warenkorb";
+                echo '<p class="note note-warning mb-5">Noch keine Dinge im Warenkorb</p>';
             }
             ?>
 
             <!-- Submit button -->
-            <button type="submit" id="shoppingcart-submit" class="btn btn-primary btn-block mt-5" <?php if (!isset($shoppingCart)) { // Disable button when there are no items
-                                                                                                        echo "disabled";
-                                                                                                    }  ?>>
+            <button type="submit" id="shoppingcart-submit" class="btn btn-primary btn-block" <?php if (!isset($shoppingCart)) { // Disable button when there are no items
+                                                                                                    echo "disabled";
+                                                                                                }  ?>>
                 Bestellung abschicken
             </button>
         </form>
@@ -565,10 +574,10 @@ if (isset($error)) {
     });
 
     //message fadeOut
-    setTimeout(function () {
+    setTimeout(function() {
         document.getElementById("message").style.opacity = '0';
     }, 1);
-    setTimeout(function () {
+    setTimeout(function() {
         document.getElementById("message").remove();
     }, 6001);
 

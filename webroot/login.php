@@ -19,8 +19,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             case "logoutsuccessful":
                 $message = "Du hast dich erfolgreich abgemeldet. Bitte melde Dich erneut an.";
                 break;
-                case "registersuccessful":
-                    $message = "Die Registrierung war erfolgreich. Bitte melde Dich an.";
+            case "registersuccessful":
+                $message = "Die Registrierung war erfolgreich. Bitte melde Dich an.";
         }
     }
     $cookie = isset($_COOKIE['rememberme']) ? $_COOKIE['rememberme'] : ''; // Is there a rememberMe Cookie
@@ -178,11 +178,11 @@ function redirectToRequestedPage()
 <body>
     <div class="container">
         <div class="row justify-content-center align-items-center h-100-vh">
-            <div class="col-lg-5 col-md-7 col-sm-10 col-12">
-                <h1 class="text-center mb-4">Anmelden</h1>
+            <div class="col-lg-6 col-md-8 col-12">
+                <h1 class="text-center mb-5">Anmelden</h1>
                 <?php
                 if (!empty($message)) {
-                    echo '<p class="mb-4 note ';
+                    echo '<p class="mb-5 note ';
                     if (!$login_success) {
                         echo 'note-danger';
                     } else {
@@ -191,9 +191,9 @@ function redirectToRequestedPage()
                     echo '">' . $message . '</p>';
                 }
                 ?>
-                <form id="1" method="post">
+                <form method="post">
                     <!-- Email input -->
-                    <div class="form-outline mb-5">
+                    <div class="form-outline <?php echo (!$email_isset) ? "mb-5" : "mb-3"; ?>">
                         <input name="email" type="email" id="email" class="form-control 
                         <?php if (!$email_isset) {
                             echo "is-invalid";
@@ -228,7 +228,7 @@ function redirectToRequestedPage()
                     </div>
 
                     <!-- 2 column grid layout -->
-                    <div class="row mb-4">
+                    <div class="row mb-5">
                         <div class="col-md-6 d-flex justify-content-center">
                             <!-- Checkbox -->
                             <div class="form-check mb-3 mb-md-0">
@@ -245,10 +245,10 @@ function redirectToRequestedPage()
                         </div>
                     </div>
                     <!-- Submit button -->
-                    <button type="submit" id="login-submit" class="btn btn-primary btn-block mt-5">
+                    <button type="submit" id="login-submit" class="btn btn-primary btn-block mb-3">
                         Anmelden
                     </button>
-                    <a href="register.php" class="btn btn-outline-primary btn-block">
+                    <a href="register.php" class="btn btn-outline-info btn-block mt-0">
                         Registrieren
                     </a>
                 </form>
