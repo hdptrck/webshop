@@ -153,7 +153,7 @@ if (isset($_GET["token"])) {
 
                     <!-- Submit button -->
                     <button type="submit" id="reset-submit" class="btn btn-primary btn-block mt-5">
-                        Passwort zurücksetzen
+                        Zurücksetzen
                     </button>
                 </form>
             </div>

@@ -179,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
                     <!-- Submit button -->
                     <button type="submit" id="email-submit" class="btn btn-primary btn-block">
-                        Link senden
+                        Zurücksetzen
                     </button>
                 </form>
             </div>
