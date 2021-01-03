@@ -322,7 +322,7 @@ if (isset($error)) {
             <label class="form-label" for="orderLocation">Bereitstellungsort</label><br />
             <div <?php echo (!$orderLocation_isValid || !$items_exist) ? 'class="mb-55"' : 'class="mb-5"'; ?>>
                 <select id="orderLocation" name="orderLocation" required class="orderInfo custom-select  <?php echo (!$orderLocation_isValid || !$items_exist) ? "is-invalid" : ""; ?>">
-                    <option value="0">Auswählen...</option>
+                    <option value="">Auswählen...</option>
                     <?php
                     foreach ($orderLocations as $location) { // Foreach orderLocation which was selected in DB earlier there will be an option
                         $selected = "";
@@ -355,7 +355,6 @@ if (isset($error)) {
                     if ($result->num_rows > 0) { // Is ID valid?
                         $row = $result->fetch_assoc();
                         echo '<div class="col-12 mb-3 card"><div class="card-body">';
-                        //TODO:Add display of picture
                         echo '<a href="detail.php?id=' . $row['idItem'] . '"><h5 class="card-title">' . $row['title'] . '</h5></a>';
                         echo '<input name="id[]" type="hidden" value="' . $row['idItem'] . '" class="hidden"/>'; // Hidden input, so item-ID is present in post
                         echo '<input name="number[]" type="number" min="1" value="' . $item['count'] . '" aria-label="Search" class="number form-control float-left" style="width: 100px" required/>';
@@ -372,7 +371,6 @@ if (isset($error)) {
                 }
                 echo '</div>';
             } else {
-                //TODO: Nice view of no Items
                 echo '<p class="note note-warning mb-5">Noch keine Produkte im Warenkorb</p>';
             }
             ?>

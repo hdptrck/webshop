@@ -113,6 +113,7 @@ if (isset($message)) {
                         <td>
                             <div class="form-check">
                                 <input class="form-check-input user-active-checkbox" type="checkbox" value="<?php echo $user["active"]; ?>" data-user-id="<?php echo $user["idWebShopUser"]; ?>" <?php echo ($user["active"] == 1) ? 'checked' : ''; ?> />
+                            </div>
                         </td>
                     </tr>
                 <?php
