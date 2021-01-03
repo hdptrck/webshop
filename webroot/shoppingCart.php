@@ -373,7 +373,7 @@ if (isset($error)) {
                 echo '</div>';
             } else {
                 //TODO: Nice view of no Items
-                echo '<p class="note note-warning mb-5">Noch keine Dinge im Warenkorb</p>';
+                echo '<p class="note note-warning mb-5">Noch keine Produkte im Warenkorb</p>';
             }
             ?>
 
@@ -381,7 +381,7 @@ if (isset($error)) {
             <button type="submit" id="shoppingcart-submit" class="btn btn-primary btn-block" <?php if (!isset($shoppingCart)) { // Disable button when there are no items
                                                                                                     echo "disabled";
                                                                                                 }  ?>>
-                Bestellung abschicken
+                Bestellung absenden
             </button>
         </form>
     </div>

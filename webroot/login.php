@@ -234,7 +234,7 @@ function redirectToRequestedPage()
                             <div class="form-check mb-3 mb-md-0">
                                 <input name="login-remember" class="form-check-input" type="checkbox" value="" id="login-remember" checked />
                                 <label class="form-check-label" for="login-remember">
-                                    Remember me
+                                    Angemeldet bleiben
                                 </label>
                             </div>
                         </div>

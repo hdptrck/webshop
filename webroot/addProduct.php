@@ -293,7 +293,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $count = trim(preg_replace('#[^0-9]#i', "", $_POST["count"]));
         $title = htmlspecialchars(trim(($_POST["title"])));
         $description = htmlspecialchars(trim($_POST["description"]));
-        if (empty($_FILES["fileUpload"]) || !isset($_FILES["fileUpload"]) && !$hasSamePicturePath) {
+        if (!$hasImage && !$hasSamePicturePath) {
             $imagePath = "/img/products/1.jpg";
         } elseif ($hasSamePicturePath) {
             $imagePath = $samePicturePath;
@@ -302,7 +302,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Use default images when no image was uploaded
-        if (empty($_FILES["fileUpload"]) || !isset($_FILES["fileUpload"]) && !$hasSameThumbPath) {
+        if (!$hasImage && !$hasSameThumbPath) {
             $thumbPath = "/img/products/1.jpg";
         } elseif ($hasSameThumbPath) {
             $thumbPath = $sameThumbPath;

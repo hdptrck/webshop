@@ -43,6 +43,7 @@ include("./includes/header.inc.php");
                         <div class="col-md-6 col-12">
                             <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Besteller" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">assignment_ind</span></a> <?php echo $order['firstname'] . ' ' . $order['lastname']; ?></p>
                             <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="E-Mail" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">email</span></a> <a href="mailto:<?php echo $order['email']; ?>"> <?php echo $order['email']; ?></a></p>
+                            <p class="card-text mb-3"><a href="#" data-mdb-toggle="tooltip" title="Bereitstellungsort" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">place</span></a> <?php echo $order['eventPlace']; ?></p>
                         </div>
                         <div class="col-md-6 col-12">
                             <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Abholdatum" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">local_shipping</span></a> <?php echo $order['pickUpDatetime']; ?></p>
