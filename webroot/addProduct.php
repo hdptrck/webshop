@@ -390,7 +390,7 @@ include("./includes/header.inc.php");
             <!-- Title -->
             <div class="form-outline <?php echo (!$title_isValid) ? "mb-5" : "mb-3"; ?>">
                 <input type="text" id="title" name="title" maxlength="45" class="form-control
-                <?php echo (!$title_isValid) ? "is-invalid" : ""; ?>" value="<?php echo (isset($_POST["title"])) ? $_POST["title"] : ""; ?>" />
+                <?php echo (!$title_isValid) ? "is-invalid" : ""; ?>" value="<?php echo (isset($_POST["title"])) ? $_POST["title"] : ""; ?>" required />
                 <label class="form-label" for="title">Titel</label>
                 <?php
                 if (!$title_isValid) {
@@ -414,7 +414,7 @@ include("./includes/header.inc.php");
             <!-- Count -->
             <div class="form-outline mb-5">
                 <input type="number" id="count" name="count" min="1" class="form-control
-                <?php echo (!$count_isValid) ? "is-invalid" : ""; ?>" value="<?php echo (isset($_POST["count"])) ? $_POST["count"] : ""; ?>" />
+                <?php echo (!$count_isValid) ? "is-invalid" : ""; ?>" value="<?php echo (isset($_POST["count"])) ? $_POST["count"] : ""; ?>" required />
                 <label class="form-label" for="count">Bestand</label>
                 <?php
                 if (!$count_isValid) {

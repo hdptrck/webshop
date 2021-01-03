@@ -48,6 +48,7 @@ include("./includes/header.inc.php");
                         <div class="col-md-6 col-12">
                             <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Abholdatum" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">local_shipping</span></a> <?php echo $order['pickUpDatetime']; ?></p>
                             <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Zurückbringdatum" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">assignment_return</span></a> <?php echo $order['returnDatetime']; ?></p>
+                            <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Bereitstellungsort" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">pin_drop</span></a> <?php echo $order['name']; ?></p>
                         </div>
                     </div>
                     <button id="btn-<?php echo  $order['idOrder']; ?>" class="mb-3 btn btn-outline-info" onClick="showDetail(this)">Details anzeigen</button>
