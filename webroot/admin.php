@@ -39,11 +39,29 @@ include("./includes/header.inc.php");
             <div class="card" data-ripple-color="light">
                 <div class="card-body">
                     <h5 class="card-title"><?php echo $order['eventName']; ?> </h5>
-                    <p class="card-text">Besteller: <?php echo $order['firstname'] . ' ' . $order['lastname']; ?> <br>E-Mail: <a href="mailto:<?php echo $order['email']; ?>"> <?php echo $order['email']; ?></a></p>
-                    <p>Abholdatum: <?php echo $order['pickUpDatetime']; ?><br>
-                        Zurückbringdatum: <?php echo $order['returnDatetime']; ?></p>
-                    <button id="btn-<?php echo  $order['idOrder']; ?>" class="btn btn-info mb-3" onClick="showDetail(this)">Details anzeigen</button>
-                    <div class="mb-3" style="display: none">
+                    <div class="row mb-3">
+                        <div class="col-md-6 col-12">
+                            <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Besteller" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">assignment_ind</span></a> <?php echo $order['firstname'] . ' ' . $order['lastname']; ?></p>
+                            <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="E-Mail" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">email</span></a> <a href="mailto:<?php echo $order['email']; ?>"> <?php echo $order['email']; ?></a></p>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Abholdatum" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">local_shipping</span></a> <?php echo $order['pickUpDatetime']; ?></p>
+                            <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Zurückbringdatum" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">assignment_return</span></a> <?php echo $order['returnDatetime']; ?></p>
+                        </div>
+                    </div>
+                    <button id="btn-<?php echo  $order['idOrder']; ?>" class="mb-3 btn btn-outline-info" onClick="showDetail(this)">Details anzeigen</button>
+
+                    <?php
+                    // Create a button depending on the state of the order
+                    echo '<button class="mb-3 order-event btn btn-primary" data-order-id="' . $order['idOrder'] . '" data-order-action="';
+                    if ($order['isReady'] == 0) {
+                        echo 'isReady">Bestellung bereitgestellt</button>';
+                    } else {
+                        echo 'isReturned">Bestellung zurückgegeben</button>';
+                    }
+                    ?>
+
+                    <div class="mb-3 order-info" style="display: none">
                         <?php
                         // Get items in the order
                         $items = [];
@@ -93,78 +111,84 @@ include("./includes/header.inc.php");
                             echo '<span class="text-warning">Keine Einträge vorhanden</span>';
                         }
 
-                        // Create a button depending on the state of the order
-                        echo '</div><button class="order-event btn btn-primary btn-block" data-order-id="' . $order['idOrder'] . '" data-order-action="';
-                        if ($order['isReady'] == 0) {
-                            echo 'isReady">Bestellung bereitgestellt</button>';
-                        } else {
-                            echo 'isReturned">Bestellung zurückgegeben</button>';
-                        }
+
                         ?>
                     </div>
                 </div>
             </div>
-
-        <?php
-    }
-        ?>
-
         </div>
 
+    <?php
+    }
+    ?>
+
+</div>
 
 
-        <script>
-            // Get all order-events
-            const orderActionItemList = document.querySelectorAll('.order-event');
 
-            // Shows the items in an order
-            const showDetail = (e) => {
-                let nextSibling = e.nextElementSibling;
-                switch (nextSibling.style.display) {
-                    case "none":
-                        nextSibling.style.display = "block";
-                        break;
-                    case "block":
-                        nextSibling.style.display = "none";
-                        break;
+<script>
+    // Get all order-events
+    const orderActionItemList = document.querySelectorAll('.order-event');
+
+    // Shows the items in an order
+    const showDetail = (e) => {
+        // Get parent node and search for matching child
+        const parentofSelected = e.parentNode;
+        const children = parentofSelected.childNodes;
+        for (var i = 0; i < children.length; i++) {
+            if (children[i].tagName == 'DIV') {
+                if (children[i].classList.contains('order-info')) {
+                    switch (children[i].style.display) {
+                        case "none":
+                            e.innerText = "Details ausblenden";
+                            children[i].style.display = "block";
+                            break;
+                        case "block":
+                            e.innerText = "Details anzeigen";
+                            children[i].style.display = "none";
+                            break;
+                    }
+                    break;
                 }
-            };
+            }
+        }
+    };
 
-            // Changes the state of an order
-            const orderAction = event => {
-                const clickedItem = event.target;
-                // Create GET Request
-                fetch('adminOrderHandler.php?orderId=' + clickedItem.dataset.orderId + '&orderAction=' + clickedItem.dataset.orderAction)
-                    .then(res => {
-                        return res.json();
-                    }).then(res => {
-                        if (res.code != 200) {
-                            //alert(res.description);
-                            let div = document.createElement("div");
-                            let text = document.createTextNode(res.description)
-                            div.appendChild(text);
-                            div.classList.add("note", "note-danger");
-                            div.setAttribute("id", "message");
-                            document.body.appendChild(div);
-                            setInterval(() => {
-                                document.getElementById("message").style.opacity = '0';
-                            }, 1000);
-                            setTimeout(function() {
-                                document.getElementById("message").remove();
-                            }, 7001);
-                        } else {
-                            // If successful reloads page
-                            location.reload();
-                        }
-                    });
-            };
-
-            // Adds event listeners
-            orderActionItemList.forEach(item => {
-                item.addEventListener('click', orderAction);
+    // Changes the state of an order
+    const orderAction = event => {
+        const clickedItem = event.target;
+        // Create GET Request
+        fetch('adminOrderHandler.php?orderId=' + clickedItem.dataset.orderId + '&orderAction=' + clickedItem.dataset.orderAction)
+            .then(res => {
+                return res.json();
+            }).then(res => {
+                if (res.code != 200) {
+                    //alert(res.description);
+                    let div = document.createElement("div");
+                    let text = document.createTextNode(res.description)
+                    div.appendChild(text);
+                    div.classList.add("note", "note-danger");
+                    div.setAttribute("id", "message");
+                    document.body.appendChild(div);
+                    setInterval(() => {
+                        document.getElementById("message").style.opacity = '0';
+                    }, 1000);
+                    setTimeout(function() {
+                        document.getElementById("message").remove();
+                    }, 7001);
+                } else {
+                    // If successful reloads page
+                    location.reload();
+                }
             });
-        </script>
+    };
 
-        <?php
-        include("./includes/footer.inc.php");
-        ?>
+    // Adds event listeners
+    orderActionItemList.forEach(item => {
+        item.addEventListener('click', orderAction);
+    });
+</script>
+
+<?php
+include("./includes/footer.inc.php");
+?>
