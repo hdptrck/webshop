@@ -95,7 +95,6 @@ foreach ($pages as $index => $page) {
                             <span class="material-icons-outlined">
                                 shopping_bag
                             </span>
-
                             <?php
                             // Displays number of items in the shopping cart
                             if (isset($numberOfItems)) {

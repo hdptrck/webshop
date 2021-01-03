@@ -26,6 +26,16 @@
     cursor: pointer;
 }
 
+.material-icons-extra-class {
+    display: inline-flex;
+    vertical-align: top;
+}
+
+.a-nostyling {
+    color: inherit!important;
+    text-decoration: inherit!important;
+}
+
 .user-role-select {
     display: block;
     width: 100%;
@@ -47,9 +57,9 @@
     margin: 1em;
     width: auto;
     position: fixed;
-    bottom: 0;
-    right: 0;
-    z-index: 2;
+    top: 0;
+    left: 0;
+    z-index: 1040;
     transition: opacity 1s ease 5s;
 }
 
