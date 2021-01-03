@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $startDate_error = "Bitte teile uns mit, wann das Material abgeholt wird.";
     }
 
-    // Same validation as startdate exepts it's time
+    // Same validation as startdate excepts it's time
     if (isset($_POST['start_time'])) {
         if (empty(trim($_POST['start_time'])) || !preg_match("#([0-1]?[0-9]|2[0-3]):[0-5][0-9]$#", htmlspecialchars(trim($_POST['start_time'])))) {
             $startTime_isValid = false;
