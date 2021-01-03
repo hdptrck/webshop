@@ -111,17 +111,18 @@ if (isset($_GET["token"])) {
 <body>
     <div class="container">
         <div class="row justify-content-center align-items-center h-100-vh">
-            <div class="col-lg-5 col-md-7 col-sm-10 col-12">
+            <div class="col-lg-6 col-md-8 col-12">
                 <h1 class="text-center mb-5">Passwort zurücksetzen</h1>
-                <p class="text-center mb-5">Setze nun ein neues Passwort. Anschliessend wirst du zur Login-Seite weitergeleitet.</p>
                 <?php
-                if (!$reset_successful) {
-                    echo '<div class="invalid-feedback"> Das Zurücksetzen war nicht erfolgreich, bitte versuche es später erneut. </div>';
+                if ($reset_successful) {
+                    echo '<p class="note note-info mb-5">Setze nun ein neues Passwort. Anschliessend wirst du zur Login-Seite weitergeleitet.</p>';
+                } else {
+                    echo '<div class="note note-danger mb-5"> Das Zurücksetzen war nicht erfolgreich, bitte versuche es später erneut. </div>';
                 }
                 ?>
                 <form method="post">
                     <!-- Password input -->
-                    <div class="form-outline mb-4">
+                    <div class="form-outline <?php echo (!$password_isValid) ? "mb-55" : "mb-3"; ?>">
                         <input name="reset-password" type="password" id="reset-password" class="form-control <?php if (!$password_isValid) {
                                                                                                                     echo "is-invalid";
                                                                                                                 } ?>" value="<?php if (isset($_POST["reset-password"])) {
@@ -130,15 +131,13 @@ if (isset($_GET["token"])) {
                         <label class="form-label" for="reset-password">Neues Passwort</label>
                         <?php
                         if (!$password_isValid) {
-                            echo '<div class="invalid-feedback">' .
-                                $password_error .
-                                '</div>';
+                            echo '<div class="invalid-feedback">' . $password_error . '</div>';
                         }
                         ?>
                     </div>
 
                     <!-- Repeat Password input -->
-                    <div class="form-outline mb-4">
+                    <div class="form-outline <?php echo (!$password_repeat_isValid) ? "mb-55" : "mb-3"; ?>">
                         <input name="reset-password-repeat" type="password" id="reset-password-repeat" class="form-control <?php if (!$password_repeat_isValid) {
                                                                                                                                 echo "is-invalid";
                                                                                                                             } ?>" value="<?php if (isset($_POST["reset-password"])) {
@@ -147,16 +146,14 @@ if (isset($_GET["token"])) {
                         <label class="form-label" for="reset-password-repeat">Passwort wiederholen</label>
                         <?php
                         if (!$password_repeat_isValid) {
-                            echo '<div class="invalid-feedback">' .
-                                $password_repeat_error .
-                                '</div>';
+                            echo '<div class="invalid-feedback">' . $password_repeat_error . '</div>';
                         }
                         ?>
                     </div>
 
                     <!-- Submit button -->
                     <button type="submit" id="reset-submit" class="btn btn-primary btn-block mt-5">
-                        Zurücksetzen
+                        Passwort zurücksetzen
                     </button>
                 </form>
             </div>

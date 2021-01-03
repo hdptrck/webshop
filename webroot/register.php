@@ -166,125 +166,115 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container">
         <div class="row justify-content-center align-items-center h-100-vh">
-            <div class="col-lg-5 col-md-7 col-sm-10 col-12">
+            <div class="col-lg-6 col-md-8 col-12">
                 <h1 class="text-center mb-5">Registrieren</h1>
                 <form method="post">
-                    <div class="text-center mb-4">
-                        <!-- Name input -->
-                        <div class="row 
-                        <?php echo (!$firstname_isValid || !$lastname_isValid) ? "mb-4" : "mb-3";
-                        ?>">
-                            <div class="col">
-                                <div class="form-outline">
-                                    <input name="register-firstname" type="text" id="register-firstname" class="form-control 
+                    <!-- Name input -->
+                    <div class="row <?php echo (!$firstname_isValid || !$lastname_isValid) ? "mb-4" : "mb-3"; ?>">
+                        <div class="col">
+                            <div class="form-outline">
+                                <input name="register-firstname" type="text" id="register-firstname" class="form-control 
                                     <?php if (!$firstname_isValid) {
                                         echo "is-invalid";
                                     } ?>" value="<?php if (isset($_POST["register-firstname"])) {
                                                         echo $_POST["register-firstname"];
                                                     } ?>" required />
-                                    <label class="form-label" for="register-firstname">Vorname</label>
-                                    <?php
-                                    if (!$firstname_isValid) {
-                                        echo '<div class="invalid-feedback">' .
-                                            $firstname_error .
-                                            '</div>';
-                                    }
-                                    ?>
-                                </div>
+                                <label class="form-label" for="register-firstname">Vorname</label>
+                                <?php
+                                if (!$firstname_isValid) {
+                                    echo '<div class="invalid-feedback">' .
+                                        $firstname_error .
+                                        '</div>';
+                                }
+                                ?>
                             </div>
-                            <div class="col">
-                                <div class="form-outline">
-                                    <input name="register-lastname" type="text" id="register-lastname" class="form-control 
+                        </div>
+                        <div class="col">
+                            <div class="form-outline">
+                                <input name="register-lastname" type="text" id="register-lastname" class="form-control 
                                     <?php if (!$lastname_isValid) {
                                         echo "is-invalid";
                                     } ?>" value="<?php if (isset($_POST["register-lastname"])) {
                                                         echo $_POST["register-lastname"];
                                                     } ?>" required />
-                                    <label class="form-label" for="register-lastname">Nachname</label>
-                                    <?php
-                                    if (!$lastname_isValid) {
-                                        echo '<div class="invalid-feedback">' .
-                                            $lastname_error .
-                                            '</div>';
-                                    }
-                                    ?>
-                                </div>
+                                <label class="form-label" for="register-lastname">Nachname</label>
+                                <?php
+                                if (!$lastname_isValid) {
+                                    echo '<div class="invalid-feedback">' .
+                                        $lastname_error .
+                                        '</div>';
+                                }
+                                ?>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Email input -->
-                        <div class="form-outline
-                        <?php echo (!$email_isValid) ? "mb-45" : "mb-3";
-                        ?>">
-                            <input name=" register-email" type="email" id="register-email" class="form-control 
+                    <!-- Email input -->
+                    <div class="form-outline <?php echo (!$email_isValid) ? "mb-45" : "mb-3"; ?>">
+                        <input name=" register-email" type="email" id="register-email" class="form-control 
                             <?php if (!$email_isValid) {
                                 echo "is-invalid";
                             } ?>" value="<?php if (isset($_POST["register-email"])) {
                                                 echo $_POST["register-email"];
                                             } ?>" required />
-                            <label class="form-label" for="register-email">E-Mail</label>
-                            <?php
-                            if (!$email_isValid) {
-                                echo '<div class="invalid-feedback">' .
-                                    $email_error .
-                                    '</div>';
-                            }
-                            ?>
-                        </div>
+                        <label class="form-label" for="register-email">E-Mail</label>
+                        <?php
+                        if (!$email_isValid) {
+                            echo '<div class="invalid-feedback">' .
+                                $email_error .
+                                '</div>';
+                        }
+                        ?>
+                    </div>
 
-                        <!-- Password input -->
-                        <div class="form-outline 
-                        <?php echo (!$password_isValid) ? "mb-55" : "mb-3";
-                        ?>">
-                            <input name="register-password" type="password" id="register-password" class="form-control 
+                    <!-- Password input -->
+                    <div class="form-outline <?php echo (!$password_isValid) ? "mb-55" : "mb-3"; ?>">
+                        <input name="register-password" type="password" id="register-password" class="form-control 
                             <?php if (!$password_isValid) {
                                 echo "is-invalid";
                             } ?>" value="<?php if (isset($_POST["register-password"])) {
                                                 echo $_POST["register-password"];
                                             } ?>" required />
-                            <label class="form-label" for="register-password">Passwort</label>
-                            <?php
-                            if (!$password_isValid) {
-                                echo '<div class="invalid-feedback">' .
-                                    $password_error .
-                                    '</div>';
-                            }
-                            ?>
-                        </div>
+                        <label class="form-label" for="register-password">Passwort</label>
+                        <?php
+                        if (!$password_isValid) {
+                            echo '<div class="invalid-feedback">' .
+                                $password_error .
+                                '</div>';
+                        }
+                        ?>
+                    </div>
 
-                        <!-- Repeat Password input -->
-                        <div class="form-outline 
-                        <?php echo (!$password_repeat_isValid) ? "mb-55" : "mb-3";
-                        ?>">
-                            <input name="register-password-repeat" type="password" id="register-password-repeat" class="form-control 
+                    <!-- Repeat Password input -->
+                    <div class="form-outline <?php echo (!$password_repeat_isValid) ? "mb-55" : "mb-5"; ?>">
+                        <input name="register-password-repeat" type="password" id="register-password-repeat" class="form-control 
                             <?php if (!$password_repeat_isValid) {
                                 echo "is-invalid";
                             } ?>" value="<?php if (isset($_POST["register-password-repeat"])) {
                                                 echo $_POST["register-password-repeat"];
                                             } ?>" required />
-                            <label class="form-label" for="register-password-repeat">Passwort wiederholen</label>
-                            <?php
-                            if (!$password_repeat_isValid) {
-                                echo '<div class="invalid-feedback">' .
-                                    $password_repeat_error .
-                                    '</div>';
-                            }
-                            ?>
-                        </div>
-
+                        <label class="form-label" for="register-password-repeat">Passwort wiederholen</label>
                         <?php
-                        if (isset($error)) {
-                            echo '<div class="note note-danger mb-4">' . $error . '</div>';
+                        if (!$password_repeat_isValid) {
+                            echo '<div class="invalid-feedback">' .
+                                $password_repeat_error .
+                                '</div>';
                         }
                         ?>
-                        <!-- Submit button -->
-                        <button type="submit" id="register-submit" class="btn btn-primary btn-block mt-5">
-                            Registrieren
-                        </button>
-                        <a href="login.php" class="btn btn-outline-primary btn-block">
-                            Anmelden
-                        </a>
                     </div>
+
+                    <?php
+                    if (isset($error)) {
+                        echo '<div class="note note-danger mb-4">' . $error . '</div>';
+                    }
+                    ?>
+                    <!-- Submit button -->
+                    <button type="submit" id="register-submit" class="btn btn-primary btn-block mb-3">
+                        Registrieren
+                    </button>
+                    <a href="login.php" class="btn btn-outline-info btn-block mt-0">
+                        Anmelden
+                    </a>
                 </form>
             </div>
         </div>

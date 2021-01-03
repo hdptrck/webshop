@@ -95,7 +95,6 @@ foreach ($pages as $index => $page) {
                             <span class="material-icons-outlined">
                                 shopping_bag
                             </span>
-
                             <?php
                             // Displays number of items in the shopping cart
                             if (isset($numberOfItems)) {
@@ -137,7 +136,7 @@ foreach ($pages as $index => $page) {
     <!--Main layout-->
     <main class="mt-5 pt-5 main-min-height">
         <div class="container dark-grey-text">
-            <div class="row fadeIn mb-4">
+            <div class="row fadeIn mb-5">
                 <div class="col text-center">
 
                     <!-- Print site name -->

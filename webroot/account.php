@@ -90,17 +90,16 @@ include("./includes/header.inc.php");
 
 ?>
 <div class="row justify-content-center">
-    <div class="col-lg-6 col-md-7 col-sm-10 col-12">
+    <div class="col-lg-6 col-md-8 col-12">
         <?php
         if ($error) {
-            echo '<p class="note note-danger mb-4">' . $error . '</p>';
+            echo '<p class="note note-danger mb-5">' . $error . '</p>';
         } elseif ($message)
-            echo '<p class="note note-success mb-4">' . $message . '</p>';
+            echo '<p class="note note-success mb-5">' . $message . '</p>';
         ?>
         <form method="post">
-            <div class="text-center mb-3">
                 <!-- Name input -->
-                <div class="row mb-4">
+                <div class="row mb-3">
                     <div class="col">
                         <div class="form-outline">
                             <input disabled name="register-firstname" type="text" id="register-firstname" class="form-control" value="<?php if (isset($user['firstname'])) { echo $user['firstname'];} ?>" />
@@ -116,13 +115,13 @@ include("./includes/header.inc.php");
                 </div>
 
                 <!-- Email input -->
-                <div class="form-outline mb-4">
+                <div class="form-outline mb-5">
                     <input disabled name="register-email" type="email" id="register-email" class="form-control" value="<?php if (isset($user['email'])) { echo $user['email'];} ?>" />
                     <label class="form-label" for="register-email">E-Mail</label>
                 </div>
 
                 <!-- Password input -->
-                <div class="form-outline mb-5">
+                <div class="form-outline <?php echo (!$password_isValid) ? "mb-55" : "mb-3"; ?>">
                     <input name="password" type="password" id="password" class="form-control 
                         <?php if (!$password_isValid) {
                             echo "is-invalid";
@@ -138,7 +137,7 @@ include("./includes/header.inc.php");
                 </div>
 
                 <!-- New password input -->
-                <div class="form-outline mb-5">
+                <div class="form-outline <?php echo (!$newPassword_isValid) ? "mb-55" : "mb-3"; ?>">
                     <input name="new-password" type="password" id="new-password" class="form-control 
                     <?php if (!$newPassword_isValid) {
                         echo "is-invalid";
@@ -156,7 +155,7 @@ include("./includes/header.inc.php");
                 </div>
 
                 <!-- Confirm new password input -->
-                <div class="form-outline mb-5">
+                <div class="form-outline <?php echo (!$newPasswordConfirm_isValid) ? "mb-55" : "mb-5"; ?>">
                     <input name="new-password-confirm" type="password" id="new-password-confirm" class="form-control 
                     <?php if (!$newPasswordConfirm_isValid) {
                         echo "is-invalid";
@@ -174,10 +173,9 @@ include("./includes/header.inc.php");
                 </div>
 
                 <!-- Submit button -->
-                <button type="submit" id="register-submit" class="btn btn-primary btn-block mt-5">
+                <button type="submit" id="register-submit" class="btn btn-primary btn-block">
                     Passwort ändern
                 </button>
-            </div>
         </form>
     </div>
 </div>

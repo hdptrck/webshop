@@ -362,16 +362,16 @@ include("./includes/header.inc.php");
 ?>
 
 <div class="row justify-content-center">
-    <div class="col-lg-6 col-md-7 col-sm-10 col-12">
+    <div class="col-lg-6 col-md-8 col-12">
         <?php
         if ($error) {
-            echo '<p class="note note-danger mb-4">' . $error . '</p>';
+            echo '<p class="note note-danger mb-5">' . $error . '</p>';
         } elseif ($message)
-            echo '<p class="note note-success mb-4">' . $message . '</p>';
+            echo '<p class="note note-success mb-5">' . $message . '</p>';
         ?>
         <form enctype="multipart/form-data" method="post">
             <!-- File upload -->
-            <div class="form-file mb-5">
+            <div class="form-file mb-3">
                 <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $maxFileSize ?>" />
                 <input type="file" class="form-file-input" id="fileUpload" name="fileUpload" accept="image/*" />
                 <label class="form-file-label" for="fileUpload">
@@ -381,39 +381,25 @@ include("./includes/header.inc.php");
             </div>
 
             <!-- Title -->
-            <div class="form-outline mb-5">
+            <div class="form-outline <?php echo (!$title_isValid) ? "mb-5" : "mb-3"; ?>">
                 <input type="text" id="title" name="title" maxlength="45" class="form-control
-                <?php if (!$title_isValid) {
-                    echo "is-invalid";
-                } ?>
-                " value="<?php if (isset($_POST["title"])) {
-                                echo $_POST["title"];
-                            } ?>" />
+                <?php echo (!$title_isValid) ? "is-invalid" : ""; ?>" value="<?php echo (isset($_POST["title"])) ? $_POST["title"] : ""; ?>" />
                 <label class="form-label" for="title">Titel</label>
                 <?php
                 if (!$title_isValid) {
-                    echo '<div class="invalid-feedback">' .
-                        $title_error .
-                        '</div>';
+                    echo '<div class="invalid-feedback">' . $title_error . '</div>';
                 }
                 ?>
             </div>
 
             <!-- Description -->
-            <div class="form-outline mb-5">
+            <div class="form-outline <?php echo (!$description_isValid) ? "mb-5" : "mb-3"; ?>">
                 <textarea id="description" name="description" rows="4" maxlength="512" class="form-control
-                <?php if (!$description_isValid) {
-                    echo "is-invalid";
-                } ?>
-                "><?php if (isset($_POST["description"])) {
-                        echo $_POST["description"];
-                    } ?></textarea>
+                <?php echo (!$description_isValid) ? "is-invalid" : ""; ?>"><?php echo (isset($_POST["description"])) ? $_POST["description"] : ""; ?></textarea>
                 <label class="form-label" for="description">Beschreibung</label>
                 <?php
                 if (!$description_isValid) {
-                    echo '<div class="invalid-feedback">' .
-                        $description_error .
-                        '</div>';
+                    echo '<div class="invalid-feedback">' . $description_error . '</div>';
                 }
                 ?>
             </div>
@@ -421,24 +407,17 @@ include("./includes/header.inc.php");
             <!-- Count -->
             <div class="form-outline mb-5">
                 <input type="number" id="count" name="count" min="1" class="form-control
-                <?php if (!$count_isValid) {
-                    echo "is-invalid";
-                } ?>
-                " value="<?php if (isset($_POST["count"])) {
-                                echo $_POST["count"];
-                            } ?>" />
+                <?php echo (!$count_isValid) ? "is-invalid" : ""; ?>" value="<?php echo (isset($_POST["count"])) ? $_POST["count"] : ""; ?>" />
                 <label class="form-label" for="count">Bestand</label>
                 <?php
                 if (!$count_isValid) {
-                    echo '<div class="invalid-feedback">' .
-                        $count_error .
-                        '</div>';
+                    echo '<div class="invalid-feedback">' . $count_error . '</div>';
                 }
                 ?>
             </div>
 
             <!-- Submit button -->
-            <button type="submit" name="submit" id="submit" class="btn btn-primary btn-block mt-5">
+            <button type="submit" name="submit" id="submit" class="btn btn-primary btn-block">
                 <?php
                 echo ($isUpdate) ? "Produkt ändern" : "Produkt hinzufügen";
                 ?>
