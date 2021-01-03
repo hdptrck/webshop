@@ -57,17 +57,19 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
     // If item found
     if ($isUpdate) {
         $item = $result->fetch_assoc();
+
         if (empty($_POST)) {
             // Set initial values for updating an item
             $_POST["title"] = $item["title"];
             $_POST["description"] = $item["description"];
             $_POST["count"] = $item["count"];
-            $hasSamePicturePath = true;
-            $samePicturePath = $item["picture"];
-            $hasSameThumbPath = true;
-            $sameThumbPath = $item["thumb"];
-            $result->free();
         }
+
+        $hasSamePicturePath = true;
+        $samePicturePath = $item["picture"];
+        $hasSameThumbPath = true;
+        $sameThumbPath = $item["thumb"];
+        $result->free();
     }
 }
 
@@ -132,6 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             // No error
         } elseif ($hasImage) {
+            echo "has image";
             // Check filetype
             if (exif_imagetype($_FILES['fileUpload']['tmp_name']) == IMAGETYPE_GIF) {
                 $imageType = 'gif';
@@ -303,10 +306,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Use default images when no image was uploaded
         if (!$hasImage && !$hasSameThumbPath) {
+            echo "placeholder";
             $thumbPath = "/img/products/1.jpg";
         } elseif ($hasSameThumbPath) {
+            echo "same thumb path";
             $thumbPath = $sameThumbPath;
         } else {
+            echo "new file";
             $thumbPath = $thumbFile;
         }
 
