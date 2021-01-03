@@ -41,17 +41,16 @@ include("./includes/header.inc.php");
                     <h5 class="card-title"><?php echo $order['eventName']; ?> </h5>
                     <div class="row mb-3">
                         <div class="col-md-6 col-12">
-                            <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Besteller" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">assignment_ind</span></a> <?php echo $order['firstname'] . ' ' . $order['lastname']; ?></p>
-                            <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="E-Mail" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">email</span></a> <a href="mailto:<?php echo $order['email']; ?>"> <?php echo $order['email']; ?></a></p>
-                            <p class="card-text mb-3"><a href="#" data-mdb-toggle="tooltip" title="Bereitstellungsort" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">place</span></a> <?php echo $order['eventPlace']; ?></p>
-                        </div>
-                        <div class="col-md-6 col-12">
                             <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Abholdatum" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">local_shipping</span></a> <?php echo $order['pickUpDatetime']; ?></p>
                             <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Zurückbringdatum" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">assignment_return</span></a> <?php echo $order['returnDatetime']; ?></p>
-                            <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Bereitstellungsort" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">pin_drop</span></a> <?php echo $order['name']; ?></p>
+                            <p class="card-text mb-3"><a href="#" data-mdb-toggle="tooltip" title="Bereitstellungsort" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">pin_drop</span></a> <?php echo $order['name']; ?></p>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="Besteller" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">assignment_ind</span></a> <?php echo $order['firstname'] . ' ' . $order['lastname']; ?></p>
+                            <p class="card-text"><a href="#" data-mdb-toggle="tooltip" title="E-Mail" class="a-nostyling"><span class="material-icons-outlined material-icons-extra-class">email</span></a> <a href="mailto:<?php echo $order['email']; ?>"> <?php echo $order['email']; ?></a></p>
                         </div>
                     </div>
-                    <button id="btn-<?php echo  $order['idOrder']; ?>" class="mb-3 btn btn-outline-info" onClick="showDetail(this)">Details anzeigen</button>
+                    <button id="btn-<?php echo  $order['idOrder']; ?>" class="mr-3 mb-3 btn btn-outline-info" onClick="showDetail(this)">Details anzeigen</button>
 
                     <?php
                     // Create a button depending on the state of the order
