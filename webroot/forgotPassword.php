@@ -32,7 +32,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (isset($_POST['email'])) {
         if (!empty(trim($_POST['email'])) || filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL)) { //Is it a valid email?
             if (strlen(htmlspecialchars(trim($_POST['email']))) <= 100) {
-
                 $email = htmlspecialchars(trim($_POST['email']));
 
                 //Check if email is known
